@@ -1,12 +1,4 @@
 Social Feed
-===========
-A module that allows the display of a social feed on your website.
-
-I have not added a Page template for the SocialFeed page type, since I prefer creating my own. However, all the includes are there.
-
-My suggestion is to load the feed with AJAX, so it does not slow the page down.
-
-Social Feed
 ======
 **Social Feed** allows the display of a social feed (duh) on your website.
 
