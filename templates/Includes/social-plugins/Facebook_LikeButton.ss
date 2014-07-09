@@ -1,0 +1,3 @@
+$require_facebook_script
+
+<div class="fb-like" data-href="<% if $fbLink %>$fbLink<% else_if $SiteConfig.Facebook_UserID %>http://facebook.com/$SiteConfig.Facebook_UserID<% else %>$absoluteBaseURL<% end_if %>" data-width="100" data-height="60" data-colorscheme="<% if $fbScheme %>$fbScheme<% else %>light<% end_if %>" data-layout="<% if $fbLayout %>$fbLayout<% else %>button_count<% end_if %>" data-action="<% if $fbAction %>$fbAction<% else %>like<% end_if %>" data-show-faces="<% if $fbFaces %>true<% else %>false<% end_if %>" data-send="<% if $fbSend %>true<% else %>false<% end_if %>"></div>

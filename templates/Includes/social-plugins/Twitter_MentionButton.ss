@@ -1,0 +1,3 @@
+$require_twitter_script
+<span class="twitter-btn">
+<a href="https://twitter.com/intent/tweet?screen_name=<% if $twitterUser %>$twitterUser<% else_if $SiteConfig.Twitter_UserID %>http://twitter.com/$SiteConfig.Twitter_UserID<% else %>mwmdesign<% end_if %>" class="twitter-mention-button" <% if $twitterLargeBtn %>data-size="large" <% end_if %>data-related="<% if $twitterUser %>$twitterUser<% else_if $SiteConfig.Twitter_UserID %>$SiteConfig.Twitter_UserID<% else %>mwmdesign<% end_if %>" data-lang="$localeLanguage"><% _t('TWEET_TO', 'TWEET_TO') %> @<% if $twitterUser %>$twitterUser<% else_if $SiteConfig.Twitter_UserID %>$SiteConfig.Twitter_UserID<% else %>mwmdesign<% end_if %></a></span>

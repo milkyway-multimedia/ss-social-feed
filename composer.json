@@ -1,0 +1,22 @@
+{
+    "name"       : "milkyway-multimedia/silverstripe-social-feed",
+    "description": "Ability to display a social on a silverstripe website",
+    "type"       : "silverstripe-module",
+    "keywords"   : ["silverstripe facebook twitter mwm"],
+    "license"    : "MIT",
+    "authors"    : [
+        {
+            "name" : "Mellisa Hankins",
+            "email": "mell@milkywaymultimedia.com.au"
+        }
+    ],
+    "require"    : {
+        "silverstripe/framework"                  : "~3.1",
+        "silverstripe/cms"                        : "~3.1",
+        "guzzlehttp/oauth-subscriber"             : "~0.1",
+        "ajshort/silverstripe-gridfieldextensions": "dev-master"
+    },
+    "extra"      : {
+        "installer-name": "social-feed"
+    }
+}
