@@ -21,12 +21,13 @@ class SocialFeed extends Page {
     public function __construct($record = null, $isSingleton = false, $model = null) {
         parent::__construct($record, $isSingleton, $model);
 
-        $this->collection = Object::create('\Milkyway\SocialFeed\Collector', $this->Profiles());
+        $profiles = $this->Profiles()->exists() ? $this->Profiles()->filter('Enabled', 1) : $this->Profiles();
+        $this->collection = Object::create('\Milkyway\SocialFeed\Collector', $profiles);
 
         $this->beforeExtending('updateSettingsFields', function($fields) {
                 $fields->addFieldToTab('Root', Tab::create(
-                        'SocialPlugins',
-                        _t('SocialFeed.SOCIAL_PLUGINS', 'Social Plugins'),
+                        'SocialPlatforms',
+                        _t('SocialFeed.SOCIAL_PLATFORMS', 'Social Platforms'),
                         $gf = GridField::create(
                             'Profiles',
                             _t('SocialFeed.PROFILES', 'Profiles'),
@@ -56,5 +57,9 @@ class SocialFeed extends Page {
                 }
             }
         );
+    }
+
+    public function getFeed() {
+        return $this->collection->all();
     }
 }

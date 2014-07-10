@@ -7,5 +7,5 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 interface Provider {
-
+    public function all($settings = []);
 } 

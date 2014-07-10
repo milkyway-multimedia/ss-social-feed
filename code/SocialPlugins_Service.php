@@ -8,7 +8,7 @@
  * @credit http://www.codeofaninja.com/2012/06/display-facebook-feed-on-website.html
  */
 
-class SocialPlugins_Service extends Object implements TemplateGlobalProvider {
+class SocialPlugins_Service extends Object {
 	protected $plugins = array();
 	protected $controller;
 
@@ -108,21 +108,6 @@ class SocialPlugins_Service extends Object implements TemplateGlobalProvider {
 			$page = 0;
 
 		return $page * $this->limit;
-	}
-
-	private static $_facebook_included;
-
-	public static function require_facebook_script() {
-		if(!self::$_facebook_included) {
-			if($appId = SocialFeed_Profile::get_setting_from_config('facebook', 'ApplicationID'))
-				MWMRequirements::defer(sprintf(Director::protocol() . 'connect.facebook.net/%s/all.js#xfbml=1&appId=%s', i18n::get_locale(), $appId), true);
-
-			self::$_facebook_included = true;
-
-			return DBField::create_field('HTMLText', '<div id="fb-root"></div>');
-		}
-
-		return '';
 	}
 
 	public static function require_twitter_script() {

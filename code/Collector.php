@@ -1,0 +1,71 @@
+<?php namespace Milkyway\SocialFeed;
+/**
+ * Milkyway Multimedia
+ * Collector.php
+ *
+ * @package reggardocolaianni.com
+ * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
+ */
+class Collector {
+    protected $profiles;
+    protected $sort = 'Priority DESC';
+
+    public function __construct(\SS_List $profiles, $sort = 'Priority DESC') {
+        $this->profiles = $profiles;
+        $this->sort = $sort;
+    }
+
+    public function all() {
+        $feed = \ArrayList::create();
+
+        if($this->profiles->count()) {
+            foreach($this->profiles as $profile)
+                $feed->merge($this->collect($profile));
+
+            if($this->sort) {
+                if(is_string($this->sort) && strpos($this->sort, ' ') !== false) {
+                    $sort = explode(' ', $this->sort);
+                    $feed = $feed->sort($sort[0], $sort[1]);
+                }
+                else
+                    $feed = $feed->sort($this->sort);
+            }
+            else
+                $feed = $feed->sort('Priority', 'DESC');
+        }
+
+        return $feed;
+    }
+
+    public function collect($profile) {
+        $feed = [];
+
+        $provider = \Object::create($profile->Provider, (array) $profile->OauthConfiguration);
+        $template = $profile->Templates;
+        $posts = $provider->all((array) $profile->FeedSettings);
+        $postSettings = (array) $profile->PostSettings;
+
+        foreach($posts as $post) {
+            $post = array_merge($postSettings, $post);
+            $post['Profile'] = $profile;
+            $this->convertToArrayData($post);
+            $post['forTemplate'] = \ArrayData::create($post)->renderWith($template);
+            $feed[] = \ArrayData::create($post);
+        }
+
+        return $feed;
+    }
+
+    protected function convertToArrayData(&$data) {
+        foreach($data as $key => $item) {
+            if(is_array($item)) {
+                if(!\ArrayLib::is_associative($item)) {
+                    $this->convertToArrayData($item);
+                    $data[$key] = \ArrayList::create($item);
+                }
+                else
+                    $data[$key] = \ArrayData::create($item);
+            }
+        }
+    }
+} 

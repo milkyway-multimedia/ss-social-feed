@@ -1,5 +1,7 @@
 <?php namespace Milkyway\SocialFeed\Providers\Model;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Message\Response;
 use Milkyway\SocialFeed\Contracts\Provider;
 
 /**
@@ -20,7 +22,7 @@ abstract class HTTP implements Provider {
     protected function http()
     {
         if(!$this->client)
-            $this->client = Object::create('\GuzzleHttp\Client', $this->getHttpSettings());
+            $this->client = new Client($this->getHttpSettings());
 
         return $this->client;
     }
@@ -30,4 +32,8 @@ abstract class HTTP implements Provider {
             'base_url' => $this->endpoint,
         ];
     }
-} 
+
+    protected function isError(Response $response) {
+        return ($response->getStatusCode() < 200 || $response->getStatusCode() > 399);
+    }
+}

@@ -1,7 +1,7 @@
 <% if $Feed %>
 <% loop $Feed %>
-    <% include SocialFeed_Post %>
+    $forTemplate
 <% end_loop %>
 <% else %>
-	<p><% _t('NO_POSTS_TO_SHOW', 'No posts to show') %></p>
+	<p class="alert alert-none wow subtle-bounce"><% _t('NO_POSTS_TO_SHOW', 'No posts to show') %></p>
 <% end_if %>

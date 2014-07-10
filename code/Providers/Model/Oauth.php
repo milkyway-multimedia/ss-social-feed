@@ -1,6 +1,6 @@
 <?php namespace Milkyway\SocialFeed\Providers\Model;
 
-use GuzzleHttp\Client;
+use GuzzleHttp\Subscriber\Oauth\Oauth1;
 
 /**
  * Milkyway Multimedia
@@ -17,14 +17,18 @@ abstract class Oauth extends HTTP {
         'token_secret'    => '',
     ];
 
+    public function __construct(array $credentials) {
+        $this->credentials = $credentials;
+    }
+
     protected function http()
     {
         parent::http();
 
         $this
-            ->$client
+            ->client
             ->getEmitter()
-            ->attach(Object::create('\GuzzleHttp\Subscriber\Oauth\Oauth1', $this->credentials));
+            ->attach(new Oauth1($this->credentials));
 
         return $this->client;
     }

@@ -10,9 +10,32 @@
 class SocialFeed_GooglePlus extends SocialFeed_Profile {
     private static $singular_name = 'Google Plus Page';
 
+    protected $provider = 'Milkyway\SocialFeed\Providers\GooglePlus';
+
     private static $db = array(
-        'APIKey'                 => 'Varchar',
+        'ApiKey'                 => 'Varchar',
+
         'AllowGooglePlusFollows' => 'Boolean',
         'AllowPlusOnes'          => 'Boolean',
     );
+
+    protected $environmentMapping = [
+        'ApiKey'              => 'google+_api_key',
+    ];
+
+    public function getFeedSettings() {
+        return array_merge(parent::getFeedSettings(), [
+                'query' => [
+                    'key' => $this->getValueFromEnvironment('ApiKey'),
+                ],
+            ]
+        );
+    }
+
+    public function getPostSettings() {
+        return [
+            'canLikePage' => $this->AllowGooglePlusFollows,
+            'canLikePost' => $this->AllowPlusOnes,
+        ];
+    }
 } 
