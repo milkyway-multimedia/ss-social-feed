@@ -12,9 +12,18 @@ class SocialFeed extends Page {
 
 	private static $icon = 'social-feed/images/treeicons/social-feed.png';
 
-	private static $has_many = array(
+    private static $db = [
+        'Cache' => 'Int',
+        'AddThis' => 'Varchar',
+    ];
+
+	private static $has_many = [
 		'Profiles' => 'SocialFeed_Profile',
-	);
+	];
+
+    private static $defaults = [
+        'Cache' => 6,
+    ];
 
     protected $collection;
 
@@ -33,7 +42,11 @@ class SocialFeed extends Page {
                             _t('SocialFeed.PROFILES', 'Profiles'),
                             $this->Profiles(),
                             $config = GridFieldConfig_RecordEditor::create()
-                        )
+                        ),
+                        NumericField::create('Cache', _t('SocialFeed.CACHE', 'Cache for'))
+                            ->setDescription(_t('SocialFeed.DESC-CACHE', 'Set how many hours the results from the various platforms are stored in cache for')),
+                        TextField::create('AddThis', _t('SocialFeed.ADDTHIS', 'Add This Profile'))
+                            ->setDescription(_t('SocialFeed.DESC-ADDTHIS', 'AddThis Profile ID used for sharing (format: <strong>ra-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</strong>)'))
                     )
                 );
 
@@ -48,11 +61,11 @@ class SocialFeed extends Page {
                         $displayColumns['Enabled'] = _t('SHOW', 'Show');
                         $columns->setDisplayFields($displayColumns);
 
-                        $columns->setFieldFormatting(array(
+                        $columns->setFieldFormatting([
                                 'Enabled' => function($value, $record) {
                                         return $value ? '<span class="ui-button-icon-primary ui-icon btn-icon-accept boolean-yes"></span>' : '<span class="ui-button-icon-primary ui-icon btn-icon-decline boolean-no"></span>';
                                     }
-                            ));
+                            ]);
                     }
                 }
             }

@@ -46,10 +46,10 @@ class SocialFeed_Facebook extends SocialFeed_Profile {
     }
 
     public function getPostSettings() {
-        return [
+        return array_merge(parent::getPostSettings(), [
             'canLikePage' => $this->AllowPageLikes,
             'canLikePost' => $this->AllowPostLikes,
-        ];
+        ]);
     }
 
     public function LikeButton($url = '') {
@@ -57,5 +57,9 @@ class SocialFeed_Facebook extends SocialFeed_Profile {
             $url = Controller::join_links('http://facebook.com', $this->getValueFromEnvironment('Username'));
 
         return $this->customise(['fbLink' => $url])->renderWith('Facebook_LikeButton');
+    }
+
+    public function LikePostButton($url = '') {
+        return $this->LikeButton($url);
     }
 } 

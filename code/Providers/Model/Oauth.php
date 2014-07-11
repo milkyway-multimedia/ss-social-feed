@@ -17,7 +17,8 @@ abstract class Oauth extends HTTP {
         'token_secret'    => '',
     ];
 
-    public function __construct(array $credentials) {
+    public function __construct($cache = 6, array $credentials = []) {
+        parent::__construct($cache);
         $this->credentials = $credentials;
     }
 

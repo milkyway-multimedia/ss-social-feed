@@ -18,23 +18,11 @@ class Facebook extends Oauth {
         $all = [];
 
         try {
-            $response = $this->http()->get(
-                $this->endpoint($settings['username'], 'feed'),
-                [
-                    'query' => isset($settings['query']) ? $settings['query'] : [],
-                ]
-            );
+            $body = $this->getBodyFromCache($this->endpoint($settings['username'], 'feed'), $settings);
 
-            if(!$this->isError($response)) {
-                $body = $response->json();
-
-                if(!isset($body['data']))
-                    throw new \Exception('Data not received from Facebook. Please check your credentials.');
-
-                foreach($body['data'] as $post) {
-                    if($this->allowed($post))
-                        $all[] = $this->handlePost($post, $settings);
-                }
+            foreach($body['data'] as $post) {
+                if($this->allowed($post))
+                    $all[] = $this->handlePost($post, $settings);
             }
         } catch (\Exception $e) {
             \Debug::show($e->getMessage());
@@ -49,7 +37,7 @@ class Facebook extends Oauth {
         if(isset($settings['username']))
             $userId = $settings['username'];
 
-        $post = array(
+        $post = [
             'ID' => $id,
             'Link' => \Controller::join_links($this->url . '/' . $userId . '/posts/' . $id),
             'Author' => isset($data['from']) && isset($data['from']['name']) ? $data['from']['name'] : '',
@@ -57,20 +45,22 @@ class Facebook extends Oauth {
             'AuthorURL' => isset($data['from']) && isset($data['from']['id']) ? \Controller::join_links($this->url, $data['from']['id']) : '',
             'Avatar' => isset($data['from']) && isset($data['from']['id']) ? \Controller::join_links($this->endpoint, $data['from']['id'], 'picture') : '',
             'Content' => isset($data['message']) ? Utilities::auto_link_text(nl2br($data['message'])) : '',
-            'Picture' => isset($data['picture']) ? $data['picture'] : '',
+            'Picture' => isset($data['picture']) ? str_replace(['p130x130/', 's130x130/'], '', $data['picture']) : '',
+            'Thumbnail' => isset($data['picture']) ? $data['picture'] : '',
             'ObjectName' => isset($data['name']) ? $data['name'] : '',
             'ObjectURL' => isset($data['link']) ? $data['link'] : '',
             'Description' => isset($data['description']) ? Utilities::auto_link_text(nl2br($data['description'])) : '',
             'Icon' => isset($data['icon']) ? $data['icon'] : '',
             'Type' => isset($data['type']) ? $data['type'] : '',
             'StatusType' => isset($data['status_type']) ? $data['status_type'] : '',
-            'Priority' => $data['created_time'],
+            'Priority' => isset($data['created_time']) ? strtotime($data['created_time']) : 0,
             'Posted' => isset($data['created_time']) ? \DBField::create_field('SS_Datetime', $data['created_time']) : null,
             'LikesCount' => isset($data['likes']) && isset($data['likes']['data']) ? count($data['likes']['data']) : 0,
             'CommentsCount' => isset($data['comments']) && isset($data['comments']['data']) ? count($data['comments']['data']) : 0,
-        );
+        ];
 
         $post['Created'] = $post['Posted'];
+        $post['StyleClasses'] = $post['StatusType'];
 
         $post['LikesDescriptor'] = $post['LikesCount'] == 1 ? _t('SocialFeed.LIKE', 'like') : _t('SocialFeed.LIKES', 'likes');
         $post['CommentsDescriptor'] = $post['CommentsCount'] == 1 ? _t('SocialFeed.COMMENT', 'comment') : _t('SocialFeed.COMMENTS', 'comments');
@@ -122,5 +112,9 @@ class Facebook extends Oauth {
 
     protected function endpoint($username, $type = 'feed') {
         return \Controller::join_links($this->endpoint, $username, $type);
+    }
+
+    protected function isValid($body) {
+        return $body && is_array($body) && count($body) && isset($body['data']);
     }
 }

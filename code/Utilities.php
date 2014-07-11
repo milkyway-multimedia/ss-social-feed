@@ -1,4 +1,7 @@
 <?php namespace Milkyway\SocialFeed;
+
+use Milkyway\Assets;
+
 /**
  * Milkyway Multimedia
  * Utilities.php
@@ -6,7 +9,7 @@
  * @package reggardocolaianni.com
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
-class Utilities implements TemplateGlobalProvider {
+class Utilities implements \TemplateGlobalProvider {
     public static function auto_link_text($text = '') {
         if (!$text) return '';
 
@@ -34,20 +37,61 @@ class Utilities implements TemplateGlobalProvider {
 
     private static $_facebook_included;
 
-    public static function require_facebook_script() {
+    public static function require_facebook_script($facebook = null) {
         if(!self::$_facebook_included) {
-            $facebook = SocialFeed_Facebook::get()->first();
-            if(!$facebook) $facebook = singleton('SocialFeed_Facebook');
+            if(!$facebook)
+                $facebook = singleton('SocialFeed_Facebook');
 
-            if($appId = $facebook->getValueFromEnvironment('AppID'))
-                MWMRequirements::defer(sprintf(Director::protocol() . 'connect.facebook.net/%s/all.js#xfbml=1&appId=%s', i18n::get_locale(), $appId), true);
+            $appId = $facebook->getValueFromEnvironment('AppID');
+
+            if(!$appId && $facebook = \SocialFeed_Facebook::get()->first())
+                $appId = $facebook->getValueFromEnvironment('AppID');
+
+            if($appId)
+                Assets::defer(sprintf(\Director::protocol() . 'connect.facebook.net/%s/all.js#xfbml=1&appId=%s', \i18n::get_locale(), $appId));
 
             self::$_facebook_included = true;
 
-            return DBField::create_field('HTMLText', '<div id="fb-root"></div>');
+            return \DBField::create_field('HTMLText', '<div id="fb-root"></div>');
         }
 
         return '';
+    }
+
+    private static $_addThis_included;
+
+    public static function addThisJS($profileID = '', $config = []) {
+        if(!self::$_addThis_included) {
+            if(!$profileID) {
+                if($profile = \SocialFeed_Profile::first())
+                    $profileID = $profile->getValueFromEnvironment('AppID');
+
+                if(!$profileID)
+                    $profileID = singleton('SocialFeed_Profile')->getValueFromEnvironment('AppID');
+
+                if(!$profileID)
+                    return;
+            }
+
+            if(!count($config)) {
+                $config = array(
+                    'data_track_addressbar' => false,
+                    'ui_cobrand' => \SiteConfig::current_site_config()->Title,
+                    'ui_header_color' => '#FFFFFF',
+                    'ui_header_background' => '#999999',
+                );
+            }
+
+            \Requirements::insertHeadTags('
+        <script>
+            var addthis_config = addthis_config || ' . json_encode($config) . ';
+        </script>
+            ', 'AddThis-Configuration');
+
+            Assets::defer('http://s7.addthis.com/js/300/addthis_widget.js#pubid=' . $profileID, true);
+
+            self::$_facebook_included = true;
+        }
     }
 
     public static function get_template_global_variables() {
@@ -55,6 +99,7 @@ class Utilities implements TemplateGlobalProvider {
             'require_facebook_script',
             'require_twitter_script',
             'require_google_plus_script',
+            'addThisJS',
         );
     }
 } 

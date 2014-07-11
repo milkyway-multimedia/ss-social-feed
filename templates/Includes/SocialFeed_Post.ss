@@ -1,4 +1,4 @@
-<article class="panel-post $Profile.StyleClasses $EvenOdd">
+<article class="panel-post $Profile.StyleClasses $StyleClasses $EvenOdd">
 	<div class="avatar">
         <% if $Avatar %>
             <% if $AuthorURL %>
@@ -12,7 +12,7 @@
 	<div class="panel-post-body">
 		<h4>
             <% if $AuthorURL %>
-				<a href="$AuthorURL" target="_blank"><i class="social-icon" title="<% _t('VIA', 'Via') %> $Platform"></i></a>
+				<a href="$AuthorURL" target="_blank"><i class="social-icon" title="<% _t('VIA', 'Via') %> $Profile.Platform"></i></a>
             <% else %>
 				<i class="social-icon" title="<% _t('VIA', 'Via') %> $Platform"></i>
             <% end_if %>
@@ -82,6 +82,12 @@
 		<div class="panel-post-footer">
             <% if $Icon %><img src="$Icon" alt="$StatusType" class="post-icon" /> <% end_if %>
 
+            <% if not $HideAddThis && $AddThisProfileID %>
+				<div class="panel-post-share">
+                    <% include AddThis_ShareModule addThisProfileID=$AddThisProfileID %>
+				</div>
+            <% end_if %>
+
             <% if $CommentsDescriptor %>
 				<span class="panel-post-comment-count"><a href="$Link" target="_blank">$CommentsCount $CommentsDescriptor</a></span>
             <% end_if %>
@@ -92,11 +98,7 @@
 
             <% if $LikesDescriptor %>
                 <% if $canLikePost %>
-                    <% if $_is == 'facebook' %>
-                        <% include Facebook_LikeButton fbLink=$Link %>
-                    <% else_if $_is == 'google-plus' %>
-                        <% include Google_PlusOneButton gpLink=$Link %>
-                    <% end_if %>
+                    $Profile.LikePostButton($Link)
                 <% else %>
 	                <span class="panel-post-likes-count"><a href="$Link" target="_blank">$LikesCount $LikesDescriptor</a></span>
                 <% end_if %>

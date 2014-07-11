@@ -27,6 +27,7 @@ class SocialFeed_GooglePlus extends SocialFeed_Profile {
         return array_merge(parent::getFeedSettings(), [
                 'query' => [
                     'key' => $this->getValueFromEnvironment('ApiKey'),
+                    'maxResults' => $this->Limit,
                 ],
             ]
         );
@@ -37,5 +38,17 @@ class SocialFeed_GooglePlus extends SocialFeed_Profile {
             'canLikePage' => $this->AllowGooglePlusFollows,
             'canLikePost' => $this->AllowPlusOnes,
         ];
+    }
+
+    public function LikeButton($url = '') {
+        if(!$url)
+            $url = Controller::join_links('http://plus.google.com', $this->getValueFromEnvironment('Username'));
+
+        return $this->customise(['gpLink' => $url])->renderWith('Google_FollowButton');
+    }
+
+    public function LikePostButton($url = '') {
+        if(!$url) return '';
+        return $this->customise(['gpLink' => $url])->renderWith('Google_PlusOneButton');
     }
 } 

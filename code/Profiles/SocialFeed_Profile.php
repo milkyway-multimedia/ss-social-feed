@@ -15,6 +15,7 @@ class SocialFeed_Profile extends DataObject {
         'Username' => 'Varchar',
         'Limit'    => 'Int',
         'Enabled'  => 'Boolean',
+        'AddThis' => 'Varchar',
     ];
 
     private static $has_one = [
@@ -54,7 +55,10 @@ class SocialFeed_Profile extends DataObject {
 
     protected $provider = 'Milkyway\SocialFeed\Providers\Models\HTTP';
 
-    protected $environmentMapping = [];
+    protected $environmentMapping = [
+        'AddThis' => 'addthis_profile_id',
+    ];
+
     protected $cachedEnvironmentMapping = [];
 
     public function __construct($record = null, $isSingleton = false, $model = null) {
@@ -68,6 +72,12 @@ class SocialFeed_Profile extends DataObject {
 
         $this->beforeExtending('updateCMSFields', function($fields) {
                 $fields->removeByName('ParentID');
+                $fields->removeByName('AddThis');
+
+                $fields->addFieldsToTab('Root.Main', [
+                    TextField::create('AddThis', _t('SocialFeed.ADDTHIS', 'Add This Profile'))
+                    ->setDescription(_t('SocialFeed.DESC-ADDTHIS', 'AddThis Profile ID used for sharing (format: <strong>ra-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</strong>)'))
+                ]);
             }
         );
     }
@@ -88,6 +98,16 @@ class SocialFeed_Profile extends DataObject {
         ];
     }
 
+    public function getPostSettings() {
+        return [
+            'AddThisProfileID' => $this->getValueFromEnvironment('AddThis'),
+        ];
+    }
+
+    public function processPost(array $post) {
+        return $post;
+    }
+
     public function getPlatform() {
         return $this->i18n_singular_name();
     }
@@ -97,12 +117,14 @@ class SocialFeed_Profile extends DataObject {
     }
 
     public function getStyleClasses() {
-        return Convert::raw2htmlid('platform-' . strtolower($this->Platform));
+        return Convert::raw2htmlid('platform-' . str_replace('_', '-', strtolower($this->singular_name())));
     }
 
     public function getValueFromEnvironment($setting, $cache = true) {
         if($this->$setting)
             return $this->$setting;
+        elseif($this->Parent()->$setting)
+            return $this->Parent()->$setting;
 
         if(isset($this->environmentMapping[$setting])) {
             $setting = $this->environmentMapping[$setting];
@@ -126,5 +148,7 @@ class SocialFeed_Profile extends DataObject {
 
             return $value;
         }
+
+        return null;
     }
 }

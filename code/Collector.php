@@ -7,11 +7,18 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 class Collector {
+    /** @var \ArrayAccess A list of profiles */
     protected $profiles;
+
+    /** @var int Hours to cache */
+    protected $cache = 6;
+
+    /** @var string Sorting of list */
     protected $sort = 'Priority DESC';
 
-    public function __construct(\SS_List $profiles, $sort = 'Priority DESC') {
+    public function __construct(\ArrayAccess $profiles, $cache = 6, $sort = 'Priority DESC') {
         $this->profiles = $profiles;
+        $this->cache = $cache;
         $this->sort = $sort;
     }
 
@@ -40,13 +47,13 @@ class Collector {
     public function collect($profile) {
         $feed = [];
 
-        $provider = \Object::create($profile->Provider, (array) $profile->OauthConfiguration);
+        $provider = \Object::create($profile->Provider, $this->cache, (array) $profile->OauthConfiguration);
         $template = $profile->Templates;
         $posts = $provider->all((array) $profile->FeedSettings);
         $postSettings = (array) $profile->PostSettings;
 
         foreach($posts as $post) {
-            $post = array_merge($postSettings, $post);
+            $post = $profile->processPost(array_merge($postSettings, $post));
             $post['Profile'] = $profile;
             $this->convertToArrayData($post);
             $post['forTemplate'] = \ArrayData::create($post)->renderWith($template);
