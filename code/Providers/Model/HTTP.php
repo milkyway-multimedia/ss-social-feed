@@ -78,7 +78,7 @@ abstract class HTTP implements Provider {
             }
         }
 
-        return '';
+        return $body;
     }
 
     protected function parseResponse(ResponseInterface $response) {
