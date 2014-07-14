@@ -111,8 +111,8 @@
             <% if $UserMentionsDescriptor %>
 				<span class="panel-post-mentions-count"><% if $UserMentions %>$UserMentions.Count<% else %>0<% end_if %> $UserMentionsDescriptor</span>
 
-                <% if $canMentionAuthor %>
-                    <% include Twitter_MentionButton twitterUser=$AuthorName %>
+                <% if $canLikePost %>
+                    $Profile.LikePostButton($AuthorName)
                 <% end_if %>
             <% end_if %>
 

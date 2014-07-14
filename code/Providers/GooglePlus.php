@@ -15,14 +15,15 @@ class GooglePlus extends HTTP {
 
     protected $endpoint = 'https://www.googleapis.com/plus';
     protected $url = 'http://+.google.com';
+    protected $type = 'people';
 
     public function all($settings = []) {
         $all = [];
 
         try {
-            $body = $this->getBodyFromCache($this->endpoint(), $settings);
+            $body = $this->getBodyFromCache($this->endpoint($settings['username']), $settings);
 
-            foreach($body as $post) {
+            foreach($body['items'] as $post) {
                 $all[] = $this->handlePost($post, $settings);
             }
         } catch (\Exception $e) {
@@ -76,8 +77,8 @@ class GooglePlus extends HTTP {
         return $post;
     }
 
-    protected function endpoint($type = 'people/activities') {
-        return \Controller::join_links($this->endpoint, static::VERSION, $type);
+    protected function endpoint($username, $type = 'activities') {
+        return \Controller::join_links($this->endpoint, static::VERSION, $this->type, $username, $type, 'public');
     }
 
     protected function isValid($body) {

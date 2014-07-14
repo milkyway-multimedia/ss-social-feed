@@ -58,6 +58,10 @@ class Utilities implements \TemplateGlobalProvider {
         return '';
     }
 
+    public static function require_twitter_script() {
+        Assets::defer(\Director::protocol() . 'platform.twitter.com/widgets.js');
+    }
+
     private static $_addThis_included;
 
     public static function addThisJS($profileID = '', $config = []) {

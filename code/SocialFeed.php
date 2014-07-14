@@ -44,7 +44,8 @@ class SocialFeed extends Page {
                             $config = GridFieldConfig_RecordEditor::create()
                         ),
                         NumericField::create('Cache', _t('SocialFeed.CACHE', 'Cache for'))
-                            ->setDescription(_t('SocialFeed.DESC-CACHE', 'Set how many hours the results from the various platforms are stored in cache for')),
+                            ->setDescription(_t('SocialFeed.DESC-CACHE', 'Set how many hours the results from the various platforms are stored in cache for'))
+                            ->setAttribute('placeholder', 6),
                         TextField::create('AddThis', _t('SocialFeed.ADDTHIS', 'Add This Profile'))
                             ->setDescription(_t('SocialFeed.DESC-ADDTHIS', 'AddThis Profile ID used for sharing (format: <strong>ra-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</strong>)'))
                     )

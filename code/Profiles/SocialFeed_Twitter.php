@@ -38,19 +38,18 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
     {
         parent::__construct($record, $isSingleton, $model);
 
-        $types = [
-            'user_timeline'     => _t('SocialFeed_Twitter.USER_TIMELINE', 'User Tweets'),
-            'mentions_timeline' => _t('SocialFeed_Twitter.MENTIONS_TIMELINE', 'User Mentions'),
-            'home_timeline'     => _t('SocialFeed_Twitter.HOME_TIMELINE', 'Home Timeline'),
-        ];
-
         $this->beforeExtending(
             'updateCMSFields',
-            function ($fields) use ($types)
+            function ($fields)
             {
                 if ($type = $fields->dataFieldByName('Type'))
                 {
-                    $type->setSource($types);
+                    $type->setSource([
+                            'user_timeline'     => _t('SocialFeed_Twitter.USER_TIMELINE', 'User Tweets'),
+                            'mentions_timeline' => _t('SocialFeed_Twitter.MENTIONS_TIMELINE', 'User Mentions'),
+                            'home_timeline'     => _t('SocialFeed_Twitter.HOME_TIMELINE', 'Home Timeline'),
+                        ]
+                    );
                 }
             }
         );
@@ -105,17 +104,11 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
         return $post;
     }
 
-    public function LikeButton($user = '') {
-        if(!$user)
-            $user = $this->getValueFromEnvironment('Username');
-
-        return $this->customise(['twitterUser' => $user])->renderWith('Twitter_FollowButton');
+    public function LikeButton() {
+        return $this->customise(['twitterUser' => $this->getValueFromEnvironment('Username')])->renderWith('Twitter_FollowButton');
     }
 
-    public function LikePostButton($user = '') {
-        if(!$user)
-            $user = $this->getValueFromEnvironment('Username');
-
-        return $this->customise(['twitterUser' => $user])->renderWith('Twitter_MentionButton');
+    public function LikePostButton() {
+        return $this->customise(['twitterUser' => $this->getValueFromEnvironment('Username')])->renderWith('Twitter_MentionButton');
     }
 } 

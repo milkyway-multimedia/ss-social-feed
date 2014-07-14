@@ -50,7 +50,7 @@ class Twitter extends Oauth {
             'Favourite' => isset($data['favorited']) ? $data['favorited'] : false,
             'Truncated' => isset($data['truncated']) ? $data['truncated'] : false,
             'Priority' => isset($data['created_at']) ? strtotime($data['created_at']) : 0,
-            'Posted' => isset($data['created_at']) ? DBField::create_field('SS_Datetime', strtotime($data['created_at'])) : null,
+            'Posted' => isset($data['created_at']) ? \DBField::create_field('SS_Datetime', strtotime($data['created_at'])) : null,
             'Retweeted' => isset($data['retweeted']) ? $data['retweeted'] : false,
             'Retweets' => isset($data['retweet_count']) ? $data['retweet_count'] : 0,
             'Source' => isset($data['source']) ? $data['source'] : '',
@@ -60,9 +60,9 @@ class Twitter extends Oauth {
 
         $post['Created'] = $post['Posted'];
 
-        $post['RetweetsDescriptor'] = $data['Retweets'] == 1 ? _t('SocialFeed.RETWEET', 'Retweet') : _t('SocialFeed.RETWEETS', 'Retweets');
-        $post['AuthorFollowersDescriptor'] = $data['AuthorFollowers'] == 1 ? _t('SocialFeed.FOLLOWER', 'Follower') : _t('SocialFeed.FOLLOWERS', 'Followers');
-        $post['AuthorFriendsDescriptor'] = $data['AuthorFriends'] == 1 ? _t('SocialFeed.FRIEND', 'Friend') : _t('SocialFeed.FRIENDS', 'Friends');
+        $post['RetweetsDescriptor'] = $post['Retweets'] == 1 ? _t('SocialFeed.RETWEET', 'Retweet') : _t('SocialFeed.RETWEETS', 'Retweets');
+        $post['AuthorFollowersDescriptor'] = $post['AuthorFollowers'] == 1 ? _t('SocialFeed.FOLLOWER', 'Follower') : _t('SocialFeed.FOLLOWERS', 'Followers');
+        $post['AuthorFriendsDescriptor'] = $post['AuthorFriends'] == 1 ? _t('SocialFeed.FRIEND', 'Friend') : _t('SocialFeed.FRIENDS', 'Friends');
 
         if (isset($data['entities'])) {
             if(isset($data['entities']['urls']) && count($data['entities']['urls'])) {
@@ -116,7 +116,7 @@ class Twitter extends Oauth {
     }
 
     protected function endpoint($username, $type = 'statuses/user_timeline') {
-        return \Controller::join_links($this->endpoint, static::VERSION, $type);
+        return \Controller::join_links($this->endpoint, static::VERSION, $type . '.json');
     }
 
     protected function isValid($body) {
