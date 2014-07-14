@@ -120,6 +120,10 @@ class SocialFeed_Profile extends DataObject {
         return Convert::raw2htmlid('platform-' . str_replace('_', '-', strtolower($this->singular_name())));
     }
 
+    public function Link() {
+        return Controller::join_links($this->config()->url, $this->getValueFromEnvironment('Username'));
+    }
+
     public function getValueFromEnvironment($setting, $cache = true) {
         if($this->$setting)
             return $this->$setting;

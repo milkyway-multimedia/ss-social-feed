@@ -8,6 +8,7 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 class SocialFeed_Facebook extends SocialFeed_Profile {
+    private static $url = 'http://facebook.com';
 
     private static $singular_name = 'Facebook Page';
 
@@ -54,7 +55,7 @@ class SocialFeed_Facebook extends SocialFeed_Profile {
 
     public function LikeButton($url = '') {
         if(!$url)
-            $url = Controller::join_links('http://facebook.com', $this->getValueFromEnvironment('Username'));
+            $url = $this->Link();
 
         return $this->customise(['fbLink' => $url])->renderWith('Facebook_LikeButton');
     }
