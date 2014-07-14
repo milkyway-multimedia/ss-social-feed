@@ -117,7 +117,7 @@ class SocialFeed_Profile extends DataObject {
     }
 
     public function getStyleClasses() {
-        return Convert::raw2htmlid('platform-' . str_replace('_', '-', strtolower($this->singular_name())));
+        return \Milkyway\Utilities::raw2htmlid('platform-' . str_replace('_', '-', strtolower($this->singular_name())));
     }
 
     public function Link() {
