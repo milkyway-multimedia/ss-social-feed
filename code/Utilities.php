@@ -63,7 +63,7 @@ class Utilities implements \TemplateGlobalProvider {
     }
 
     public static function require_google_plus_script() {
-        Requirements::customScript("window.___gcfg = {lang: '" . str_replace('_', '-', i18n::get_locale()) . "'};", 'GooglePlus-Locale');
+        \Requirements::customScript("window.___gcfg = {lang: '" . str_replace('_', '-', \i18n::get_locale()) . "'};", 'GooglePlus-Locale');
         Assets::defer(\Director::protocol() . 'apis.google.com/js/plusone.js', true);
     }
 
