@@ -27,9 +27,10 @@ Currently only the following are supported:
 I am hoping to add Instagram and maybe Pinterest when I have time... But you can have as many of the above accounts as you want (if you don't mind the lag...)
 
 ### Features
-- Display all your social activity of one page
+- Display all your social activity of one papge
 - Use AddThis to encourage sharing
 - You can add follow buttons and like post buttons, as well as use hash tag retweets with Twitter.
+- JS is deferred for faster load times! No more social plugins annoyingly slowing down the website!!
 
 ## License
 * MIT

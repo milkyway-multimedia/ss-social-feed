@@ -62,6 +62,11 @@ class Utilities implements \TemplateGlobalProvider {
         Assets::defer(\Director::protocol() . 'platform.twitter.com/widgets.js');
     }
 
+    public static function require_google_plus_script() {
+        Requirements::customScript("window.___gcfg = {lang: '" . str_replace('_', '-', i18n::get_locale()) . "'};", 'GooglePlus-Locale');
+        Assets::defer(\Director::protocol() . 'apis.google.com/js/plusone.js', true);
+    }
+
     private static $_addThis_included;
 
     public static function addThisJS($profileID = '', $config = []) {
