@@ -13,7 +13,7 @@ class SocialFeed extends Page {
 	private static $icon = 'social-feed/images/treeicons/social-feed.png';
 
     private static $db = [
-        'Cache' => 'Int',
+        'CacheHours' => 'Int',
         'AddThis' => 'Varchar',
     ];
 
@@ -22,7 +22,7 @@ class SocialFeed extends Page {
 	];
 
     private static $defaults = [
-        'Cache' => 6,
+        'CacheHours' => 6,
     ];
 
     protected $collection;
@@ -43,7 +43,7 @@ class SocialFeed extends Page {
                             $this->Profiles(),
                             $config = GridFieldConfig_RecordEditor::create()
                         ),
-                        NumericField::create('Cache', _t('SocialFeed.CACHE', 'Cache for'))
+                        NumericField::create('CacheHours', _t('SocialFeed.CACHE', 'Cache for'))
                             ->setDescription(_t('SocialFeed.DESC-CACHE', 'Set how many hours the results from the various platforms are stored in cache for'))
                             ->setAttribute('placeholder', 6),
                         TextField::create('AddThis', _t('SocialFeed.ADDTHIS', 'Add This Profile'))
