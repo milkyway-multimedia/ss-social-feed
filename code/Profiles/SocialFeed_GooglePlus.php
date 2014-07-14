@@ -10,7 +10,7 @@
 class SocialFeed_GooglePlus extends SocialFeed_Profile {
     private static $url = 'http://plus.google.com';
 
-    private static $singular_name = 'Google Plus Page';
+    private static $singular_name = 'Google Plus';
 
     protected $provider = 'Milkyway\SocialFeed\Providers\GooglePlus';
 

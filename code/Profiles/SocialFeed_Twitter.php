@@ -11,7 +11,7 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
 
     private static $url = 'http://twitter.com';
 
-    private static $singular_name = 'Twitter Username';
+    private static $singular_name = 'Twitter';
 
     private static $db = [
         'Type'                => 'Enum(array("user_timeline","mentions_timeline","home_timeline"))',

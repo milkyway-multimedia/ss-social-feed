@@ -10,7 +10,7 @@
 class SocialFeed_Facebook extends SocialFeed_Profile {
     private static $url = 'http://facebook.com';
 
-    private static $singular_name = 'Facebook Page';
+    private static $singular_name = 'Facebook';
 
     private static $db = array(
         'AppID'          => 'Varchar',
