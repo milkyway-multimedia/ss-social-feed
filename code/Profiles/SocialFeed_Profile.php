@@ -130,6 +130,10 @@ class SocialFeed_Profile extends DataObject {
         elseif($this->Parent()->$setting)
             return $this->Parent()->$setting;
 
+        return $this->getValueFromServerEnvironment($setting, $cache);
+    }
+
+    protected function getValueFromServerEnvironment($setting, $cache = true) {
         if(isset($this->environmentMapping[$setting])) {
             $setting = $this->environmentMapping[$setting];
 
