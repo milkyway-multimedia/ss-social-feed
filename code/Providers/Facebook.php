@@ -45,7 +45,7 @@ class Facebook extends Oauth {
             'AuthorURL' => isset($data['from']) && isset($data['from']['id']) ? \Controller::join_links($this->url, $data['from']['id']) : '',
             'Avatar' => isset($data['from']) && isset($data['from']['id']) ? \Controller::join_links($this->endpoint, $data['from']['id'], 'picture') : '',
             'Content' => isset($data['message']) ? Utilities::auto_link_text(nl2br($data['message'])) : '',
-            'Picture' => isset($data['picture']) ? str_replace(['p130x130/', 's130x130/'], '', $data['picture']) : '',
+            'Picture' => isset($data['picture']) ? str_replace(['/v/', 'p130x130/', 's130x130/'], ['/', '', ''], $data['picture']) : '',
             'Thumbnail' => isset($data['picture']) ? $data['picture'] : '',
             'ObjectName' => isset($data['name']) ? $data['name'] : '',
             'ObjectURL' => isset($data['link']) ? $data['link'] : '',
