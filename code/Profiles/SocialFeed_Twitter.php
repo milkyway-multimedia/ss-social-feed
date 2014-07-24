@@ -95,7 +95,7 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
                 if(!isset($tag['Content'])) continue;
 
                 if($this->AllowHashTagTweets) {
-                    \Milkyway\SocialFeed\Utilities::require_twitter_script();
+                    \Milkyway\SS\SocialFeed\Utilities::require_twitter_script();
                     $post['Content'] = str_replace('#' . $post['Content'], sprintf('<span class="twitter-btn"><a href="https://twitter.com/intent/tweet?button_hashtag=%s" class="twitter-hashtag-button" target="_blank">#%s</a></span>', $tag['Content'], $tag['Content']), $post['Content']);
                 }
                 else

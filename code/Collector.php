@@ -1,4 +1,4 @@
-<?php namespace Milkyway\SocialFeed;
+<?php namespace Milkyway\SS\SocialFeed;
 /**
  * Milkyway Multimedia
  * Collector.php

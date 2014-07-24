@@ -1,7 +1,7 @@
-<?php namespace Milkyway\SocialFeed\Providers;
+<?php namespace Milkyway\SS\SocialFeed\Providers;
 
-use Milkyway\SocialFeed\Providers\Model\HTTP;
-use Milkyway\SocialFeed\Utilities;
+use Milkyway\SS\SocialFeed\Providers\Model\HTTP;
+use Milkyway\SS\SocialFeed\Utilities;
 
 /**
  * Milkyway Multimedia

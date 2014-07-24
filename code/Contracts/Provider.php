@@ -1,4 +1,4 @@
-<?php namespace Milkyway\SocialFeed\Contracts;
+<?php namespace Milkyway\SS\SocialFeed\Contracts;
 /**
  * Milkyway Multimedia
  * Provider.php

@@ -31,7 +31,7 @@ class SocialFeed extends Page {
         parent::__construct($record, $isSingleton, $model);
 
         $profiles = $this->Profiles()->exists() ? $this->Profiles()->filter('Enabled', 1) : $this->Profiles();
-        $this->collection = Object::create('\Milkyway\SocialFeed\Collector', $profiles);
+        $this->collection = Object::create('\Milkyway\SS\SocialFeed\Collector', $profiles);
 
         $this->beforeExtending('updateSettingsFields', function($fields) {
                 $fields->addFieldToTab('Root', Tab::create(

@@ -1,4 +1,4 @@
-<?php namespace Milkyway\SocialFeed\Providers\Model;
+<?php namespace Milkyway\SS\SocialFeed\Providers\Model;
 
 use GuzzleHttp\Subscriber\Oauth\Oauth1;
 

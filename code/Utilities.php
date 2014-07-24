@@ -1,6 +1,6 @@
-<?php namespace Milkyway\SocialFeed;
+<?php namespace Milkyway\SS\SocialFeed;
 
-use Milkyway\Assets;
+use Milkyway\SS\Assets;
 
 /**
  * Milkyway Multimedia

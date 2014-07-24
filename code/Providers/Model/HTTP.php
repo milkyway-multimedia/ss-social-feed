@@ -1,8 +1,8 @@
-<?php namespace Milkyway\SocialFeed\Providers\Model;
+<?php namespace Milkyway\SS\SocialFeed\Providers\Model;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\ResponseInterface;
-use Milkyway\SocialFeed\Contracts\Provider;
+use Milkyway\SS\SocialFeed\Contracts\Provider;
 
 /**
  * Milkyway Multimedia
