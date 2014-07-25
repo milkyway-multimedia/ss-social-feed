@@ -27,7 +27,7 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
         'AllowHashTagTweets'  => 'Boolean',
     ];
 
-    protected $provider = 'Milkyway\SocialFeed\Providers\Twitter';
+    protected $provider = 'Milkyway\SS\SocialFeed\Providers\Twitter';
 
     protected $environmentMapping = [
         'ApiKey'              => 'twitter_api_key',

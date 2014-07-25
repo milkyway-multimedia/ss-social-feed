@@ -21,7 +21,7 @@ class SocialFeed_Facebook extends SocialFeed_Profile {
         'AllowPostLikes' => 'Boolean',
     );
 
-    protected $provider = 'Milkyway\SocialFeed\Providers\Facebook';
+    protected $provider = 'Milkyway\SS\SocialFeed\Providers\Facebook';
 
     protected $environmentMapping = [
         'AppID'     => 'facebook_application_id',

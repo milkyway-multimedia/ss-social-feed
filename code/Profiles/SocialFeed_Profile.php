@@ -53,7 +53,7 @@ class SocialFeed_Profile extends DataObject {
         'SocialFeed_Post',
     ];
 
-    protected $provider = 'Milkyway\SocialFeed\Providers\Models\HTTP';
+    protected $provider = 'Milkyway\SS\SocialFeed\Providers\Models\HTTP';
 
     protected $environmentMapping = [
         'AddThis' => 'addthis_profile_id',

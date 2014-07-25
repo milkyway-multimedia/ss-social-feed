@@ -12,7 +12,7 @@ class SocialFeed_GooglePlus extends SocialFeed_Profile {
 
     private static $singular_name = 'Google Plus';
 
-    protected $provider = 'Milkyway\SocialFeed\Providers\GooglePlus';
+    protected $provider = 'Milkyway\SS\SocialFeed\Providers\GooglePlus';
 
     private static $db = array(
         'ApiKey'                 => 'Varchar',
