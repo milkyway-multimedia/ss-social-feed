@@ -61,6 +61,11 @@ class Collector {
                 $feed[] = \ArrayData::create($post);
             }
             else {
+                $profile->processPost($postSettings, $post);
+
+                foreach($postSettings as $setting => $value)
+                    $post->$setting = $value;
+
                 $post->Profile = $profile;
                 $post->forTemplate = $post->renderWith($template);
                 $feed[] = $post;

@@ -25,7 +25,8 @@ class SocialFeed_Page extends SocialFeed_Profile {
 
     public function getCMSFields() {
         $this->beforeExtending('updateCMSFields', function(FieldList $fields) {
-                $fields->replaceField('PageID', TreeDropdownField::create('PageID', _t('SocialFeed.DISPLAY_CHILDREN_OF_PAGE', 'Page'), 'Page'));
+                $fields->removeByName('PageID');
+                $fields->replaceField('Username', TreeDropdownField::create('PageID', _t('SocialFeed.DISPLAY_CHILDREN_OF_PAGE', 'Display children of'), 'Page'));
             }
         );
 
@@ -49,7 +50,8 @@ class SocialFeed_Page extends SocialFeed_Profile {
         return array_merge(parent::getPostSettings(), [
                 'canLikePage' => $this->AllowPageLikes,
                 'canLikePost' => $this->AllowPostLikes,
-            ]);
+            ]
+        );
     }
 
     public function getPlatform() {

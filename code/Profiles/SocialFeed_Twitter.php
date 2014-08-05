@@ -87,8 +87,8 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
         );
     }
 
-    public function processPost(array $post) {
-        $post = parent::processPost($post);
+    public function processPost(array $post, $postObject = null) {
+        $post = parent::processPost($post, $postObject);
 
         if(isset($post['HashTags']) && isset($post['Content'])) {
             foreach($post['HashTags'] as $tag) {

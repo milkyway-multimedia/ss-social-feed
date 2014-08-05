@@ -104,7 +104,7 @@ class SocialFeed_Profile extends DataObject {
         ];
     }
 
-    public function processPost(array $post) {
+    public function processPost(array $post, $postObject = null) {
         return $post;
     }
 

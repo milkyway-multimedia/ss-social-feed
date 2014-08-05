@@ -21,7 +21,12 @@
                 $Profile.LikeButton($AuthorURL)
             <% end_if %>
 
-            <% if $AuthorName %>$AuthorName<% else_if $Author %>$Author<% else %>$Title<% end_if %>
+            <% if $AuthorURL %>
+				<a href="$AuthorURL" target="_blank"><% if $AuthorName %>$AuthorName<% else_if $Author %>$Author<% else %>$Title<% end_if %></a>
+            <% else %>
+                <% if $AuthorName %>$AuthorName<% else_if $Author %>$Author<% else %>$Title<% end_if %>
+            <% end_if %>
+
 			<time>$Posted.Ago</time>
 		</h4>
 
@@ -46,12 +51,10 @@
 				<span class="panel-post-replies-count"><a href="$Link" target="_blank">$ReplyCount $ReplyDescriptor</a></span>
             <% end_if %>
 
-            <% if $LikesDescriptor %>
-                <% if $canLikePost %>
-                    $Profile.LikePostButton($Link)
-                <% else %>
-	                <span class="panel-post-likes-count"><a href="$Link" target="_blank">$LikesCount $LikesDescriptor</a></span>
-                <% end_if %>
+            <% if $canLikePost %>
+                $Profile.LikePostButton($Link)
+            <% else_if $LikesDescriptor %>
+                <span class="panel-post-likes-count"><a href="$Link" target="_blank">$LikesCount $LikesDescriptor</a></span>
             <% end_if %>
 
             <% if $RetweetsDescriptor %>
