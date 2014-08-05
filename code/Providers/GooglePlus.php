@@ -43,7 +43,7 @@ class GooglePlus extends HTTP {
             'Avatar' => isset($data['actor']) && isset($data['actor']['image']) && isset($data['actor']['image']['url']) ? $data['actor']['image']['url'] : '',
             'Title' => isset($data['title']) ? Utilities::auto_link_text(nl2br($data['title'])) : '',
             'Type' => isset($data['object']) && isset($data['object']['objectType']) ? $data['object']['objectType'] : '',
-            'Content' => isset($data['object']) && isset($data['object']['content']) ? Utilities::auto_link_text(nl2br($data['object']['content'])) : '',
+            'Content' => isset($data['object']) && isset($data['object']['content']) ? '<p>' . Utilities::auto_link_text(nl2br($data['object']['content'])) . '</p>' : '',
             'ReplyCount' => isset($data['object']) && isset($data['object']['replies']) && isset($data['object']['replies']['totalItems']) ? $data['object']['replies']['totalItems'] : 0,
             'LikesCount' => isset($data['object']) && isset($data['object']['plusoners']) && isset($data['object']['plusoners']['totalItems']) ? $data['object']['plusoners']['totalItems'] : 0,
             'ReshareCount' => isset($data['object']) && isset($data['object']['resharers']) && isset($data['object']['resharers']['totalItems']) ? $data['object']['resharers']['totalItems'] : 0,

@@ -66,7 +66,7 @@ class Facebook extends Oauth {
         $post['CommentsDescriptor'] = $post['CommentsCount'] == 1 ? _t('SocialFeed.COMMENT', 'comment') : _t('SocialFeed.COMMENTS', 'comments');
 
         if (!$post['Content'] && isset($data['story']) && $data['story'])
-            $post['Content'] = Utilities::auto_link_text(nl2br($data['story']));
+            $post['Content'] = '<p>' . Utilities::auto_link_text(nl2br($data['story'])) . '</p>';
 
         if (isset($data['likes']) && isset($data['likes']['data']) && count($data['likes']['data'])) {
             $post['Likes'] = [];
