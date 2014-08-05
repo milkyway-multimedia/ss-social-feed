@@ -66,7 +66,7 @@ abstract class HTTP implements Provider {
                 ]
             );
 
-            if(!$this->isError($response)) {
+            if($response && !$this->isError($response)) {
                 $body = $this->parseResponse($response);
 
                 if(!$this->isValid($body))
