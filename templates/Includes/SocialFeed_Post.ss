@@ -1,13 +1,13 @@
 <article class="panel-post $Profile.StyleClasses $StyleClasses $EvenOdd">
+    <% if $Avatar %>
 	<div class="avatar">
-        <% if $Avatar %>
             <% if $AuthorURL %>
 				<a href="$AuthorURL" target="_blank"><img src="$Avatar" alt="$Author" /></a>
             <% else %>
 				<img src="$Avatar" alt="$Author" />
             <% end_if %>
-        <% end_if %>
 	</div>
+    <% end_if %>
 
 	<div class="panel-post-body">
 		<h4>
@@ -21,63 +21,13 @@
                 $Profile.LikeButton($AuthorURL)
             <% end_if %>
 
-            $Author
+            <% if $AuthorName %>$AuthorName<% else_if $Author %>$Author<% else %>$Title<% end_if %>
 			<time>$Posted.Ago</time>
 		</h4>
 
-		<p>$Content</p>
+        $Content
 
-        <% if $Picture %>
-			<figure class="panel-post-media has-image">
-                <% if $ObjectURL %>
-					<a href="$ObjectURL" target="_blank"><img src="$Picture" alt="$ObjectName" /></a>
-                <% else %>
-					<img src="$Picture" alt="$ObjectName" />
-                <% end_if %>
-
-				<figcaption class="panel-post-media-caption">
-                    <% if $ObjectURL && $ObjectName %>
-						<h5><a href="$ObjectURL" target="_blank">$ObjectName</a></h5>
-                    <% else_if $ObjectName %>
-						<h5>$ObjectName</h5>
-                    <% end_if %>
-                    <% if $Description %><p>$Description</p><% end_if %>
-				</figcaption>
-			</figure>
-        <% else_if $ObjectURL %>
-			<figure class="panel-post-media">
-				<a href="$ObjectURL" target="_blank">$ObjectURL</a>
-
-				<figcaption class="panel-post-media-caption">
-                    <% if $ObjectURL && $ObjectName %>
-						<h6><a href="$ObjectURL" target="_blank">$ObjectName</a></h6>
-                    <% else_if $ObjectName %>
-						<h6>$ObjectName</h6>
-                    <% end_if %>
-                    <% if $Description %><p>$Description</p><% end_if %>
-				</figcaption>
-			</figure>
-        <% else_if $Attachments %>
-            <% loop $Attachments %>
-				<figure class="panel-post-media">
-                    <% if $Picture %>
-                        <% if $Link %>
-							<a href="$Link" target="_blank"><img src="$Picture" alt="$Link" /></a>
-                        <% else %>
-							<img src="$Picture" alt="$Link" />
-                        <% end_if %>
-                    <% end_if %>
-
-                    <% if not $Picture %>
-                        <% if $Content %>
-							<figcaption class="panel-post-media-caption">
-                                $Content
-							</figcaption>
-                        <% end_if %>
-                    <% end_if %>
-				</figure>
-            <% end_loop %>
-        <% end_if %>
+        <% include SocialFeed_Media %>
 
 		<div class="panel-post-footer">
             <% if $Icon %><img src="$Icon" alt="$StatusType" class="post-icon" /> <% end_if %>
@@ -124,10 +74,7 @@
         <% if $Comments %>
 			<div class="panel-post-comments">
                 <% loop $Comments %>
-					<div class="panel-post-comment<% if $ReplyByPoster %> author-reply<% end_if %>">
-                        <% if $Author %><h6>$Author <time>$Posted.Ago</time></h6> <% end_if %>
-						<p>$Content</p>
-					</div>
+					<% include SocialFeed_Comment %>
                 <% end_loop %>
 			</div>
         <% end_if %>
