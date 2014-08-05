@@ -2,7 +2,7 @@
     "name"       : "milkyway-multimedia/silverstripe-social-feed",
     "description": "Ability to display a social on a silverstripe website",
     "type"       : "silverstripe-module",
-    "keywords"   : ["silverstripe facebook twitter mwm"],
+    "keywords"   : ["silverstripe", "facebook", "twitter", "googleplus", "google+", "blog", "mwm"],
     "license"    : "MIT",
     "authors"    : [
         {
