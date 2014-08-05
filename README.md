@@ -23,6 +23,7 @@ Currently only the following are supported:
 - Facebook Pages/Profiles
 - Twitter Account
 - Google Plus Page
+- Internal Page (will display children of said page)
 
 I am hoping to add Instagram and maybe Pinterest when I have time... But you can have as many of the above accounts as you want (if you don't mind the lag...)
 

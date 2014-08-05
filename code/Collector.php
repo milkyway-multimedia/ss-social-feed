@@ -53,11 +53,18 @@ class Collector {
         $postSettings = (array) $profile->PostSettings;
 
         foreach($posts as $post) {
-            $post = $profile->processPost(array_merge($postSettings, $post));
-            $post['Profile'] = $profile;
-            $this->convertToArrayData($post);
-            $post['forTemplate'] = \ArrayData::create($post)->renderWith($template);
-            $feed[] = \ArrayData::create($post);
+            if(!($post instanceof \ViewableData)) {
+                $post = $profile->processPost(array_merge($postSettings, $post));
+                $post['Profile'] = $profile;
+                $this->convertToArrayData($post);
+                $post['forTemplate'] = \ArrayData::create($post)->renderWith($template);
+                $feed[] = \ArrayData::create($post);
+            }
+            else {
+                $post->Profile = $profile;
+                $post->forTemplate = $post->renderWith($template);
+                $feed[] = $post;
+            }
         }
 
         return $feed;
