@@ -1,4 +1,4 @@
-<div class="addthis_toolbox addthis_default_style ">
+<div class="addthis_toolbox addthis_default_style "<% if $addThisUrl %> addthis:url="$addThisUrl"<% end_if %><% if $addThisTitle %> addthis:title="$addThisTitle"<% end_if %>>
 	<a class="addthis_button_facebook"></a>
 	<a class="addthis_button_twitter"></a>
 	<a class="addthis_button_pinterest_share"></a>

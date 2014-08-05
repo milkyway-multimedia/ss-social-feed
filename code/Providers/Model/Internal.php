@@ -29,7 +29,7 @@ abstract class Internal implements Provider {
                 if(!$data->Priority)
                     $data->Priority = strtotime($data->Posted);
 
-                if(!$data->AuthorURL && $data->hasMethod('Link'))
+                if(!$data->Link && $data->hasMethod('Link'))
                     $data->AuthorURL = $data->Link();
 
                 $list[] = $data;

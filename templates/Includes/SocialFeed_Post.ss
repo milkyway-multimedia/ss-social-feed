@@ -39,7 +39,19 @@
 
             <% if not $HideAddThis && $AddThisProfileID %>
 				<div class="panel-post-share">
-                    <% include AddThis_ShareModule addThisProfileID=$AddThisProfileID %>
+                    <% if $Title %>
+                        <% if $AbsoluteLink %>
+                            <% include AddThis_ShareModule addThisProfileID=$AddThisProfileID,addThisTitle=$Title,addThisUrl=$AbsoluteLink %>
+                        <% else %>
+                            <% include AddThis_ShareModule addThisProfileID=$AddThisProfileID,addThisTitle=$Title,addThisUrl=$Link %>
+                        <% end_if %>
+                    <% else %>
+                        <% if $AbsoluteLink %>
+                            <% include AddThis_ShareModule addThisProfileID=$AddThisProfileID,addThisTitle=$Author,addThisUrl=$AbsoluteLink %>
+                        <% else %>
+                            <% include AddThis_ShareModule addThisProfileID=$AddThisProfileID,addThisTitle=$Author,addThisUrl=$Link %>
+                        <% end_if %>
+                    <% end_if %>
 				</div>
             <% end_if %>
 
