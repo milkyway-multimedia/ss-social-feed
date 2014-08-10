@@ -1,5 +1,5 @@
 {
-    "name"       : "milkyway-multimedia/silverstripe-social-feed",
+    "name"       : "milkyway-multimedia/ss-social-feed",
     "description": "Ability to display a social on a silverstripe website",
     "type"       : "silverstripe-module",
     "keywords"   : ["silverstripe", "facebook", "twitter", "googleplus", "google+", "blog", "mwm"],
@@ -15,12 +15,12 @@
         "silverstripe/cms"                        : "~3.1",
         "guzzlehttp/oauth-subscriber"             : "~0.1",
         "ajshort/silverstripe-gridfieldextensions": "dev-master",
-        "milkyway-multimedia/silverstripe-mwm": "dev-master"
+        "milkyway-multimedia/ss-mwm": "dev-master"
     },
     "repositories": [
         {
             "type": "vcs",
-            "url" : "https://github.com/milkyway-multimedia/silverstripe-mwm"
+            "url" : "https://github.com/milkyway-multimedia/ss-mwm"
         }
     ],
     "extra"      : {
