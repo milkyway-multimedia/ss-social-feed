@@ -87,7 +87,7 @@ class Facebook extends Oauth {
                 $comment = array(
                     'Author' => isset($commentData['from']) && isset($commentData['from']['name']) ? $commentData['from']['name'] : '',
                     'AuthorID' => isset($commentData['from']) && isset($commentData['from']['id']) ? $commentData['from']['id'] : '',
-                    'AuthorURL' => isset($commentData['from']) && isset($commentData['from']['id']) ? \Controller::join_links($this->url, $post['from']['id']) : '',
+                    'AuthorURL' => isset($commentData['from']) && isset($commentData['from']['id']) ? \Controller::join_links($this->url, $commentData['from']['id']) : '',
                     'Content' => isset($commentData['message']) ? $commentData['message'] : '',
                     'Posted' => isset($commentData['created_time']) ? \DBField::create_field('SS_Datetime', $commentData['created_time']) : null,
                     'ReplyByPoster' => isset($commentData['from']) && isset($commentData['from']['id']) ? $commentData['from']['id'] == $post['AuthorID'] : false,
