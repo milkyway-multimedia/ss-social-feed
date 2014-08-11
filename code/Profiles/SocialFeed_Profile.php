@@ -61,26 +61,30 @@ class SocialFeed_Profile extends DataObject {
 
     protected $cachedEnvironmentMapping = [];
 
-    public function __construct($record = null, $isSingleton = false, $model = null) {
-        parent::__construct($record, $isSingleton, $model);
+	public function canCreate($member = null) {
+		$this->beforeExtending(__METHOD__, function($member = null) {
+				if(get_class($this) == 'SocialFeed_Profile')
+					return false;
+			}
+		);
 
-        $this->beforeExtending('canCreate', function($member = null) {
-                if(get_class($this) == 'SocialFeed_Profile')
-                    return false;
-            }
-        );
+		return parent::canCreate($member);
+	}
 
-        $this->beforeExtending('updateCMSFields', function($fields) {
-                $fields->removeByName('ParentID');
-                $fields->removeByName('AddThis');
+	public function getCMSFields() {
+		$this->beforeExtending('updateCMSFields', function($fields) {
+				$fields->removeByName('ParentID');
+				$fields->removeByName('AddThis');
 
-                $fields->addFieldsToTab('Root.Main', [
-                    TextField::create('AddThis', _t('SocialFeed.ADDTHIS', 'Add This Profile'))
-                    ->setDescription(_t('SocialFeed.DESC-ADDTHIS', 'AddThis Profile ID used for sharing (format: <strong>ra-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</strong>)'))
-                ]);
-            }
-        );
-    }
+				$fields->addFieldsToTab('Root.Main', [
+					TextField::create('AddThis', _t('SocialFeed.ADDTHIS', 'Add This Profile'))
+						->setDescription(_t('SocialFeed.DESC-ADDTHIS', 'AddThis Profile ID used for sharing (format: <strong>ra-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</strong>)'))
+				]);
+			}
+		);
+
+		return parent::getCMSFields();
+	}
 
     public function getTitle()
     {

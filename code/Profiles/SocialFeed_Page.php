@@ -30,8 +30,7 @@ class SocialFeed_Page extends SocialFeed_Profile {
             }
         );
 
-        $fields = parent::getCMSFields();
-        return $fields;
+        return parent::getCMSFields();
     }
 
     public function getTitle()

@@ -36,26 +36,25 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
         'AccessTokenSecret'   => 'twitter_access_token_secret',
     ];
 
-    public function __construct($record = null, $isSingleton = false, $model = null)
-    {
-        parent::__construct($record, $isSingleton, $model);
+	public function getCMSFields() {
+		$this->beforeExtending(
+			'updateCMSFields',
+			function ($fields)
+			{
+				if ($type = $fields->dataFieldByName('Type'))
+				{
+					$type->setSource([
+							'user_timeline'     => _t('SocialFeed_Twitter.USER_TIMELINE', 'User Tweets'),
+							'mentions_timeline' => _t('SocialFeed_Twitter.MENTIONS_TIMELINE', 'User Mentions'),
+							'home_timeline'     => _t('SocialFeed_Twitter.HOME_TIMELINE', 'Home Timeline'),
+						]
+					);
+				}
+			}
+		);
 
-        $this->beforeExtending(
-            'updateCMSFields',
-            function ($fields)
-            {
-                if ($type = $fields->dataFieldByName('Type'))
-                {
-                    $type->setSource([
-                            'user_timeline'     => _t('SocialFeed_Twitter.USER_TIMELINE', 'User Tweets'),
-                            'mentions_timeline' => _t('SocialFeed_Twitter.MENTIONS_TIMELINE', 'User Mentions'),
-                            'home_timeline'     => _t('SocialFeed_Twitter.HOME_TIMELINE', 'Home Timeline'),
-                        ]
-                    );
-                }
-            }
-        );
-    }
+		return parent::getCMSFields();
+	}
 
     public function getOauthConfiguration()
     {
