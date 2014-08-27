@@ -62,11 +62,12 @@ class SocialFeed_Profile extends DataObject {
     protected $cachedEnvironmentMapping = [];
 
     public function canCreate($member = null) {
-        $this->afterExtending(__METHOD__, function($member = null) {
+        $this->beforeExtending(__FUNCTION__, function($member = null) {
                 if(get_class($this) == 'SocialFeed_Profile')
                     return false;
 
-                return $this->Parent()->canCreate($member);
+                if($this->Parent()->canCreate($member))
+                    return true;
             }
         );
 
@@ -74,8 +75,9 @@ class SocialFeed_Profile extends DataObject {
     }
 
     public function canEdit($member = null) {
-        $this->afterExtending(__METHOD__, function($member = null) {
-                return $this->Parent()->canEdit($member);
+        $this->beforeExtending(__FUNCTION__, function($member = null) {
+                if($this->Parent()->canEdit($member))
+                    return true;
             }
         );
 
@@ -83,8 +85,9 @@ class SocialFeed_Profile extends DataObject {
     }
 
     public function canDelete($member = null) {
-        $this->afterExtending(__METHOD__, function($member = null) {
-                return $this->Parent()->canDelete($member);
+        $this->beforeExtending(__FUNCTION__, function($member = null) {
+                if($this->Parent()->canDelete($member))
+                    return true;
             }
         );
 
@@ -92,8 +95,9 @@ class SocialFeed_Profile extends DataObject {
     }
 
     public function canView($member = null) {
-        $this->afterExtending(__METHOD__, function($member = null) {
-                return $this->Parent()->canView($member);
+        $this->beforeExtending(__FUNCTION__, function($member = null) {
+                if($this->Parent()->canView($member))
+                    return true;
             }
         );
 
@@ -101,19 +105,42 @@ class SocialFeed_Profile extends DataObject {
     }
 
 	public function getCMSFields() {
-		$this->beforeExtending('updateCMSFields', function($fields) {
-				$fields->removeByName('ParentID');
-				$fields->removeByName('AddThis');
+        $this->beforeExtending('updateCMSFields', function($fields) {
+                $fields->removeByName('ParentID');
+                $fields->removeByName('AddThis');
 
-				$fields->addFieldsToTab('Root.Main', [
-					TextField::create('AddThis', _t('SocialFeed.ADDTHIS', 'Add This Profile'))
-						->setDescription(_t('SocialFeed.DESC-ADDTHIS', 'AddThis Profile ID used for sharing (format: <strong>ra-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</strong>)'))
-				]);
-			}
-		);
+                $fields->addFieldsToTab('Root.Main', [
+                        TextField::create('AddThis', _t('SocialFeed.ADDTHIS', 'Add This Profile'))
+                            ->setDescription(_t('SocialFeed.DESC-ADDTHIS', 'AddThis Profile ID used for sharing (format: <strong>ra-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</strong>)'))
+                    ]);
+            }
+        );
+
+        $this->afterExtending('updateCMSFields', function($fields) {
+                $dataFields = $fields->dataFields();
+
+                foreach($dataFields as $field) {
+                    if($field instanceof \TextField)
+                        $field->setAttribute('placeholder', $this->getValueFromEnvironment($field->Name));
+                }
+            }
+        );
 
 		return parent::getCMSFields();
 	}
+
+    public function getBetterButtonsUtils() {
+        if($this->has_extension('BetterButtonDataObject')) {
+            $extension = $this->getExtensionInstance('BetterButtonDataObject');
+            $extension->setOwner($this);
+            $utils   = $extension->getBetterButtonsUtils();
+            $utils->removeByName('action_doNew');
+        }
+        else
+            $utils = \FieldList::create();
+
+        return $utils;
+    }
 
     public function getTitle()
     {
@@ -168,24 +195,27 @@ class SocialFeed_Profile extends DataObject {
 
     protected function getValueFromServerEnvironment($setting, $cache = true) {
         if(isset($this->environmentMapping[$setting])) {
-            $setting = $this->environmentMapping[$setting];
+            $envSetting = $this->environmentMapping[$setting];
 
-            if($cache && isset($this->cachedEnvironmentMapping[$setting]))
-                return $this->cachedEnvironmentMapping[$setting];
+            if($cache && isset($this->cachedEnvironmentMapping[$envSetting]))
+                return $this->cachedEnvironmentMapping[$envSetting];
 
             $value = null;
+            $prefix = str_replace('SocialFeed_', '', get_class($this));
 
-            if(SocialFeed::config()->$setting)
-                $value = SocialFeed::config()->$setting;
-            elseif(SiteConfig::config()->$setting)
-                $value = SiteConfig::config()->$setting;
-            elseif(getenv($setting))
-                $value = getenv($setting);
-            elseif(isset($_ENV[$setting]))
-                $value = $_ENV[$setting];
+            if(SocialFeed::config()->$envSetting)
+                $value = SocialFeed::config()->$envSetting;
+            elseif(SiteConfig::current_site_config()->{$prefix.$setting})
+                $value = SiteConfig::current_site_config()->{$prefix.$setting};
+            elseif(SiteConfig::config()->$envSetting)
+                $value = SiteConfig::config()->$envSetting;
+            elseif(getenv($envSetting))
+                $value = getenv($envSetting);
+            elseif(isset($_ENV[$envSetting]))
+                $value = $_ENV[$envSetting];
 
             if($cache)
-                $this->cachedEnvironmentMapping[$setting] = $value;
+                $this->cachedEnvironmentMapping[$envSetting] = $value;
 
             return $value;
         }

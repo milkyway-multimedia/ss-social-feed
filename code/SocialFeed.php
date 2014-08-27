@@ -43,6 +43,7 @@ class SocialFeed extends Page {
 							->setAttribute('placeholder', 6),
 						TextField::create('AddThis', _t('SocialFeed.ADDTHIS', 'Add This Profile'))
 							->setDescription(_t('SocialFeed.DESC-ADDTHIS', 'AddThis Profile ID used for sharing (format: <strong>ra-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</strong>)'))
+                            ->setAttribute('placeholder', singleton('SocialFeed_Profile')->getValueFromEnvironment('AddThis'))
 					)
 				);
 

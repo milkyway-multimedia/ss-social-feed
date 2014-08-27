@@ -1,0 +1,6 @@
+---
+Name: social-feed-extensions
+---
+SiteConfig:
+  extensions:
+    - 'Milkyway\SS\SocialFeed\Extensions\SiteConfig'

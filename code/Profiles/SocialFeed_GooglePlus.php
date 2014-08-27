@@ -22,7 +22,7 @@ class SocialFeed_GooglePlus extends SocialFeed_Profile {
     );
 
     protected $environmentMapping = [
-        'ApiKey'              => 'google+_api_key',
+        'ApiKey'              => 'googleplus_api_key',
     ];
 
     public function getFeedSettings() {
