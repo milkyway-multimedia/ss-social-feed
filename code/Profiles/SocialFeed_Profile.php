@@ -61,15 +61,44 @@ class SocialFeed_Profile extends DataObject {
 
     protected $cachedEnvironmentMapping = [];
 
-	public function canCreate($member = null) {
-		$this->beforeExtending(__METHOD__, function($member = null) {
-				if(get_class($this) == 'SocialFeed_Profile')
-					return false;
-			}
-		);
+    public function canCreate($member = null) {
+        $this->afterExtending(__METHOD__, function($member = null) {
+                if(get_class($this) == 'SocialFeed_Profile')
+                    return false;
 
-		return parent::canCreate($member);
-	}
+                return $this->Parent()->canCreate($member);
+            }
+        );
+
+        return parent::canCreate($member);
+    }
+
+    public function canEdit($member = null) {
+        $this->afterExtending(__METHOD__, function($member = null) {
+                return $this->Parent()->canEdit($member);
+            }
+        );
+
+        return parent::canEdit($member);
+    }
+
+    public function canDelete($member = null) {
+        $this->afterExtending(__METHOD__, function($member = null) {
+                return $this->Parent()->canDelete($member);
+            }
+        );
+
+        return parent::canDelete($member);
+    }
+
+    public function canView($member = null) {
+        $this->afterExtending(__METHOD__, function($member = null) {
+                return $this->Parent()->canView($member);
+            }
+        );
+
+        return parent::canView($member);
+    }
 
 	public function getCMSFields() {
 		$this->beforeExtending('updateCMSFields', function($fields) {
