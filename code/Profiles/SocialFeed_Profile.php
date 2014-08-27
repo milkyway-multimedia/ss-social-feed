@@ -121,7 +121,7 @@ class SocialFeed_Profile extends DataObject {
 
                 foreach($dataFields as $field) {
                     if($field instanceof \TextField)
-                        $field->setAttribute('placeholder', $this->getValueFromEnvironment($field->Name));
+                        $field->setAttribute('placeholder', $this->getValueFromServerEnvironment($field->Name));
                 }
             }
         );
