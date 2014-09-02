@@ -112,4 +112,29 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
     public function LikePostButton() {
         return $this->customise(['twitterUser' => $this->getValueFromEnvironment('Username')])->renderWith('Twitter_MentionButton');
     }
+
+    public static function twitter_follow_shortcode($arguments, $content = null, $parser = null, $template = 'Twitter_FollowButton') {
+        $link = isset($arguments['link']) ? $arguments['link'] : $content;
+
+        if($link && !filter_var($link, FILTER_VALIDATE_URL)) {
+            $link = 'http://twitter.com/' . str_replace('@', '', $link);
+            $user = $link;
+        }
+        else
+            $user = isset($arguments['user']) ? $arguments['user'] : '';
+
+        $user = str_replace('@', '', $user);
+
+        return \ArrayData::create(array_merge(
+                array(
+                    'twitterLink' => $link,
+                    'twitterShowUser' => isset($arguments['show_user']) ? $arguments['show_user'] : true,
+                    'twitterUser' => $user,
+                ), $arguments)
+        )->renderWith($template);
+    }
+
+    public static function twitter_mention_shortcode($arguments, $content = null, $parser = null) {
+        return static::twitter_follow_shortcode($arguments, $content, $parser, 'Twitter_MentionButton');
+    }
 } 

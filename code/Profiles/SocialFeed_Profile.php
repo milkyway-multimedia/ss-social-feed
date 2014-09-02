@@ -201,12 +201,14 @@ class SocialFeed_Profile extends DataObject {
                 return $this->cachedEnvironmentMapping[$envSetting];
 
             $value = null;
-            $prefix = str_replace('SocialFeed_', '', get_class($this));
+            $prefix = get_class($this) == 'SocialFeed_Profile' ? '' : str_replace('SocialFeed_', '', get_class($this));
 
             if(SocialFeed::config()->$envSetting)
                 $value = SocialFeed::config()->$envSetting;
-            elseif(SiteConfig::current_site_config()->{$prefix.$setting})
+            elseif($prefix && SiteConfig::current_site_config()->{$prefix.$setting})
                 $value = SiteConfig::current_site_config()->{$prefix.$setting};
+            elseif(!$prefix && SiteConfig::current_site_config()->{$setting})
+                $value = SiteConfig::current_site_config()->{$setting};
             elseif(SiteConfig::config()->$envSetting)
                 $value = SiteConfig::config()->$envSetting;
             elseif(getenv($envSetting))
@@ -221,5 +223,27 @@ class SocialFeed_Profile extends DataObject {
         }
 
         return null;
+    }
+
+    public static function addthis_shortcode($arguments, $content = null, $parser = null) {
+        $link = isset($arguments['link']) ? $arguments['link'] : $content;
+        $user = $content;
+
+        if($link && !filter_var($link, FILTER_VALIDATE_URL)) {
+            $link = '';
+            $user = $link;
+        }
+
+        if(isset($arguments['user']))
+            $user = $arguments['user'];
+
+        return \ArrayData::create(array_merge(
+                array(
+                    'addThisUrl' => $link,
+                    'addThisProfileID' => $user,
+                    'addThisTitle' => isset($arguments['title']) ? $arguments['title'] : null,
+                    'addThisCounter' => isset($arguments['counter']) ? $arguments['counter'] : null,
+                ), $arguments)
+        )->renderWith('AddThis_ShareModule');
     }
 }

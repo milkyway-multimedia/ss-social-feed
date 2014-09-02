@@ -72,11 +72,11 @@ class Utilities implements \TemplateGlobalProvider {
     public static function addThisJS($profileID = '', $config = []) {
         if(!self::$_addThis_included) {
             if(!$profileID) {
-                if($profile = \SocialFeed_Profile::first())
-                    $profileID = $profile->getValueFromEnvironment('AppID');
+                if($profile = \SocialFeed_Profile::get()->first())
+                    $profileID = $profile->getValueFromEnvironment('AddThis');
 
                 if(!$profileID)
-                    $profileID = singleton('SocialFeed_Profile')->getValueFromEnvironment('AppID');
+                    $profileID = singleton('SocialFeed_Profile')->getValueFromEnvironment('AddThis');
 
                 if(!$profileID)
                     return;

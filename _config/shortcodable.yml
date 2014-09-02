@@ -1,0 +1,8 @@
+---
+Name: social-feed-shortcodable
+Only:
+  moduleexists: 'shortcodable'
+---
+ShortcodableController:
+  extensions:
+    - 'Milkyway\SS\SocialFeed\Modules\ShortcodableController'
