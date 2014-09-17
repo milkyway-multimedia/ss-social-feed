@@ -98,10 +98,40 @@ class Utilities implements \TemplateGlobalProvider {
             ', 'AddThis-Configuration');
 
             Assets::defer('http://s7.addthis.com/js/300/addthis_widget.js#pubid=' . $profileID, true);
-
-            self::$_facebook_included = true;
         }
     }
+
+	public static function facebookLink()
+	{
+		if($id = singleton('SocialFeed_Facebook')->getValueFromEnvironment('Username'))
+			return \Controller::join_links(singleton('SocialFeed_Facebook')->url, $id);
+
+		return '';
+	}
+
+	public static function twitterLink()
+	{
+		if($id = singleton('SocialFeed_Twitter')->getValueFromEnvironment('Username'))
+			return \Controller::join_links(singleton('SocialFeed_Twitter')->url, $id);
+
+		return '';
+	}
+
+	public static function googlePlusLink()
+	{
+		if($id = singleton('SocialFeed_GooglePlus')->getValueFromEnvironment('Username'))
+			return \Controller::join_links(singleton('SocialFeed_GooglePlus')->url, $id);
+
+		return '';
+	}
+
+	public static function instagramLink()
+	{
+		if($id = \SiteConfig::current_site_config()->Instagram_Username)
+			return \Controller::join_links('http://instagram.com', $id);
+
+		return '';
+	}
 
     public static function get_template_global_variables() {
         return array(
@@ -109,6 +139,11 @@ class Utilities implements \TemplateGlobalProvider {
             'require_twitter_script',
             'require_google_plus_script',
             'addThisJS',
+
+	        'facebookLink',
+	        'twitterLink',
+	        'googlePlusLink',
+	        'instagramLink',
         );
     }
 } 
