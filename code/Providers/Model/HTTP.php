@@ -22,6 +22,10 @@ abstract class HTTP implements Provider {
         $this->cacheLifetime = $cache;
     }
 
+    public function cleanCache() {
+        $this->cache()->clean();
+    }
+
     /**
      * Get a new HTTP client instance.
      * @return \GuzzleHttp\Client

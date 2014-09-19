@@ -133,6 +133,14 @@ class Utilities implements \TemplateGlobalProvider {
 		return '';
 	}
 
+    public static function clean_cache() {
+        $classes = \ClassInfo::implementorsOf('Milkyway\SS\SocialFeed\Contracts\IsCached');
+
+        foreach($classes as $class) {
+            singleton($class)->cleanCache();
+        }
+    }
+
     public static function get_template_global_variables() {
         return array(
             'require_facebook_script',
