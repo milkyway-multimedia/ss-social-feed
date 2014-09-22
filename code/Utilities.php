@@ -10,31 +10,6 @@ use Milkyway\SS\Assets;
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 class Utilities implements \TemplateGlobalProvider {
-    public static function auto_link_text($text = '') {
-        if (!$text) return '';
-
-        $pattern = '#\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))#';
-        $callback = create_function('$matches', '
-			   $url       = array_shift($matches);
-			   $url_parts = parse_url($url);
-
-			   /*
-			   $text = parse_url($url, PHP_URL_HOST) . parse_url($url, PHP_URL_PATH);
-			   $text = preg_replace("/^www./", "", $text);
-
-			   $last = -(strlen(strrchr($text, "/"))) + 1;
-			   if ($last < 0) {
-				   $text = substr($text, 0, $last) . "&hellip;";
-			   }*/
-
-			   return sprintf(\'<a href="%s" target="_blank">%s</a>\', $url, $url);
-		   ');
-
-        $linked = preg_replace_callback($pattern, $callback, $text);
-
-        return preg_replace("/\-+<br \/>/", '<hr class="post-divider" />', $linked);
-    }
-
     private static $_facebook_included;
 
     public static function require_facebook_script($facebook = null) {

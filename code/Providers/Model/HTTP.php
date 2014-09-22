@@ -17,6 +17,7 @@ abstract class HTTP implements Provider {
     protected $cacheLifetime = 6;
 
     protected $cache;
+    protected $textParser;
 
     public function __construct($cache = 6) {
         $this->cacheLifetime = $cache;
@@ -91,6 +92,13 @@ abstract class HTTP implements Provider {
 
     protected function isValid($body) {
         return true;
+    }
+
+    protected function textParser() {
+        if(!$this->textParser)
+            $this->textParser = \Injector::inst()->create('Milkyway\SS\SocialFeed\Contracts\TextParser');
+
+        return $this->textParser;
     }
 }
 

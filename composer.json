@@ -17,6 +17,9 @@
         "ajshort/silverstripe-gridfieldextensions": "dev-master",
         "milkyway-multimedia/ss-mwm": "dev-master"
     },
+	"suggest"    : {
+		"erusev/parsedown"         : "Allow posts coming from Facebook/Twitter/Google Plus to be parsed as markdown"
+	},
     "repositories": [
         {
             "type": "vcs",

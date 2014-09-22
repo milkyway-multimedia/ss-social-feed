@@ -44,12 +44,12 @@ class Facebook extends Oauth {
             'AuthorID' => isset($data['from']) && isset($data['from']['id']) ? $data['from']['id'] : '',
             'AuthorURL' => isset($data['from']) && isset($data['from']['id']) ? \Controller::join_links($this->url, $data['from']['id']) : '',
             'Avatar' => isset($data['from']) && isset($data['from']['id']) ? \Controller::join_links($this->endpoint, $data['from']['id'], 'picture') : '',
-            'Content' => isset($data['message']) ? Utilities::auto_link_text(nl2br($data['message'])) : '',
+            'Content' => isset($data['message']) ? $this->textParser()->text($data['message']) : '',
             'Picture' => isset($data['picture']) ? str_replace(['/v/', 'p130x130/', 's130x130/'], ['/', '', ''], $data['picture']) : '',
             'Thumbnail' => isset($data['picture']) ? $data['picture'] : '',
             'ObjectName' => isset($data['name']) ? $data['name'] : '',
             'ObjectURL' => isset($data['link']) ? $data['link'] : '',
-            'Description' => isset($data['description']) ? Utilities::auto_link_text(nl2br($data['description'])) : '',
+            'Description' => isset($data['description']) ? $this->textParser()->text($data['description']) : '',
             'Icon' => isset($data['icon']) ? $data['icon'] : '',
             'Type' => isset($data['type']) ? $data['type'] : '',
             'StatusType' => isset($data['status_type']) ? $data['status_type'] : '',
@@ -66,7 +66,7 @@ class Facebook extends Oauth {
         $post['CommentsDescriptor'] = $post['CommentsCount'] == 1 ? _t('SocialFeed.COMMENT', 'comment') : _t('SocialFeed.COMMENTS', 'comments');
 
         if (!$post['Content'] && isset($data['story']) && $data['story'])
-            $post['Content'] = '<p>' . Utilities::auto_link_text(nl2br($data['story'])) . '</p>';
+            $post['Content'] = '<p>' . $this->textParser()->text($data['story']) . '</p>';
 
         if (isset($data['likes']) && isset($data['likes']['data']) && count($data['likes']['data'])) {
             $post['Likes'] = [];

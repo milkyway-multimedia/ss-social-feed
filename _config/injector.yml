@@ -1,0 +1,22 @@
+---
+Name: social-feed--injector
+---
+Injector:
+  'Milkyway\SS\SocialFeed\Contracts\TextParser':
+    class: 'Milkyway\SS\SocialFeed\Parsers\DefaultParser'
+---
+Only:
+  classexists: 'Parsedown'
+  envvar: 'use_parsedown_for_social_feeds'
+---
+Injector:
+  'Milkyway\SS\SocialFeed\Contracts\TextParser':
+    class: 'Parsedown'
+---
+Only:
+  classexists: 'ParsedownExtra'
+  envvar: 'use_parsedown_for_social_feeds'
+---
+Injector:
+  'Milkyway\SS\SocialFeed\Contracts\TextParser':
+    class: 'ParsedownExtra'

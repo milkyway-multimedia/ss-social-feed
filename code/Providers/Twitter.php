@@ -46,7 +46,7 @@ class Twitter extends Oauth {
             'Avatar' => isset($data['user']) && isset($data['user']['profile_image_url']) ? $data['user']['profile_image_url'] : '',
             'AuthorFollowers' => isset($data['user']) && isset($data['user']['followers_count']) ? $data['user']['followers_count'] : 0,
             'AuthorFriends' => isset($data['user']) && isset($data['user']['friends_count']) ? $data['user']['friends_count'] : 0,
-            'Content' => isset($data['text']) ? '<p>' . Utilities::auto_link_text(nl2br($data['text'])) . '</p>' : '',
+            'Content' => isset($data['text']) ? '<p>' . $this->textParser()->text($data['text']) . '</p>' : '',
             'Favourite' => isset($data['favorited']) ? $data['favorited'] : false,
             'Truncated' => isset($data['truncated']) ? $data['truncated'] : false,
             'Priority' => isset($data['created_at']) ? strtotime($data['created_at']) : 0,
