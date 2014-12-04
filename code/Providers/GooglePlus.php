@@ -48,7 +48,7 @@ class GooglePlus extends HTTP {
             'LikesCount' => isset($data['object']) && isset($data['object']['plusoners']) && isset($data['object']['plusoners']['totalItems']) ? $data['object']['plusoners']['totalItems'] : 0,
             'ReshareCount' => isset($data['object']) && isset($data['object']['resharers']) && isset($data['object']['resharers']['totalItems']) ? $data['object']['resharers']['totalItems'] : 0,
             'Priority' => isset($data['published']) ? strtotime($data['published']) : 0,
-            'Posted' => isset($data['published']) ? DBField::create_field('SS_Datetime', strtotime($data['published'])) : null,
+            'Posted' => isset($data['published']) ? \DBField::create_field('SS_Datetime', strtotime($data['published'])) : null,
         );
 
         $post['Created'] = $post['Posted'];
