@@ -8,113 +8,130 @@ use Milkyway\SS\SocialFeed\Utilities;
  * Facebook.php
  *
  * @package reggardocolaianni.com
- * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
+ * @author  Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
-class Facebook extends Oauth {
-    protected $endpoint = 'https://graph.facebook.com';
-    protected $url = 'http://facebook.com';
+class Facebook extends Oauth
+{
+	protected $endpoint = 'https://graph.facebook.com';
+	protected $url = 'http://facebook.com';
 
-    public function all($settings = []) {
-        $all = [];
+	protected $replaceInUrls = [
+		//'/v/'       => '/',
+		'p600x600/' => '',
+		'p480x480/' => '',
+		'p130x130/' => '',
+		's130x130/' => '',
+		'p50x50/'   => '',
+		's50x50/'   => '',
+	];
 
-        try {
-            $body = $this->getBodyFromCache($this->endpoint($settings['username'], 'feed'), $settings);
+	public function all($settings = [])
+	{
+		$all = [];
 
-            foreach($body['data'] as $post) {
-                if($this->allowed($post))
-                    $all[] = $this->handlePost($post, $settings);
-            }
-        } catch (\Exception $e) {
-            \Debug::show($e->getMessage());
-        }
+		try {
+			$body = $this->getBodyFromCache($this->endpoint($settings['username'], 'feed'), $settings);
 
-        return $all;
-    }
+			foreach ($body['data'] as $post) {
+				if ($this->allowed($post))
+					$all[] = $this->handlePost($post, $settings);
+			}
+		} catch (\Exception $e) {
+			\Debug::show($e->getMessage());
+		}
 
-    protected function handlePost(array $data, $settings = []) {
-        list($userId, $id) = explode('_', $data['id']);
+		return $all;
+	}
 
-        if(isset($settings['username']))
-            $userId = $settings['username'];
+	protected function handlePost(array $data, $settings = [])
+	{
+		list($userId, $id) = explode('_', $data['id']);
 
-        $post = [
-            'ID' => $id,
-            'Link' => \Controller::join_links($this->url . '/' . $userId . '/posts/' . $id),
-            'Author' => isset($data['from']) && isset($data['from']['name']) ? $data['from']['name'] : '',
-            'AuthorID' => isset($data['from']) && isset($data['from']['id']) ? $data['from']['id'] : '',
-            'AuthorURL' => isset($data['from']) && isset($data['from']['id']) ? \Controller::join_links($this->url, $data['from']['id']) : '',
-            'Avatar' => isset($data['from']) && isset($data['from']['id']) ? \Controller::join_links($this->endpoint, $data['from']['id'], 'picture') : '',
-            'Content' => isset($data['message']) ? $this->textParser()->text($data['message']) : '',
-            'Picture' => isset($data['picture']) ? str_replace(['/v/', 'p130x130/', 's130x130/', 'p50x50/', 's50x50/'], ['/', '', '', '', ''], $data['picture']) : '',
-            'Thumbnail' => isset($data['picture']) ? $data['picture'] : '',
-            'ObjectName' => isset($data['name']) ? $data['name'] : '',
-            'ObjectURL' => isset($data['link']) ? $data['link'] : '',
-            'Description' => isset($data['description']) ? $this->textParser()->text($data['description']) : '',
-            'Icon' => isset($data['icon']) ? $data['icon'] : '',
-            'Type' => isset($data['type']) ? $data['type'] : '',
-            'StatusType' => isset($data['status_type']) ? $data['status_type'] : '',
-            'Priority' => isset($data['created_time']) ? strtotime($data['created_time']) : 0,
-            'Posted' => isset($data['created_time']) ? \DBField::create_field('SS_Datetime', $data['created_time']) : null,
-            'LikesCount' => isset($data['likes']) && isset($data['likes']['data']) ? count($data['likes']['data']) : 0,
-            'CommentsCount' => isset($data['comments']) && isset($data['comments']['data']) ? count($data['comments']['data']) : 0,
-        ];
+		if (isset($settings['username']))
+			$userId = $settings['username'];
 
-        $post['Created'] = $post['Posted'];
-        $post['StyleClasses'] = $post['StatusType'];
+		$post = [
+			'ID'            => $id,
+			'Link'          => \Controller::join_links($this->url . '/' . $userId . '/posts/' . $id),
+			'Author'        => isset($data['from']) && isset($data['from']['name']) ? $data['from']['name'] : '',
+			'AuthorID'      => isset($data['from']) && isset($data['from']['id']) ? $data['from']['id'] : '',
+			'AuthorURL'     => isset($data['from']) && isset($data['from']['id']) ? \Controller::join_links($this->url, $data['from']['id']) : '',
+			'Avatar'        => isset($data['from']) && isset($data['from']['id']) ? \Controller::join_links($this->endpoint, $data['from']['id'], 'picture') : '',
+			'Content'       => isset($data['message']) ? $this->textParser()->text($data['message']) : '',
+			'Picture'       => isset($data['picture']) ? str_replace(array_keys($this->replaceInUrls), array_values($this->replaceInUrls), $data['picture']) : '',
+			'Thumbnail'     => isset($data['picture']) ? $data['picture'] : '',
+			'ObjectName'    => isset($data['name']) ? $data['name'] : '',
+			'ObjectURL'     => isset($data['link']) ? $data['link'] : '',
+			'Source'     => isset($data['source']) ? $data['source'] : '',
+			'Description'   => isset($data['description']) ? $this->textParser()->text($data['description']) : '',
+			'Icon'          => isset($data['icon']) ? $data['icon'] : '',
+			'Type'          => isset($data['type']) ? $data['type'] : '',
+			'StatusType'    => isset($data['status_type']) ? $data['status_type'] : '',
+			'Priority'      => isset($data['created_time']) ? strtotime($data['created_time']) : 0,
+			'Posted'        => isset($data['created_time']) ? \DBField::create_field('SS_Datetime', $data['created_time']) : null,
+			'LikesCount'    => isset($data['likes']) && isset($data['likes']['data']) ? count($data['likes']['data']) : 0,
+			'CommentsCount' => isset($data['comments']) && isset($data['comments']['data']) ? count($data['comments']['data']) : 0,
+		];
 
-        $post['LikesDescriptor'] = $post['LikesCount'] == 1 ? _t('SocialFeed.LIKE', 'like') : _t('SocialFeed.LIKES', 'likes');
-        $post['CommentsDescriptor'] = $post['CommentsCount'] == 1 ? _t('SocialFeed.COMMENT', 'comment') : _t('SocialFeed.COMMENTS', 'comments');
+		$post['Created'] = $post['Posted'];
+		$post['StyleClasses'] = $post['StatusType'];
 
-        if (!$post['Content'] && isset($data['story']) && $data['story'])
-            $post['Content'] = '<p>' . $this->textParser()->text($data['story']) . '</p>';
+		$post['LikesDescriptor'] = $post['LikesCount'] == 1 ? _t('SocialFeed.LIKE', 'like') : _t('SocialFeed.LIKES', 'likes');
+		$post['CommentsDescriptor'] = $post['CommentsCount'] == 1 ? _t('SocialFeed.COMMENT', 'comment') : _t('SocialFeed.COMMENTS', 'comments');
 
-        if (isset($data['likes']) && isset($data['likes']['data']) && count($data['likes']['data'])) {
-            $post['Likes'] = [];
+		if (!$post['Content'] && isset($data['story']) && $data['story'])
+			$post['Content'] = '<p>' . $this->textParser()->text($data['story']) . '</p>';
 
-            foreach ($data['likes']['data'] as $likeData) {
-                $post['Likes'][] = [
-                    'Author' => isset($likeData['name']) ? $likeData['name'] : '',
-                    'AuthorID' => isset($likeData['id']) ? $likeData['id'] : '',
-                    'AuthorURL' => isset($likeData['id']) ? \Controller::join_links($this->url, $likeData['id']) : '',
-                ];
-            }
-        }
+		if (isset($data['likes']) && isset($data['likes']['data']) && count($data['likes']['data'])) {
+			$post['Likes'] = [];
 
-        if (isset($data['comments']) && isset($data['comments']['data']) && count($data['comments']['data'])) {
-            $post['Comments'] = [];
+			foreach ($data['likes']['data'] as $likeData) {
+				$post['Likes'][] = [
+					'Author'    => isset($likeData['name']) ? $likeData['name'] : '',
+					'AuthorID'  => isset($likeData['id']) ? $likeData['id'] : '',
+					'AuthorURL' => isset($likeData['id']) ? \Controller::join_links($this->url, $likeData['id']) : '',
+				];
+			}
+		}
 
-            foreach ($data['comments']['data'] as $commentData) {
-                $comment = array(
-                    'Author' => isset($commentData['from']) && isset($commentData['from']['name']) ? $commentData['from']['name'] : '',
-                    'AuthorID' => isset($commentData['from']) && isset($commentData['from']['id']) ? $commentData['from']['id'] : '',
-                    'AuthorURL' => isset($commentData['from']) && isset($commentData['from']['id']) ? \Controller::join_links($this->url, $commentData['from']['id']) : '',
-                    'Content' => isset($commentData['message']) ? $commentData['message'] : '',
-                    'Posted' => isset($commentData['created_time']) ? \DBField::create_field('SS_Datetime', $commentData['created_time']) : null,
-                    'ReplyByPoster' => isset($commentData['from']) && isset($commentData['from']['id']) ? $commentData['from']['id'] == $post['AuthorID'] : false,
-                    'Likes' => isset($commentData['user_likes']) ? $commentData['user_likes'] : false,
-                    'LikesCount' => isset($commentData['like_count']) ? count($commentData['like_count']) : 0,
-                );
+		if (isset($data['comments']) && isset($data['comments']['data']) && count($data['comments']['data'])) {
+			$post['Comments'] = [];
 
-                $comment['LikesDescriptor'] = $comment['LikesCount'] == 1 ? _t('SocialFeed.LIKE', 'like') : _t('SocialFeed.LIKES', 'likes');
-                $post['Comments'][] = $comment;
-            }
-        }
+			foreach ($data['comments']['data'] as $commentData) {
+				$comment = array(
+					'Author'        => isset($commentData['from']) && isset($commentData['from']['name']) ? $commentData['from']['name'] : '',
+					'AuthorID'      => isset($commentData['from']) && isset($commentData['from']['id']) ? $commentData['from']['id'] : '',
+					'AuthorURL'     => isset($commentData['from']) && isset($commentData['from']['id']) ? \Controller::join_links($this->url, $commentData['from']['id']) : '',
+					'Content'       => isset($commentData['message']) ? $commentData['message'] : '',
+					'Posted'        => isset($commentData['created_time']) ? \DBField::create_field('SS_Datetime', $commentData['created_time']) : null,
+					'ReplyByPoster' => isset($commentData['from']) && isset($commentData['from']['id']) ? $commentData['from']['id'] == $post['AuthorID'] : false,
+					'Likes'         => isset($commentData['user_likes']) ? $commentData['user_likes'] : false,
+					'LikesCount'    => isset($commentData['like_count']) ? count($commentData['like_count']) : 0,
+				);
 
-        return $post;
-    }
+				$comment['LikesDescriptor'] = $comment['LikesCount'] == 1 ? _t('SocialFeed.LIKE', 'like') : _t('SocialFeed.LIKES', 'likes');
+				$post['Comments'][] = $comment;
+			}
+		}
 
-    protected function allowed(array $post) {
-        if (isset($post['is_hidden']) && $post['is_hidden'])
-            return false;
+		return $post;
+	}
 
-        return true;
-    }
+	protected function allowed(array $post)
+	{
+		if (isset($post['is_hidden']) && $post['is_hidden'])
+			return false;
 
-    protected function endpoint($username, $type = 'feed') {
-        return \Controller::join_links($this->endpoint, $username, $type);
-    }
+		return true;
+	}
 
-    protected function isValid($body) {
-        return $body && is_array($body) && count($body) && isset($body['data']);
-    }
+	protected function endpoint($username, $type = 'feed')
+	{
+		return \Controller::join_links($this->endpoint, $username, $type);
+	}
+
+	protected function isValid($body)
+	{
+		return $body && is_array($body) && count($body) && isset($body['data']);
+	}
 }
