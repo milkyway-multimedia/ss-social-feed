@@ -63,18 +63,4 @@ class SocialFeed_Facebook extends SocialFeed_Profile {
     public function LikePostButton($url = '') {
         return $this->LikeButton($url);
     }
-
-    public static function facebook_like_shortcode($arguments, $content = null, $parser = null) {
-        $link = isset($arguments['link']) ? $arguments['link'] : $content;
-
-        return \ArrayData::create(array_merge(
-                array(
-                    'fbLink' => $link,
-                    'fbScheme' => isset($arguments['scheme']) ? $arguments['scheme'] : false,
-                    'fbAction' => isset($arguments['action']) ? $arguments['action'] : false,
-                    'fbFaces' => isset($arguments['faces']) ? $arguments['faces'] : false,
-                    'fbSend' => isset($arguments['send']) ? $arguments['send'] : false,
-                ), $arguments)
-        )->renderWith('Facebook_LikeButton');
-    }
 } 

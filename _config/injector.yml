@@ -20,3 +20,15 @@ Only:
 Injector:
   'Milkyway\SS\SocialFeed\Contracts\TextParser':
     class: 'ParsedownExtra'
+---
+Only:
+  moduleexists: 'mwm'
+---
+ShortcodeParser:
+  providers:
+    - 'Milkyway\SS\SocialFeed\Shortcodes\AddThis'
+    - 'Milkyway\SS\SocialFeed\Shortcodes\Facebook_Like'
+    - 'Milkyway\SS\SocialFeed\Shortcodes\GooglePlus_Follow'
+    - 'Milkyway\SS\SocialFeed\Shortcodes\GooglePlus_PlusOne'
+    - 'Milkyway\SS\SocialFeed\Shortcodes\Twitter_Follow'
+    - 'Milkyway\SS\SocialFeed\Shortcodes\Twitter_Mention'

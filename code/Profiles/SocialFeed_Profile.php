@@ -224,26 +224,4 @@ class SocialFeed_Profile extends DataObject {
 
         return null;
     }
-
-    public static function addthis_shortcode($arguments, $content = null, $parser = null) {
-        $link = isset($arguments['link']) ? $arguments['link'] : $content;
-        $user = $content;
-
-        if($link && !filter_var($link, FILTER_VALIDATE_URL)) {
-            $link = '';
-            $user = $link;
-        }
-
-        if(isset($arguments['user']))
-            $user = $arguments['user'];
-
-        return \ArrayData::create(array_merge(
-                array(
-                    'addThisUrl' => $link,
-                    'addThisProfileID' => $user,
-                    'addThisTitle' => isset($arguments['title']) ? $arguments['title'] : null,
-                    'addThisCounter' => isset($arguments['counter']) ? $arguments['counter'] : null,
-                ), $arguments)
-        )->renderWith('AddThis_ShareModule');
-    }
 }
