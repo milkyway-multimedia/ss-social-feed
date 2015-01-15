@@ -16,7 +16,7 @@ class Collector {
     /** @var string Sorting of list */
     protected $sort = 'Priority DESC';
 
-    public function __construct(\ArrayAccess $profiles, $cache = 6, $sort = 'Priority DESC') {
+    public function __construct(\Countable $profiles, $cache = 6, $sort = 'Priority DESC') {
         $this->profiles = $profiles;
         $this->cache = $cache;
         $this->sort = $sort;
