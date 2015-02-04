@@ -205,14 +205,14 @@ class Facebook extends Oauth
 		if(is_array($data)) {
 			if(isset($data['images']) && count($data['images']) && isset($data['source']))
 				$link = $data['source'];
-			elseif(isset($data['picture']))
-				$link = $data['picture'];
 			elseif(isset($data['cover'])) {
 				if(is_array($data['cover']) && isset($data['cover']['source']))
 					$link = $data['cover']['source'];
 				else
 					$link = $data['cover'];
 			}
+			elseif(isset($data['picture']))
+				$link = $data['picture'];
 			elseif(isset($data['cover_photo'])) {
 				$link = $data['cover_photo'];
 			}
@@ -251,6 +251,9 @@ class Facebook extends Oauth
 				if(isset($data['cover_photo']))
 					$data['cover'] = $this->one($data['cover_photo']);
 				break;
+			case 'feed':
+				if(isset($data['type']) && $data['type'] == 'photo' && isset($data['object_id']))
+					$data['cover'] = $this->one($data['object_id']);
 		}
 	}
 }

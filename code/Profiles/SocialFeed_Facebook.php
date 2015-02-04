@@ -22,6 +22,7 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 		'AuthorOnly' => 'Boolean',
 		'AllowPageLikes' => 'Boolean',
 		'AllowPostLikes' => 'Boolean',
+		'AllowHashTagLinks'  => 'Boolean',
 	);
 
 	protected $provider = 'Milkyway\SS\SocialFeed\Providers\Facebook';
@@ -97,6 +98,20 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 		]);
 	}
 
+	public function processPost(array $post, $postObject = null) {
+		$post = parent::processPost($post, $postObject);
+
+		if($this->AllowHashTagLinks) {
+			if($post['Content'])
+				$post['Content'] = $this->addHashTags($post['Content']);
+
+			if($post['Description'])
+				$post['Description'] = $this->addHashTags($post['Description']);
+		}
+
+		return $post;
+	}
+
 	public function LikeButton($url = '')
 	{
 		if (!$url)
@@ -116,5 +131,9 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 		});
 
 		return parent::provideDetailsForPlatform();
+	}
+
+	protected function addHashTags($content) {
+		return preg_replace('/(^|\s)#(\w*[a-zA-Z_]+\w*)/', str_replace('{url}', \Controller::join_links($this->url, 'hashtag') . '/', '\1#<a href="{url}\2" target="\_blank">\2</a>'), $content);
 	}
 } 
