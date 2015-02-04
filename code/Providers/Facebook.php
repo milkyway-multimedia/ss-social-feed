@@ -179,7 +179,7 @@ class Facebook extends Oauth
 
 		if(isset($data['privacy'])) {
 			if(is_array($data['privacy'])) {
-				if(isset($data['privacy']['value']) && $data['privacy']['value'] != 'EVERYONE')
+				if(isset($data['privacy']['value']) && $data['privacy']['value'] && $data['privacy']['value'] != 'EVERYONE')
 					return false;
 			}
 			elseif($data['privacy'] != 'OPEN')
