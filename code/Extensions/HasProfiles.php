@@ -9,6 +9,8 @@
 namespace Milkyway\SS\SocialFeed\Extensions;
 
 class HasProfiles extends \DataExtension {
+	protected static $connected_relations = [];
+
     private static $db = [
         'CacheHours' => 'Int',
         'AddThis' => 'Varchar',
@@ -27,12 +29,26 @@ class HasProfiles extends \DataExtension {
 
     protected $collection;
 
+	private $hasSetRelationForHidingFromFieldLists = false;
+
     public function __construct($tab = '', $useCMSFieldsAlways = false, $profileRelation = '')
     {
         parent::__construct();
         $this->tab = $tab;
         $this->useCMSFieldsAlways = $useCMSFieldsAlways;
+
+	    if($profileRelation) {
+		    static::$connected_relations[] = $profileRelation;
+		    $this->hasSetRelationForHidingFromFieldLists = true;
+	    }
     }
+
+	public function setOwner($owner, $ownerBaseClass = null) {
+		if(!$this->hasSetRelationForHidingFromFieldLists)
+			static::$connected_relations[] = get_class($owner);
+
+		return parent::setOwner($owner, $ownerBaseClass);
+	}
 
     public static function get_extra_config($class, $extension, $args)
     {
@@ -54,6 +70,10 @@ class HasProfiles extends \DataExtension {
             ],
         ];
     }
+
+	public static function get_connected_relations() {
+		return array_unique(static::$connected_relations);
+	}
 
     function updateCMSFields(\FieldList $fields)
     {

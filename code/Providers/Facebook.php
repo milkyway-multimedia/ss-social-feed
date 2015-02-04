@@ -1,7 +1,6 @@
 <?php namespace Milkyway\SS\SocialFeed\Providers;
 
 use Milkyway\SS\SocialFeed\Providers\Model\Oauth;
-use Milkyway\SS\SocialFeed\Utilities;
 
 /**
  * Milkyway Multimedia
@@ -15,26 +14,33 @@ class Facebook extends Oauth
 	protected $endpoint = 'https://graph.facebook.com';
 	protected $url = 'http://facebook.com';
 
+    protected $defaultType = 'feed';
+
 	protected $replaceInUrls = [
 		//'/v/'       => '/',
-		'p600x600/' => '',
-		'p480x480/' => '',
-		'p130x130/' => '',
-		's130x130/' => '',
-		'p50x50/'   => '',
-		's50x50/'   => '',
+//		'p600x600/' => '',
+//		'p480x480/' => '',
+//		'p130x130/' => '',
+//		's130x130/' => '',
+//		'p50x50/'   => '',
+//		's50x50/'   => '',
 	];
 
 	public function all($settings = [])
 	{
 		$all = [];
 
+        $type = isset($settings['type']) ? $settings['type'] : $this->defaultType;
+
 		try {
-			$body = $this->getBodyFromCache($this->endpoint($settings['username'], 'feed'), $settings);
+			$body = $this->getBodyFromCache($this->endpoint($settings['username'], $type), $settings);
+
+			if(!isset($body['data']))
+				$body['data'] = [];
 
 			foreach ($body['data'] as $post) {
 				if ($this->allowed($post))
-					$all[] = $this->handlePost($post, $settings);
+					$all[] = $this->handlePost($post, $settings, $type, $settings['username']);
 			}
 		} catch (\Exception $e) {
 			\Debug::show($e->getMessage());
@@ -43,41 +49,90 @@ class Facebook extends Oauth
 		return $all;
 	}
 
-	protected function handlePost(array $data, $settings = [])
+	protected function one($id, $type = '', $settings = [])
 	{
-		list($userId, $id) = explode('_', $data['id']);
+		$post = [];
+
+		try {
+			$settings['query']['access_token'] = $this->credentials['consumer_key'] . '|' . $this->credentials['consumer_secret'];
+			$settings['id'] = $id;
+			$settings['type'] = $type;
+			$post = $this->getBodyFromCache($this->endpoint($id, $type), $settings);
+		} catch (\Exception $e) {
+			\Debug::show($e->getMessage());
+		}
+
+		return $post;
+	}
+
+	protected function handlePost(array $data, $settings = [], $type = 'feed', $userId = '')
+	{
+		if(strpos($data['id'], '_') !== false)
+			list($userId, $id) = explode('_', $data['id']);
+		else
+			$id = $data['id'];
 
 		if (isset($settings['username']))
 			$userId = $settings['username'];
 
+		$this->getExtraDataVariables($data, $id, $type, $userId);
+
 		$post = [
 			'ID'            => $id,
-			'Link'          => \Controller::join_links($this->url . '/' . $userId . '/posts/' . $id),
+			'Link'          => $this->getLinkFromType($userId, $id, $type),
 			'Author'        => isset($data['from']) && isset($data['from']['name']) ? $data['from']['name'] : '',
 			'AuthorID'      => isset($data['from']) && isset($data['from']['id']) ? $data['from']['id'] : '',
-			'AuthorURL'     => isset($data['from']) && isset($data['from']['id']) ? \Controller::join_links($this->url, $data['from']['id']) : '',
+			'AuthorURL'     => isset($data['from']) && isset($data['from']['id']) ? \Controller::join_links($this->url, $data['from']['id']) : \Controller::join_links($this->url, $userId),
 			'Avatar'        => isset($data['from']) && isset($data['from']['id']) ? \Controller::join_links($this->endpoint, $data['from']['id'], 'picture') : '',
 			'Content'       => isset($data['message']) ? $this->textParser()->text($data['message']) : '',
-			'Picture'       => isset($data['picture']) ? str_replace(array_keys($this->replaceInUrls), array_values($this->replaceInUrls), $data['picture']) : '',
+			'Picture'       => $this->getPictureFromData($data),
+			'Cover'         => isset($data['cover']) ? $this->getPictureFromData($data['cover']) : '',
 			'Thumbnail'     => isset($data['picture']) ? $data['picture'] : '',
 			'ObjectName'    => isset($data['name']) ? $data['name'] : '',
 			'ObjectURL'     => isset($data['link']) ? $data['link'] : '',
-			'Source'     => isset($data['source']) ? $data['source'] : '',
+			'Source'        => isset($data['source']) ? $data['source'] : '',
 			'Description'   => isset($data['description']) ? $this->textParser()->text($data['description']) : '',
 			'Icon'          => isset($data['icon']) ? $data['icon'] : '',
 			'Type'          => isset($data['type']) ? $data['type'] : '',
 			'StatusType'    => isset($data['status_type']) ? $data['status_type'] : '',
 			'Priority'      => isset($data['created_time']) ? strtotime($data['created_time']) : 0,
 			'Posted'        => isset($data['created_time']) ? \DBField::create_field('SS_Datetime', $data['created_time']) : null,
+			'LastEdited'    => isset($data['updated_time']) ? \DBField::create_field('SS_Datetime', $data['updated_time']) : null,
 			'LikesCount'    => isset($data['likes']) && isset($data['likes']['data']) ? count($data['likes']['data']) : 0,
 			'CommentsCount' => isset($data['comments']) && isset($data['comments']['data']) ? count($data['comments']['data']) : 0,
+
+		    // Specifically for events
+		    'Location' => isset($data['location']) ? $data['location'] : '',
+		    'TicketUrl' => isset($data['ticket_uri']) ? $data['ticket_uri'] : '',
+		    'Venue' => isset($data['venue']) && isset($data['venue']['name']) ? $data['venue']['name'] : '',
+		    'VenueLink' => isset($data['venue']) && isset($data['venue']['link']) ? $data['venue']['link'] : '',
+		    'VenuePageID' => isset($data['venue']) && isset($data['venue']['username']) ? $data['venue']['username'] : '',
 		];
 
 		$post['Created'] = $post['Posted'];
 		$post['StyleClasses'] = $post['StatusType'];
 
-		$post['LikesDescriptor'] = $post['LikesCount'] == 1 ? _t('SocialFeed.LIKE', 'like') : _t('SocialFeed.LIKES', 'likes');
-		$post['CommentsDescriptor'] = $post['CommentsCount'] == 1 ? _t('SocialFeed.COMMENT', 'comment') : _t('SocialFeed.COMMENTS', 'comments');
+		if (isset($data['likes']))
+			$post['LikesDescriptor'] = $post['LikesCount'] == 1 ? _t('SocialFeed.LIKE', 'like') : _t('SocialFeed.LIKES', 'likes');
+		if (isset($data['comments']))
+			$post['CommentsDescriptor'] = $post['CommentsCount'] == 1 ? _t('SocialFeed.COMMENT', 'comment') : _t('SocialFeed.COMMENTS', 'comments');
+
+		// Specifically for events
+		if(array_key_exists('is_date_only', $data) || isset($data['start_time']) || isset($data['end_time'])) {
+			$dateType = isset($data['is_date_only']) && $data['is_date_only'] ? 'Date' : 'SS_Datetime';
+
+			$post['StartTime'] = isset($data['start_time']) ? \DBField::create_field($dateType, $data['start_time']) : null;
+			$post['EndTime'] = isset($data['end_time']) ? \DBField::create_field($dateType, $data['end_time']) : null;
+
+			if(!$post['Posted'])
+				$post['Posted'] = $post['StartTime'] ? $post['StartTime'] : $post['EndTime'];
+
+			if(!$post['Priority'])
+				$post['Priority'] = isset($data['start_time']) ? strtotime($data['start_time']) : 0;
+
+			if(!$post['Priority'])
+				$post['Priority'] = isset($data['end_time']) ? strtotime($data['end_time']) : 0;
+		}
 
 		if (!$post['Content'] && isset($data['story']) && $data['story'])
 			$post['Content'] = '<p>' . $this->textParser()->text($data['story']) . '</p>';
@@ -117,21 +172,85 @@ class Facebook extends Oauth
 		return $post;
 	}
 
-	protected function allowed(array $post)
+	protected function allowed(array $data)
 	{
-		if (isset($post['is_hidden']) && $post['is_hidden'])
+		if (isset($data['is_hidden']) && $data['is_hidden'])
 			return false;
+
+		if(isset($data['privacy'])) {
+			if(is_array($data['privacy'])) {
+				if(isset($data['privacy']['value']) && $data['privacy']['value'] != 'EVERYONE')
+					return false;
+			}
+			elseif($data['privacy'] != 'OPEN')
+				return false;
+		}
 
 		return true;
 	}
 
-	protected function endpoint($username, $type = 'feed')
+	protected function endpoint($username, $type = '')
 	{
-		return \Controller::join_links($this->endpoint, $username, $type);
+		return \Controller::join_links($this->endpoint, 'v2.2', $username, $type);
 	}
 
 	protected function isValid($body)
 	{
-		return $body && is_array($body) && count($body) && isset($body['data']);
+		return $body && is_array($body) && count($body);
+	}
+
+	protected function getPictureFromData($data) {
+		$link = '';
+
+		if(is_array($data)) {
+			if(isset($data['images']) && count($data['images']) && isset($data['source']))
+				$link = $data['source'];
+			elseif(isset($data['picture']))
+				$link = $data['picture'];
+			elseif(isset($data['cover'])) {
+				if(is_array($data['cover']) && isset($data['cover']['source']))
+					$link = $data['cover']['source'];
+				else
+					$link = $data['cover'];
+			}
+			elseif(isset($data['cover_photo'])) {
+				$link = $data['cover_photo'];
+			}
+		}
+		else
+			$link = $data;
+
+		return $link ? str_replace(array_keys($this->replaceInUrls), array_values($this->replaceInUrls), $link) : '';
+	}
+
+	protected function getLinkFromType($userId, $id, $type = 'feed') {
+		$link = $this->url;
+
+		switch($type) {
+			case 'events':
+				$type = 'events';
+				break;
+			default:
+				$type = 'posts';
+				$link = \Controller::join_links($this->url, $userId);
+				break;
+		}
+
+		return \Controller::join_links($link, $type, $id);
+	}
+
+	protected function getExtraDataVariables(&$data, $id, $type = 'feed', $userId = '') {
+		switch($type) {
+			case 'events':
+				$data = array_merge($data, $this->one($id));
+
+				if(!isset($data['from']) && isset($data['owner']))
+					$data['from'] = $data['owner'];
+				break;
+			case 'albums':
+				if(isset($data['cover_photo']))
+					$data['cover'] = $this->one($data['cover_photo']);
+				break;
+		}
 	}
 }

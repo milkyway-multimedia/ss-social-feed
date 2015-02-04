@@ -7,6 +7,9 @@
  * @package reggardocolaianni.com
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
+
+use \Milkyway\SS\SocialFeed\Extensions\HasProfiles as HasProfiles;
+
 class SocialFeed_Profile extends DataObject {
 
     private static $singular_name = 'Profile';
@@ -44,7 +47,7 @@ class SocialFeed_Profile extends DataObject {
 
     private static $summary_fields = [
         'Platform',
-        'Username',
+        'PlatformDetails',
         'Enabled',
         'Limit',
     ];
@@ -113,6 +116,10 @@ class SocialFeed_Profile extends DataObject {
                         TextField::create('AddThis', _t('SocialFeed.ADDTHIS', 'Add This Profile'))
                             ->setDescription(_t('SocialFeed.DESC-ADDTHIS', 'AddThis Profile ID used for sharing (format: <strong>ra-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</strong>)'))
                     ]);
+
+		        foreach(HasProfiles::get_connected_relations() as $relation) {
+			        $fields->removeByName($relation);
+		        }
             }
         );
 
@@ -172,6 +179,10 @@ class SocialFeed_Profile extends DataObject {
         return $this->i18n_singular_name();
     }
 
+	public function getPlatformDetails() {
+		return \DBField::create_field('HTMLText', $this->provideDetailsForPlatform());
+	}
+
     public function getTemplates() {
         return array_reverse($this->config()->templates);
     }
@@ -224,4 +235,24 @@ class SocialFeed_Profile extends DataObject {
 
         return null;
     }
+
+	protected function provideDetailsForPlatform() {
+		$details = [];
+
+		if($this->Username)
+			$details[$this->fieldLabel('Username')] = $this->Username;
+
+		$this->extend('updatePlatformDetails', $details);
+
+		$rendered = count($details) ? implode(' ', array_map(function($setting, $value) {
+			return '<li>' . $setting . ': ' . $value . '</li>';
+		}, array_keys($details), $details)) : '';
+
+		if($rendered)
+			$rendered = '<ul class="socialFeed--platformDetails">' . $rendered . '</ul>';
+
+		$this->extend('onRenderPlatformDetails', $details, $rendered);
+
+		return $rendered;
+	}
 }

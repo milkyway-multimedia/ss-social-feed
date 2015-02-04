@@ -14,7 +14,7 @@
             <% if $AuthorURL %>
 				<a href="$AuthorURL" target="_blank"><i class="social-icon" title="<% _t('VIA', 'Via') %> $Profile.Platform"></i></a>
             <% else %>
-				<i class="social-icon" title="<% _t('VIA', 'Via') %> $Platform"></i>
+				<i class="social-icon" title="<% _t('VIA', 'Via') %> $Profile.Platform"></i>
             <% end_if %>
 
             <% if $canLikePage && $AuthorURL %>

@@ -7,6 +7,7 @@
  * @package reggardocolaianni.com
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
+
 class SocialFeed_Page extends SocialFeed_Profile {
 
     private static $singular_name = 'Children of Page';

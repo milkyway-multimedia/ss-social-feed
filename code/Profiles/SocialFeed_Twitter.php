@@ -112,4 +112,12 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
     public function LikePostButton() {
         return $this->customise(['twitterUser' => $this->getValueFromEnvironment('Username')])->renderWith('Twitter_MentionButton');
     }
+
+	protected function provideDetailsForPlatform() {
+		$this->beforeExtending('updatePlatformDetails', function(&$details) {
+			$details[$this->fieldLabel('Type')] = $this->Type;
+		});
+
+		return parent::provideDetailsForPlatform();
+	}
 } 
