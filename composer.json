@@ -1,32 +1,33 @@
 {
-    "name"       : "milkyway-multimedia/ss-social-feed",
-    "description": "Ability to display a social on a silverstripe website",
-    "type"       : "silverstripe-module",
-    "keywords"   : ["silverstripe", "facebook", "twitter", "googleplus", "google+", "blog", "mwm"],
-    "license"    : "MIT",
-    "authors"    : [
+    "name":         "milkyway-multimedia/ss-social-feed",
+    "description":  "Ability to display a social on a silverstripe website",
+    "type":         "silverstripe-module",
+    "keywords":     ["silverstripe", "facebook", "twitter", "googleplus", "google+", "blog", "mwm"],
+    "license":      "MIT",
+    "authors":      [
         {
-            "name" : "Mellisa Hankins",
+            "name":  "Mellisa Hankins",
             "email": "mell@milkywaymultimedia.com.au"
         }
     ],
-    "require"    : {
-        "silverstripe/framework"                  : "~3.1",
-        "silverstripe/cms"                        : "~3.1",
-        "guzzlehttp/oauth-subscriber"             : "~0.2",
-        "silverstripe-australia/gridfieldextensions": "dev-master",
-        "milkyway-multimedia/ss-mwm": "dev-master"
+    "require":      {
+        "silverstripe/framework":                     "~3.1",
+        "silverstripe/cms":                           "~3.1",
+        "guzzlehttp/oauth-subscriber":                "~0.2",
+        "commerceguys/guzzle-oauth2-plugin":                "*",
+        "silverstripe-australia/gridfieldextensions": "~1",
+        "milkyway-multimedia/ss-mwm":                 "dev-master"
     },
-	"suggest"    : {
-		"erusev/parsedown"         : "Allow posts coming from Facebook/Twitter/Google Plus to be parsed as markdown"
-	},
+    "suggest":      {
+        "erusev/parsedown": "Allow posts coming from Facebook/Twitter/Google Plus to be parsed as markdown"
+    },
     "repositories": [
         {
             "type": "vcs",
-            "url" : "https://github.com/milkyway-multimedia/ss-mwm"
+            "url":  "https://github.com/milkyway-multimedia/ss-mwm"
         }
     ],
-    "extra"      : {
+    "extra":        {
         "installer-name": "social-feed"
     }
 }
