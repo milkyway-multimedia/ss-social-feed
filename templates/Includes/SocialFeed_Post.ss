@@ -30,6 +30,13 @@
 			<time>$Posted.Ago</time>
 		</h4>
 
+        <% if $Rating %>
+        <p class="panel-post--rating">
+            <span class="panel-post--rating-label">
+                $Rating <% _t('STAR', 'Star') %>
+            </span>
+        </p>
+        <% end_if %>
         $Content
 
         <% include SocialFeed_Media %>

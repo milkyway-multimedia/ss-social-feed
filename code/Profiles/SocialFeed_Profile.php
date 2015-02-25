@@ -120,6 +120,10 @@ class SocialFeed_Profile extends DataObject {
 		        foreach(HasProfiles::get_connected_relations() as $relation) {
 			        $fields->removeByName($relation);
 		        }
+
+		        if(count($this->RequiresExtendedPermissions)) {
+			        \Object::create($this->Provider, 0, (array) $this->OauthConfiguration)->extendedPermissions($this->RequiresExtendedPermissions, false);
+		        }
             }
         );
 

@@ -11,8 +11,12 @@ use Milkyway\SS\SocialFeed\Providers\Model\Oauth;
  */
 class Facebook extends Oauth
 {
+	const VERSION = 'v2.2';
+
 	protected $endpoint = 'https://graph.facebook.com';
 	protected $url = 'http://facebook.com';
+
+	protected $oauth2provider = 'League\OAuth2\Client\Provider\Facebook';
 
     protected $defaultType = 'feed';
 
@@ -33,14 +37,21 @@ class Facebook extends Oauth
         $type = isset($settings['type']) ? $settings['type'] : $this->defaultType;
 
 		try {
+			if($this->accessToken && $token = $this->getUsernameAccessToken($settings['username'])) {
+				$settings['query']['access_token'] = $token;
+			}
+
 			$body = $this->getBodyFromCache($this->endpoint($settings['username'], $type), $settings);
 
 			if(!isset($body['data']))
 				$body['data'] = [];
 
-			foreach ($body['data'] as $post) {
-				if ($this->allowed($post))
+			foreach ($body['data'] as $key => $post) {
+				if ($this->allowed($post)) {
+					if(!isset($post['id']))
+						$post['id'] = $key+1;
 					$all[] = $this->handlePost($post, $settings, $type, $settings['username']);
+				}
 			}
 		} catch (\Exception $e) {
 			\Debug::show($e->getMessage());
@@ -107,7 +118,19 @@ class Facebook extends Oauth
 		    'Venue' => isset($data['venue']) && isset($data['venue']['name']) ? $data['venue']['name'] : '',
 		    'VenueLink' => isset($data['venue']) && isset($data['venue']['link']) ? $data['venue']['link'] : '',
 		    'VenuePageID' => isset($data['venue']) && isset($data['venue']['username']) ? $data['venue']['username'] : '',
+
+		    // Specifically for reviews
+		    'Rating' => isset($data['rating']) ? $data['rating'] : '',
 		];
+
+		if(isset($data['review_text']))
+			$post['Content'] = '<p>' . $data['review_text'] . '</p>';
+
+		if(isset($data['reviewer'])) {
+			$post['Author'] = isset($data['reviewer']['name']) ? $data['reviewer']['name'] : '';
+			$post['AuthorID'] = isset($data['reviewer']['id']) ? $data['reviewer']['id'] : '';
+			$post['AuthorURL'] = \Controller::join_links($post['AuthorURL'], 'reviews');
+		}
 
 		$post['Created'] = $post['Posted'];
 		$post['StyleClasses'] = $post['StatusType'];
@@ -191,7 +214,7 @@ class Facebook extends Oauth
 
 	protected function endpoint($username, $type = '')
 	{
-		return \Controller::join_links($this->endpoint, 'v2.2', $username, $type);
+		return \Controller::join_links($this->endpoint, static::VERSION, $username, $type);
 	}
 
 	protected function isValid($body)
@@ -230,6 +253,9 @@ class Facebook extends Oauth
 			case 'events':
 				$type = 'events';
 				break;
+			case 'ratings':
+				return '';
+				break;
 			default:
 				$type = 'posts';
 				$link = \Controller::join_links($this->url, $userId);
@@ -255,5 +281,20 @@ class Facebook extends Oauth
 				if(isset($data['type']) && $data['type'] == 'photo' && isset($data['object_id']))
 					$data['cover'] = $this->one($data['object_id']);
 		}
+	}
+
+	protected function getUsernameAccessToken($username) {
+		if($this->accessToken) {
+			try {
+				$body = $this->getBodyFromCache($this->endpoint($username), ['query' => ['fields' => 'access_token']]);
+
+				if(isset($body['access_token']))
+					return $body['access_token'];
+			} catch (\Exception $e) {
+				\Debug::show($e->getMessage());
+			}
+		}
+
+		return null;
 	}
 }

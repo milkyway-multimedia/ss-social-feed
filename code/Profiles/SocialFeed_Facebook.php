@@ -38,21 +38,23 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 			'updateCMSFields',
 			function ($fields) {
 				if ($type = $fields->dataFieldByName('Type')) {
-					$type->setSource([
-							'feed' => _t('SocialFeed_Facebook.FEED', 'News feed (inc. statuses/posts, milestones and links)'),
-							'albums' => _t('SocialFeed_Facebook.ALBUMS', 'Albums'),
-							'events' => _t('SocialFeed_Facebook.EVENTS', 'Events'),
-							'links' => _t('SocialFeed_Facebook.LINKS', 'Posted links'),
-							'milestones' => _t('SocialFeed_Facebook.MILESTONES', 'Milestones'),
-							'offers' => _t('SocialFeed_Facebook.OFFERS', 'Offers'),
-							'photos' => _t('SocialFeed_Facebook.PHOTOS_TAGGED_IN', 'Photos where I have been tagged'),
-							'photos/uploaded' => _t('SocialFeed_Facebook.UPLOADED_PHOTOS', 'Uploaded photos'),
-							//'ratings' => _t('SocialFeed_Facebook.RATINGS', 'Reviews received'),
-							//'statuses' => _t('SocialFeed_Facebook.STATUSES', 'Statuses/Posts'),
-							'videos' => _t('SocialFeed_Facebook.VIDEOS_TAGGED_IN', 'Videos where I have been tagged'),
-							'videos/uploaded' => _t('SocialFeed_Facebook.VIDEOS_UPLOADED_PHOTOS', 'Uploaded videos'),
-						]
-					);
+					$types = [
+						'feed' => _t('SocialFeed_Facebook.FEED', 'News feed (inc. statuses/posts, milestones and links)'),
+						'albums' => _t('SocialFeed_Facebook.ALBUMS', 'Albums'),
+						'events' => _t('SocialFeed_Facebook.EVENTS', 'Events'),
+						'links' => _t('SocialFeed_Facebook.LINKS', 'Posted links'),
+						'milestones' => _t('SocialFeed_Facebook.MILESTONES', 'Milestones'),
+						'offers' => _t('SocialFeed_Facebook.OFFERS', 'Offers'),
+						'photos' => _t('SocialFeed_Facebook.PHOTOS_TAGGED_IN', 'Photos where I have been tagged'),
+						'photos/uploaded' => _t('SocialFeed_Facebook.UPLOADED_PHOTOS', 'Uploaded photos'),
+						'videos' => _t('SocialFeed_Facebook.VIDEOS_TAGGED_IN', 'Videos where I have been tagged'),
+						'videos/uploaded' => _t('SocialFeed_Facebook.VIDEOS_UPLOADED_PHOTOS', 'Uploaded videos'),
+					];
+
+					if(class_exists('League\OAuth2\Client\Token\AccessToken'))
+						$types['ratings'] = _t('SocialFeed_Facebook.RATINGS', 'Reviews received (requires Facebook login permissions)');
+
+					$type->setSource($types);
 				}
 			}
 		);
@@ -71,6 +73,15 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 			'consumer_key' => $this->getValueFromEnvironment('AppID'),
 			'consumer_secret' => $this->getValueFromEnvironment('AppSecret'),
 		];
+	}
+
+	public function getRequiresExtendedPermissions() {
+		switch ($this->Type) {
+			case 'ratings':
+				return ['manage_pages'];
+			default:
+				return [];
+		}
 	}
 
 	public function getFeedSettings()

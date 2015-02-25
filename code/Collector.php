@@ -48,6 +48,10 @@ class Collector {
         $feed = [];
 
         $provider = \Object::create($profile->Provider, $this->cache, (array) $profile->OauthConfiguration);
+
+	    if($profile->RequiresExtendedPermissions)
+			$provider = $provider->extendedPermissions($profile->RequiresExtendedPermissions);
+
         $template = $profile->Templates;
         $posts = $provider->all((array) $profile->FeedSettings);
         $postSettings = (array) $profile->PostSettings;

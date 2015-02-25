@@ -18,7 +18,7 @@
         "milkyway-multimedia/ss-mwm":                 "dev-master"
     },
     "suggest":      {
-        "erusev/parsedown": "Allow posts coming from Facebook/Twitter/Google Plus to be parsed as markdown"
+        "league/oauth2-client": "You will need Oauth2 authentication to unlock additional items to pull from a provider (such as Facebook ratings)"
     },
     "repositories": [
         {
