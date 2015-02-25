@@ -14,7 +14,6 @@
         "silverstripe/framework":                     "~3.1",
         "silverstripe/cms":                           "~3.1",
         "guzzlehttp/oauth-subscriber":                "~0.2",
-        "kamermans/guzzle4-oauth2-subscriber":        "*",
         "silverstripe-australia/gridfieldextensions": "~1",
         "milkyway-multimedia/ss-mwm":                 "dev-master"
     },
