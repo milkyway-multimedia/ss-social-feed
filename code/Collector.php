@@ -10,14 +10,21 @@ class Collector {
     /** @var \ArrayAccess A list of profiles */
     protected $profiles;
 
+	/** @var int Limit before stopping the collecting */
+	protected $limit = null;
+
     /** @var int Hours to cache */
     protected $cache = 6;
 
     /** @var string Sorting of list */
     protected $sort = 'Priority DESC';
 
-    public function __construct(\Countable $profiles, $cache = 6, $sort = 'Priority DESC') {
+	/** @var int Amount collected already */
+	private $collected = 0;
+
+    public function __construct(\Countable $profiles, $limit = null, $cache = 6, $sort = 'Priority DESC') {
         $this->profiles = $profiles;
+        $this->limit = $limit;
         $this->cache = $cache;
         $this->sort = $sort;
     }
@@ -26,8 +33,12 @@ class Collector {
         $feed = \ArrayList::create();
 
         if($this->profiles->count()) {
-            foreach($this->profiles as $profile)
+            foreach($this->profiles as $profile) {
+	            if($this->isOverTheLimit())
+		            break;
+
                 $feed->merge($this->collect($profile));
+            }
 
             if($this->sort) {
                 if(is_string($this->sort) && strpos($this->sort, ' ') !== false) {
@@ -57,6 +68,9 @@ class Collector {
         $postSettings = (array) $profile->PostSettings;
 
         foreach($posts as $post) {
+	        if($this->isOverTheLimit())
+		        break;
+
             if(!($post instanceof \ViewableData)) {
                 $post = $profile->processPost(array_merge($postSettings, $post));
                 $post['Profile'] = $profile;
@@ -74,6 +88,8 @@ class Collector {
                 $post->forTemplate = $post->renderWith($template);
                 $feed[] = $post;
             }
+
+	        $this->collected++;
         }
 
         return $feed;
@@ -91,4 +107,8 @@ class Collector {
             }
         }
     }
+
+	protected function isOverTheLimit() {
+		return $this->limit !== null && $this->collected >= $this->limit;
+	}
 } 
