@@ -1,20 +1,20 @@
 <article class="panel-post $Profile.StyleClasses $StyleClasses $EvenOdd">
     <% if $Avatar %>
-	<div class="avatar">
+	<div class="avatar panel-post--avatar">
             <% if $AuthorURL %>
-				<a href="$AuthorURL" target="_blank"><img src="$Avatar" alt="$Author" /></a>
+				<a href="$AuthorURL" target="_blank"><img src="$Avatar" alt="$Author" class="avatar panel-post--avatar-image" /></a>
             <% else %>
-				<img src="$Avatar" alt="$Author" />
+				<img src="$Avatar" alt="$Author" class="avatar panel-post--avatar-image" />
             <% end_if %>
 	</div>
     <% end_if %>
 
 	<div class="panel-post-body">
-		<h4>
+		<h4 class="panel-post-body--header">
             <% if $AuthorURL %>
-				<a href="$AuthorURL" target="_blank"><i class="social-icon" title="<% _t('VIA', 'Via') %> $Profile.Platform"></i></a>
+				<a href="$AuthorURL" target="_blank" class="panel-post--header--icon-holder"><i class="social-icon panel-post-body--header--icon" title="<% _t('VIA', 'Via') %> $Profile.Platform"></i></a>
             <% else %>
-				<i class="social-icon" title="<% _t('VIA', 'Via') %> $Profile.Platform"></i>
+				<i class="social-icon panel-post-body--header--icon" title="<% _t('VIA', 'Via') %> $Profile.Platform"></i>
             <% end_if %>
 
             <% if $canLikePage && $AuthorURL %>
@@ -27,7 +27,7 @@
                 <% if $AuthorName %>$AuthorName<% else_if $Author %>$Author<% else %>$Title<% end_if %>
             <% end_if %>
 
-			<time>$Posted.Ago</time>
+			<time class="panel-post-body--header--time">$Posted.Ago</time>
 		</h4>
 
         <% if $Rating %>
@@ -37,15 +37,16 @@
             </span>
         </p>
         <% end_if %>
+
         $Content
 
         <% include SocialFeed_Media %>
 
 		<div class="panel-post-footer">
-            <% if $Icon %><img src="$Icon" alt="$StatusType" class="post-icon" /> <% end_if %>
+            <% if $Icon %><img src="$Icon" alt="$StatusType" class="post-icon panel-post-footer--icon" /> <% end_if %>
 
             <% if not $HideAddThis && $AddThisProfileID %>
-				<div class="panel-post-share">
+				<div class="panel-post-share panel-post-footer--share">
                     <% if $Title %>
                         <% if $AbsoluteLink %>
                             <% include AddThis_ShareModule addThisProfileID=$AddThisProfileID,addThisTitle=$Title,addThisUrl=$AbsoluteLink %>
@@ -63,25 +64,25 @@
             <% end_if %>
 
             <% if $CommentsDescriptor %>
-				<span class="panel-post-comment-count"><a href="$Link" target="_blank">$CommentsCount $CommentsDescriptor</a></span>
+				<span class="panel-post-comment-count panel-post-footer--comment-count"><a href="$Link" target="_blank">$CommentsCount $CommentsDescriptor</a></span>
             <% end_if %>
 
             <% if $ReplyDescriptor %>
-				<span class="panel-post-replies-count"><a href="$Link" target="_blank">$ReplyCount $ReplyDescriptor</a></span>
+				<span class="panel-post-replies-count panel-post-footer--replies-count"><a href="$Link" target="_blank">$ReplyCount $ReplyDescriptor</a></span>
             <% end_if %>
 
             <% if $canLikePost %>
                 $Profile.LikePostButton($Link)
             <% else_if $LikesDescriptor %>
-                <span class="panel-post-likes-count"><a href="$Link" target="_blank">$LikesCount $LikesDescriptor</a></span>
+                <span class="panel-post-likes-count panel-post-footer--likes-count"><a href="$Link" target="_blank">$LikesCount $LikesDescriptor</a></span>
             <% end_if %>
 
             <% if $RetweetsDescriptor %>
-				<span class="post-retweets-count">$Retweets $RetweetsDescriptor</span>
+				<span class="post-retweets-count panel-post-footer--retweets-count">$Retweets $RetweetsDescriptor</span>
             <% end_if %>
 
             <% if $UserMentionsDescriptor %>
-				<span class="panel-post-mentions-count"><% if $UserMentions %>$UserMentions.Count<% else %>0<% end_if %> $UserMentionsDescriptor</span>
+				<span class="panel-post-mentions-count panel-post-footer--mentions-count"><% if $UserMentions %>$UserMentions.Count<% else %>0<% end_if %> $UserMentionsDescriptor</span>
 
                 <% if $canLikePost %>
                     $Profile.LikePostButton($AuthorName)
@@ -89,7 +90,7 @@
             <% end_if %>
 
             <% if $ReshareCountDescriptor %>
-				<span class="panel-post-reshares-count"><a href="$Link" target="_blank">$ReshareCount $ReshareCountDescriptor</a></span>
+				<span class="panel-post-reshares-count panel-post-footer--reshares-count"><a href="$Link" target="_blank">$ReshareCount $ReshareCountDescriptor</a></span>
             <% end_if %>
 		</div>
 

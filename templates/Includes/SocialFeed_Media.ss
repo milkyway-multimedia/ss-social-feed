@@ -67,9 +67,9 @@
 		</figure>
     <% end_loop %>
 <% else_if $StartTime || $EndTime %>
-        <div class="panel-event">
+        <div class="panel-post-event">
             <% if $ObjectName %>
-                <h5 class="panel-event--title">
+                <h5 class="panel-post-event--title">
                 <% if $Link %>
                     <a href="$Link" target="_blank">$ObjectName</a>
                 <% else %>
@@ -78,8 +78,8 @@
                 </h5>
             <% end_if %>
             <% if $Venue %>
-                <h5 class="panel-event--venue">
-                    <label class="panel-event--venue-label">At </label>
+                <h5 class="panel-post-event--venue">
+                    <label class="panel-post-event--venue-label">At </label>
                     <strong>
                     <% if $VenueLink %>
                         <a href="$VenueLink" target="_blank">$Venue</a>
