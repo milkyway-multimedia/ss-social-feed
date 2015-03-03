@@ -2,9 +2,9 @@
     <% if $Avatar %>
 	<div class="avatar panel-post--avatar">
             <% if $AuthorURL %>
-				<a href="$AuthorURL" target="_blank"><img src="$Avatar" alt="$Author" class="avatar panel-post--avatar-image" /></a>
+				<a href="$AuthorURL" target="_blank"><img src="$Avatar" alt="$Author" class="panel-post--avatar-image" /></a>
             <% else %>
-				<img src="$Avatar" alt="$Author" class="avatar panel-post--avatar-image" />
+				<img src="$Avatar" alt="$Author" class="panel-post--avatar-image" />
             <% end_if %>
 	</div>
     <% end_if %>
