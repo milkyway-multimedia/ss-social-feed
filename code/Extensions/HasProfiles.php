@@ -12,6 +12,7 @@ class HasProfiles extends \DataExtension {
 	protected static $connected_relations = [];
 
     private static $db = [
+        'SocialFeed_Limit' => 'Int',
         'CacheHours' => 'Int',
         'AddThis' => 'Varchar',
     ];
@@ -21,6 +22,7 @@ class HasProfiles extends \DataExtension {
     ];
 
     private static $defaults = [
+        'SocialFeed_Limit' => 30,
         'CacheHours' => 6,
     ];
 
@@ -101,6 +103,8 @@ class HasProfiles extends \DataExtension {
                 $this->owner->SocialFeed_Profiles(),
                 $config = \GridFieldConfig_RecordEditor::create()
             ),
+		    \NumericField::create('SocialFeed_Limit', _t('SocialFeed.LIMIT', 'Limit'))
+			        ->setDescription(_t('SocialFeed.DESC-LIMIT', 'Set how many to retrieve at a time')),
             \NumericField::create('CacheHours', _t('SocialFeed.CACHE', 'Cache for'))
                 ->setDescription(_t('SocialFeed.DESC-CACHE', 'Set how many hours the results from the various platforms are stored in cache for'))
                 ->setAttribute('placeholder', 6),
@@ -112,7 +116,8 @@ class HasProfiles extends \DataExtension {
 
         $config
             ->removeComponentsByType('GridFieldAddNewButton')
-            ->addComponent(new \GridFieldAddNewMultiClass());
+            ->addComponent(new \GridFieldAddExistingSearchButton('buttons-before-right'))
+            ->addComponent(new \GridFieldAddNewMultiClass);
 
         if($columns = $config->getComponentByType('GridFieldDataColumns')) {
             $displayColumns = $columns->getDisplayFields($gf);
@@ -136,8 +141,9 @@ class HasProfiles extends \DataExtension {
 
     protected function collection() {
         if(!$this->collection) {
+	        $cache = $this->owner->CacheHours ?: 6;
             $profiles = $this->owner->SocialFeed_Profiles()->exists() ? $this->owner->SocialFeed_Profiles()->filter('Enabled', 1)->exclude('Module_Disabled', 1) : $this->owner->SocialFeed_Profiles();
-            $this->collection = \Object::create('\Milkyway\SS\SocialFeed\Collector', $profiles);
+            $this->collection = \Object::create('Milkyway\SS\SocialFeed\Collector', $profiles, $this->owner->SocialFeed_Limit, $cache);
         }
 
         return $this->collection;
