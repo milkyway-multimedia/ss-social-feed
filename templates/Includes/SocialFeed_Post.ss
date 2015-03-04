@@ -79,6 +79,22 @@
                 <span class="panel-post-likes-count panel-post-footer--likes-count"><a href="$Link" target="_blank">$LikesCount $LikesDescriptor</a></span>
             <% end_if %>
 
+            <% if $Profile.AllowPostShare %>
+                <% if $AbsoluteLink %>
+                    <% include Facebook_ShareButton fbLink=$AbsoluteLink %>
+                <% else %>
+                    <% include Facebook_ShareButton fbLink=$Link %>
+                <% end_if %>
+            <% end_if %>
+
+            <% if $Profile.AllowPostSend %>
+                <% if $AbsoluteLink %>
+                    <% include Facebook_SendButton fbLink=$AbsoluteLink %>
+                <% else %>
+                    <% include Facebook_SendButton fbLink=$Link %>
+                <% end_if %>
+            <% end_if %>
+
             <% if $RetweetsDescriptor %>
 				<span class="post-retweets-count panel-post-footer--retweets-count">$Retweets $RetweetsDescriptor</span>
             <% end_if %>

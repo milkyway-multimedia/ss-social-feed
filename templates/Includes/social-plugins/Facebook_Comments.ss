@@ -1,0 +1,3 @@
+$require_facebook_script($Profile)
+
+<div class="fb-comments" data-href="<% if $fbLink %>$fbLink<% else_if $fbUser %>http://facebook.com/$fbUser<% else_if $SiteConfig.Facebook_Username %>http://facebook.com/$SiteConfig.Facebook_Username<% else %>$absoluteBaseURL<% end_if %>" data-width="<% if $fbWidth %>$fbWidth<% else %>100%<% end_if %>" data-colorscheme="<% if $fbScheme %>$fbScheme<% else %>light<% end_if %>"<% if $fbMobile %> data-mobile="$fbMobile"<% end_if %> data-numposts="<% if $fbNumPosts %>$fbNumPosts<% else %>20<% end_if %>" data-order-by="<% if $fbOrderBy %>$fbOrderBy<% else %>social<% end_if %>"></div>

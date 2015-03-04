@@ -28,6 +28,10 @@ ShortcodeParser:
   providers:
     - 'Milkyway\SS\SocialFeed\Shortcodes\AddThis'
     - 'Milkyway\SS\SocialFeed\Shortcodes\Facebook_Like'
+    - 'Milkyway\SS\SocialFeed\Shortcodes\Facebook_Share'
+    - 'Milkyway\SS\SocialFeed\Shortcodes\Facebook_Send'
+    - 'Milkyway\SS\SocialFeed\Shortcodes\Facebook_Follow'
+    - 'Milkyway\SS\SocialFeed\Shortcodes\Facebook_Comments'
     - 'Milkyway\SS\SocialFeed\Shortcodes\GooglePlus_Follow'
     - 'Milkyway\SS\SocialFeed\Shortcodes\GooglePlus_PlusOne'
     - 'Milkyway\SS\SocialFeed\Shortcodes\Twitter_Follow'

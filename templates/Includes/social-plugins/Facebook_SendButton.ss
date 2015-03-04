@@ -1,0 +1,3 @@
+$require_facebook_script
+
+<div class="fb-send" data-href="<% if $fbLink %>$fbLink<% else_if $fbUser %>http://facebook.com/$fbUser<% else_if $SiteConfig.Facebook_Username %>http://facebook.com/$SiteConfig.Facebook_Username<% else %>$absoluteBaseURL<% end_if %>" data-width="40" data-colorscheme="<% if $fbScheme %>$fbScheme<% else %>light<% end_if %>" data-kid-directed-site="<% if $fbForKids %>true<% else %>false<% end_if %>" data-ref="<% if $fbRef %>$fbRef<% else %>social-feed-sends<% end_if %>"></div>

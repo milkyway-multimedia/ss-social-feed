@@ -137,6 +137,7 @@ class Facebook extends Oauth
 
 		if (isset($data['likes']))
 			$post['LikesDescriptor'] = $post['LikesCount'] == 1 ? _t('SocialFeed.LIKE', 'like') : _t('SocialFeed.LIKES', 'likes');
+
 		if (isset($data['comments']))
 			$post['CommentsDescriptor'] = $post['CommentsCount'] == 1 ? _t('SocialFeed.COMMENT', 'comment') : _t('SocialFeed.COMMENTS', 'comments');
 

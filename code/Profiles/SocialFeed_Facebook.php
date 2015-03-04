@@ -22,6 +22,8 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 		'AuthorOnly' => 'Boolean',
 		'AllowPageLikes' => 'Boolean',
 		'AllowPostLikes' => 'Boolean',
+		'AllowPostShare' => 'Boolean',
+		'AllowPostSend' => 'Boolean',
 		'AllowHashTagLinks'  => 'Boolean',
 	);
 

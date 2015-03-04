@@ -14,6 +14,8 @@ use Milkyway\SS\Shortcodes\Contract;
 class Facebook_Like implements Contract {
 	protected $url = 'http://facebook.com/';
 
+	protected $template = 'Facebook_LikeButton';
+
 	public function code()
 	{
 		return 'facebook_like';
@@ -38,15 +40,7 @@ class Facebook_Like implements Contract {
 			$link = \Controller::join_links($this->url, str_replace('@', '', $link));
 		}
 
-		return \ArrayData::create(array_merge(
-				array(
-					'fbLink' => $link,
-					'fbScheme' => isset($arguments['scheme']) ? $arguments['scheme'] : false,
-					'fbAction' => isset($arguments['action']) ? $arguments['action'] : false,
-					'fbFaces' => isset($arguments['faces']) ? $arguments['faces'] : false,
-					'fbSend' => isset($arguments['send']) ? $arguments['send'] : false,
-				), $arguments)
-		)->renderWith('Facebook_LikeButton');
+		return \ArrayData::create(array_merge($this->vars($link, $arguments, $caption, $parser), $arguments))->renderWith($this->template);
 	}
 
 	public function formField() {
@@ -105,8 +99,46 @@ class Facebook_Like implements Contract {
 					_t('Shortcodable.FB-REFERRAL_REFERENCE', 'Reference for referrals')
 				)
 					->setDescription('A label for tracking referrals which must be less than 50 characters')
-					->setMaxLength(50)
+					->setMaxLength(50),
+				\DropdownField::create(
+					'for_kids',
+					_t('Shortcodable.FB-FOR_KIDS', 'Display for kid directed website specifically?'),
+					[
+						''  => 'No',
+						'1' => 'Yes',
+					]
+				)
 			)
 		);
+	}
+
+	protected function vars($link, &$arguments, $caption = null, $parser = null) {
+		return [
+			'fbLink' => $link,
+			'fbScheme' => isset($arguments['scheme']) ? $arguments['scheme'] : false,
+			'fbAction' => isset($arguments['action']) ? $arguments['action'] : false,
+			'fbLayout' => isset($arguments['layout']) ? $arguments['layout'] : false,
+			'fbFaces' => isset($arguments['show_faces']) ? $arguments['show_faces'] : false,
+			'fbShare' => isset($arguments['share']) ? $arguments['share'] : false,
+			'fbForKids' => isset($arguments['for_kids']) ? $arguments['for_kids'] : false,
+			'fbRef' => isset($arguments['ref']) ? $arguments['ref'] : false,
+		];
+	}
+
+	protected function unsetVars($vars, $varsToUnset = []) {
+		foreach($varsToUnset as $toUnset) {
+			if(isset($vars[$toUnset]))
+				unset($vars[$toUnset]);
+		}
+
+		return $vars;
+	}
+
+	protected function removeFields($fields, $fieldsToRemove = []) {
+		foreach($fieldsToRemove as $field) {
+			$fields->removeByName($field);
+		}
+
+		return $fields;
 	}
 } 
