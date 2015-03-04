@@ -38,7 +38,9 @@
         </p>
         <% end_if %>
 
+        <div class="panel-post--contents">
         $Content
+        </div>
 
         <% include SocialFeed_Media %>
 
