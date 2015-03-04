@@ -27,14 +27,14 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
         'AllowHashTagTweets'  => 'Boolean',
     ];
 
-    protected $provider = 'Milkyway\SS\SocialFeed\Providers\Twitter';
+	private static $db_to_environment_mapping = [
+		'ApiKey' => 'Twitter|SocialFeed|SiteConfig.twitter_api_key',
+		'ApiSecret' => 'Twitter|SocialFeed|SiteConfig.twitter_api_secret',
+		'AccessToken' => 'Twitter|SocialFeed|SiteConfig.twitter_access_token',
+		'AccessTokenSecret' => 'Twitter|SocialFeed|SiteConfig.twitter_access_token_secret',
+	];
 
-    protected $environmentMapping = [
-        'ApiKey'              => 'twitter_api_key',
-        'ApiSecret'           => 'twitter_api_secret',
-        'AccessToken'         => 'twitter_access_token',
-        'AccessTokenSecret'   => 'twitter_access_token_secret',
-    ];
+    protected $provider = 'Milkyway\SS\SocialFeed\Providers\Twitter';
 
 	public function getCMSFields() {
 		$this->beforeExtending(
@@ -59,18 +59,18 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
     public function getOauthConfiguration()
     {
         return [
-            'consumer_key'    => $this->getValueFromEnvironment('ApiKey'),
-            'consumer_secret' => $this->getValueFromEnvironment('ApiSecret'),
-            'token'           => $this->getValueFromEnvironment('AccessToken'),
-            'token_secret'    => $this->getValueFromEnvironment('AccessTokenSecret'),
+            'consumer_key'    => $this->setting('ApiKey'),
+            'consumer_secret' => $this->setting('ApiSecret'),
+            'token'           => $this->setting('AccessToken'),
+            'token_secret'    => $this->setting('AccessTokenSecret'),
         ];
     }
 
-    public function getFeedSettings() {
-        return array_merge(parent::getFeedSettings(), [
+    public function getFeedSettings($parent = null) {
+        return array_merge(parent::getFeedSettings($parent), [
                 'type' => 'statuses/' . $this->Type,
                 'query' => [
-                    'screen_name' => $this->getValueFromEnvironment('Username'),
+                    'screen_name' => $this->setting('Username', $parent),
                     'count' => $this->Limit,
                     'contributor_details' => true,
                 ],
@@ -78,8 +78,8 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
         );
     }
 
-    public function getPostSettings() {
-        return array_merge(parent::getPostSettings(), [
+    public function getPostSettings($parent = null) {
+        return array_merge(parent::getPostSettings($parent), [
                 'canLikePage' => $this->AllowAuthorFollows,
                 'canLikePost' => $this->AllowAuthorMentions,
             ]
@@ -106,11 +106,11 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
     }
 
     public function LikeButton() {
-        return $this->customise(['twitterUser' => $this->getValueFromEnvironment('Username')])->renderWith('Twitter_FollowButton');
+        return $this->customise(['twitterUser' => $this->setting('Username')])->renderWith('Twitter_FollowButton');
     }
 
     public function LikePostButton() {
-        return $this->customise(['twitterUser' => $this->getValueFromEnvironment('Username')])->renderWith('Twitter_MentionButton');
+        return $this->customise(['twitterUser' => $this->setting('Username')])->renderWith('Twitter_MentionButton');
     }
 
 	protected function provideDetailsForPlatform() {

@@ -10,6 +10,9 @@ class Collector {
     /** @var \ArrayAccess A list of profiles */
     protected $profiles;
 
+	/** @var \Object Parent of profiles, for config checking */
+	protected $parent = null;
+
 	/** @var int Limit before stopping the collecting */
 	protected $limit = null;
 
@@ -22,8 +25,9 @@ class Collector {
 	/** @var int Amount collected already */
 	private $collected = 0;
 
-    public function __construct(\Countable $profiles, $limit = null, $cache = 6, $sort = 'Priority DESC') {
+    public function __construct(\Countable $profiles, $parent = null, $limit = null, $cache = 6, $sort = 'Priority DESC') {
         $this->profiles = $profiles;
+        $this->parent = $parent;
         $this->limit = $limit;
         $this->cache = $cache;
         $this->sort = $sort;
@@ -34,6 +38,8 @@ class Collector {
 
         if($this->profiles->count()) {
             foreach($this->profiles as $profile) {
+	            $profile->Parent = $this->parent;
+
 	            if($this->isOverTheLimit())
 		            break;
 
@@ -64,8 +70,8 @@ class Collector {
 			$provider = $provider->extendedPermissions($profile->RequiresExtendedPermissions);
 
         $template = $profile->Templates;
-        $posts = $provider->all((array) $profile->FeedSettings);
-        $postSettings = (array) $profile->PostSettings;
+        $posts = $provider->all((array) $profile->getFeedSettings($this->parent));
+        $postSettings = (array) $profile->getPostSettings($this->parent);
 
         foreach($posts as $post) {
 	        if($this->isOverTheLimit())

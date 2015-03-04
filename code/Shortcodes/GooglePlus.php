@@ -43,7 +43,7 @@ abstract class GooglePlus implements Contract {
 				\TextField::create(
 					'link',
 					_t('Shortcodable.LINK_OR_USERNAME', 'Link/Username')
-				)->setAttribute('placeholder', singleton('SocialFeed_GooglePlus')->getValueFromEnvironment('Username')),
+				)->setAttribute('placeholder', singleton('SocialFeed_GooglePlus')->setting('Username')),
 				\DropdownField::create(
 					'annotation',
 					_t('Shortcodable.G+-ANNOTATIONS', 'Display annotation'),

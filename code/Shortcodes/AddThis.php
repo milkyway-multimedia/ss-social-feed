@@ -75,7 +75,7 @@ class AddThis implements Contract {
 					_t('Shortcodable.ADDTHIS-PROFILEID', 'Profile ID')
 				)
 					->setDescription('AddThis Profile ID used throughout the website for sharing etc. (format: <strong>ra-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</strong>)')
-					->setAttribute('placeholder', singleton('SocialFeed_Profile')->getValueFromEnvironment('AddThis'))
+					->setAttribute('placeholder', singleton('SocialFeed_Profile')->setting('AddThis'))
 			)
 		);
 	}

@@ -47,7 +47,7 @@ abstract class Twitter implements Contract {
 				\TextField::create(
 					'link',
 					_t('Shortcodable.LINK_OR_USERNAME', 'Link/Username')
-				)->setAttribute('placeholder', singleton('SocialFeed_Twitter')->getValueFromEnvironment('Username')),
+				)->setAttribute('placeholder', singleton('SocialFeed_Twitter')->setting('Username')),
 				\DropdownField::create(
 					'share',
 					_t('Shortcodable.TWITTER-COUNT', 'Show count'),

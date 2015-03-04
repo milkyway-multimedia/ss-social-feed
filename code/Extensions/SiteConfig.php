@@ -29,43 +29,43 @@ class SiteConfig extends \DataExtension
         $fields->addFieldsToTab('Root.Social.Main', [
                 \TextField::create('Facebook_Username', _t('SiteConfig.FACEBOOK_PAGE', 'Facebook Page'))
                     ->setDescription('Facebook Page (eg. http://facebook.com/<strong>username</strong> or http://facebook.com/pages/<strong>ID</strong>)')
-                    ->setAttribute('placeholder', singleton('SocialFeed_Facebook')->getValueFromEnvironment('Username')),
+                    ->setAttribute('placeholder', singleton('SocialFeed_Facebook')->setting('Username')),
                 \TextField::create('Twitter_Username', _t('SiteConfig.TWITTER_USERNAME', 'Twitter Username'))
                     ->setDescription('Twitter Username (eg. http://twitter.com/<strong>username</strong>)')
-                    ->setAttribute('placeholder', singleton('SocialFeed_Twitter')->getValueFromEnvironment('Username')),
+                    ->setAttribute('placeholder', singleton('SocialFeed_Twitter')->setting('Username')),
                 \TextField::create('GooglePlus_Username', _t('SiteConfig.GOOGLE_PLUS_PAGE', 'Google Plus Page'))
                     ->setDescription('ID for your Google Plus Page (eg. http://plus.google.com/<strong>ID</strong>)')
-                    ->setAttribute('placeholder', singleton('SocialFeed_GooglePlus')->getValueFromEnvironment('Username')),
+                    ->setAttribute('placeholder', singleton('SocialFeed_GooglePlus')->setting('Username')),
                 \TextField::create('Instagram_Username', _t('SiteConfig.INSTAGRAM_USERNAME', 'Instagram Username'))
                     ->setDescription('Instagram Username (eg. @<strong>username</strong>)'),
                 \TextField::create('AddThis', _t('SiteConfig.ADD_THIS_PROFILE_ID', 'AddThis Profile ID'))
                     ->setDescription('AddThis Profile ID used throughout the website for sharing etc. (format: <strong>ra-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</strong>)')
-                    ->setAttribute('placeholder', singleton('SocialFeed_Profile')->getValueFromEnvironment('AddThis'))
+                    ->setAttribute('placeholder', singleton('SocialFeed_Profile')->setting('AddThis'))
             ]
         );
 
         $fields->addFieldsToTab('Root.Social.Advanced', [
                 \ToggleCompositeField::create('FacebookSettings', _t('SiteConfig.FACEBOOK', 'Facebook'), [
                         \TextField::create('Facebook_AppId', _t('SiteConfig.APPLICATION_ID', 'Application ID'))
-                            ->setAttribute('placeholder', singleton('SocialFeed_Facebook')->getValueFromEnvironment('AppID')),
+                            ->setAttribute('placeholder', singleton('SocialFeed_Facebook')->setting('AppID')),
                         \TextField::create('Facebook_AppSecret', _t('SiteConfig.APPLICATION_SECRET', 'Application Secret'))
-                            ->setAttribute('placeholder', singleton('SocialFeed_Facebook')->getValueFromEnvironment('AppSecret')),
+                            ->setAttribute('placeholder', singleton('SocialFeed_Facebook')->setting('AppSecret')),
                     ]
                 ),
                 \ToggleCompositeField::create('TwitterSettings', _t('SiteConfig.TWITTER', 'Twitter'), [
                         \TextField::create('Twitter_ApiKey', _t('SiteConfig.API_KEY', 'API Key'))
-                            ->setAttribute('placeholder', singleton('SocialFeed_Twitter')->getValueFromEnvironment('ApiKey')),
+                            ->setAttribute('placeholder', singleton('SocialFeed_Twitter')->setting('ApiKey')),
                         \TextField::create('Twitter_ApiSecret', _t('SiteConfig.API_SECRET', 'API Secret'))
-                            ->setAttribute('placeholder', singleton('SocialFeed_Twitter')->getValueFromEnvironment('ApiSecret')),
+                            ->setAttribute('placeholder', singleton('SocialFeed_Twitter')->setting('ApiSecret')),
                         \TextField::create('Twitter_AccessToken', _t('SiteConfig.ACCESS_TOKEN', 'Access Token'))
-                            ->setAttribute('placeholder', singleton('SocialFeed_Twitter')->getValueFromEnvironment('AccessToken')),
+                            ->setAttribute('placeholder', singleton('SocialFeed_Twitter')->setting('AccessToken')),
                         \TextField::create('Twitter_AccessTokenSecret', _t('SiteConfig.ACCESS_TOKEN_SECRET', 'Access Token Secret'))
-                            ->setAttribute('placeholder', singleton('SocialFeed_Twitter')->getValueFromEnvironment('AccessTokenSecret')),
+                            ->setAttribute('placeholder', singleton('SocialFeed_Twitter')->setting('AccessTokenSecret')),
                     ]
                 ),
                 \ToggleCompositeField::create('GooglePlusSettings', _t('SiteConfig.GOOGLE_PLUS', 'Google Plus'), [
                         \TextField::create('GooglePlus_ApiKey', _t('SiteConfig.API_KEY', 'API Key'))
-                            ->setAttribute('placeholder', singleton('SocialFeed_GooglePlus')->getValueFromEnvironment('ApiKey')),
+                            ->setAttribute('placeholder', singleton('SocialFeed_GooglePlus')->setting('ApiKey')),
                     ]
                 ),
             ]

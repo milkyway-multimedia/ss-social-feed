@@ -49,7 +49,7 @@ class Facebook_Like implements Contract {
 				\TextField::create(
 					'link',
 					_t('Shortcodable.LINK_OR_USERNAME', 'Link/Username')
-				)->setAttribute('placeholder', singleton('SocialFeed_Facebook')->getValueFromEnvironment('Username')),
+				)->setAttribute('placeholder', singleton('SocialFeed_Facebook')->setting('Username')),
 				\DropdownField::create(
 					'action',
 					_t('Shortcodable.FB-ACTION', 'Action'),

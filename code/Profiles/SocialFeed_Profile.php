@@ -21,10 +21,6 @@ class SocialFeed_Profile extends DataObject {
         'AddThis' => 'Varchar',
     ];
 
-    private static $has_one = [
-        'Parent' => 'SocialFeed',
-    ];
-
     private static $defaults = [
         'Enabled' => true,
         'Limit'   => 5,
@@ -56,20 +52,18 @@ class SocialFeed_Profile extends DataObject {
         'SocialFeed_Post',
     ];
 
+	private static $db_to_environment_mapping = [
+		'AddThis' => 'SocialFeed|SiteConfig.addthis_profile_id',
+	];
+
     protected $provider = 'Milkyway\SS\SocialFeed\Providers\Models\HTTP';
-
-    protected $environmentMapping = [
-        'AddThis' => 'addthis_profile_id',
-    ];
-
-    protected $cachedEnvironmentMapping = [];
 
     public function canCreate($member = null) {
         $this->beforeExtending(__FUNCTION__, function($member = null) {
                 if(get_class($this) == 'SocialFeed_Profile')
                     return false;
 
-                if($this->Parent()->canCreate($member))
+                if($this->Parent && $this->Parent->canCreate($member))
                     return true;
             }
         );
@@ -79,7 +73,7 @@ class SocialFeed_Profile extends DataObject {
 
     public function canEdit($member = null) {
         $this->beforeExtending(__FUNCTION__, function($member = null) {
-                if($this->Parent()->canEdit($member))
+                if($this->Parent && $this->Parent->canEdit($member))
                     return true;
             }
         );
@@ -89,7 +83,7 @@ class SocialFeed_Profile extends DataObject {
 
     public function canDelete($member = null) {
         $this->beforeExtending(__FUNCTION__, function($member = null) {
-                if($this->Parent()->canDelete($member))
+                if($this->Parent && $this->Parent->canDelete($member))
                     return true;
             }
         );
@@ -99,7 +93,7 @@ class SocialFeed_Profile extends DataObject {
 
     public function canView($member = null) {
         $this->beforeExtending(__FUNCTION__, function($member = null) {
-                if($this->Parent()->canView($member))
+                if($this->Parent && $this->Parent->canView($member))
                     return true;
             }
         );
@@ -131,13 +125,28 @@ class SocialFeed_Profile extends DataObject {
                 $dataFields = $fields->dataFields();
 
                 foreach($dataFields as $field) {
-                    if($field instanceof \TextField)
-                        $field->setAttribute('placeholder', $this->getValueFromServerEnvironment($field->Name));
+                    if($field instanceof \TextField) {
+	                    if(!$field->getAttribute('placeholder'))
+                            $field->setAttribute('placeholder', $this->setting($field->Name));
+                    }
                 }
             }
         );
 
 		return parent::getCMSFields();
+	}
+
+	public function setEditFormWithParent($parent, $form, $controller) {
+		$dataFields = $form->Fields()->dataFields();
+
+		foreach($dataFields as $field) {
+			if($field instanceof \TextField) {
+				if(!$field->getAttribute('placeholder'))
+					$field->setAttribute('placeholder', $this->setting($field->Name, $parent));
+			}
+		}
+
+		$this->extend('updateEditFormWithParent', $parent, $form, $controller);
 	}
 
     public function getBetterButtonsUtils() {
@@ -155,23 +164,23 @@ class SocialFeed_Profile extends DataObject {
 
     public function getTitle()
     {
-        return $this->getValueFromEnvironment('Username') . ' (' . $this->i18n_singular_name() . ')';
+        return $this->setting('Username') . ' (' . $this->i18n_singular_name() . ')';
     }
 
     public function getProvider() {
         return $this->provider;
     }
 
-    public function getFeedSettings() {
+    public function getFeedSettings($parent = null) {
         return [
-            'username' => $this->getValueFromEnvironment('Username'),
+            'username' => $this->setting('Username', $parent),
             'limit' => $this->Limit,
         ];
     }
 
-    public function getPostSettings() {
+    public function getPostSettings($parent = null) {
         return [
-            'AddThisProfileID' => $this->getValueFromEnvironment('AddThis'),
+            'AddThisProfileID' => $this->setting('AddThis', $parent),
         ];
     }
 
@@ -195,49 +204,22 @@ class SocialFeed_Profile extends DataObject {
         return \Milkyway\SS\Utilities::raw2htmlid('platform-' . str_replace('_', '-', strtolower($this->singular_name())));
     }
 
-    public function Link() {
-        return Controller::join_links($this->config()->url, $this->getValueFromEnvironment('Username'));
+    public function Link($parent = null) {
+        return Controller::join_links($this->config()->url, $this->setting('Username', $parent));
     }
 
-    public function getValueFromEnvironment($setting, $cache = true) {
-        if($this->$setting)
-            return $this->$setting;
-        elseif($this->Parent()->$setting)
-            return $this->Parent()->$setting;
+    public function setting($setting, $parent = null, $cache = true) {
+	    $callbacks = [];
 
-        return $this->getValueFromServerEnvironment($setting, $cache);
-    }
+	    if(\ClassInfo::exists('SiteConfig')) {
+		    $prefix = get_class($this) == 'SocialFeed_Profile' ? '' : str_replace('SocialFeed_', '', get_class($this));
 
-    protected function getValueFromServerEnvironment($setting, $cache = true) {
-        if(isset($this->environmentMapping[$setting])) {
-            $envSetting = $this->environmentMapping[$setting];
+		    $callbacks['SiteConfig'] = function($keyParts, $key) use($prefix, $setting) {
+			    return SiteConfig::current_site_config()->{$prefix.$setting};
+		    };
+	    }
 
-            if($cache && isset($this->cachedEnvironmentMapping[$envSetting]))
-                return $this->cachedEnvironmentMapping[$envSetting];
-
-            $value = null;
-            $prefix = get_class($this) == 'SocialFeed_Profile' ? '' : str_replace('SocialFeed_', '', get_class($this));
-
-            if(SocialFeed::config()->$envSetting)
-                $value = SocialFeed::config()->$envSetting;
-            elseif($prefix && SiteConfig::current_site_config()->{$prefix.$setting})
-                $value = SiteConfig::current_site_config()->{$prefix.$setting};
-            elseif(!$prefix && SiteConfig::current_site_config()->{$setting})
-                $value = SiteConfig::current_site_config()->{$setting};
-            elseif(SiteConfig::config()->$envSetting)
-                $value = SiteConfig::config()->$envSetting;
-            elseif(getenv($envSetting))
-                $value = getenv($envSetting);
-            elseif(isset($_ENV[$envSetting]))
-                $value = $_ENV[$envSetting];
-
-            if($cache)
-                $this->cachedEnvironmentMapping[$envSetting] = $value;
-
-            return $value;
-        }
-
-        return null;
+	    return singleton('env')->get($setting, [$this, $parent], null, null, $callbacks, $cache, $cache);
     }
 
 	protected function provideDetailsForPlatform() {

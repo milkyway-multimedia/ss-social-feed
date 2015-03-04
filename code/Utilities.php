@@ -1,7 +1,5 @@
 <?php namespace Milkyway\SS\SocialFeed;
 
-use Milkyway\SS\Assets;
-
 /**
  * Milkyway Multimedia
  * Utilities.php
@@ -12,18 +10,18 @@ use Milkyway\SS\Assets;
 class Utilities implements \TemplateGlobalProvider {
     private static $_facebook_included;
 
-    public static function require_facebook_script($facebook = null) {
+    public static function require_facebook_script($facebook = null, $parent = null) {
         if(!self::$_facebook_included) {
             if(!$facebook)
                 $facebook = singleton('SocialFeed_Facebook');
 
-            $appId = $facebook->getValueFromEnvironment('AppID');
+            $appId = $facebook->setting('AppID', $parent);
 
             if(!$appId && $facebook = \SocialFeed_Facebook::get()->first())
-                $appId = $facebook->getValueFromEnvironment('AppID');
+                $appId = $facebook->setting('AppID', $parent);
 
             if($appId)
-                Assets::defer(sprintf(\Director::protocol() . 'connect.facebook.net/%s/all.js#xfbml=1&appId=%s', \i18n::get_locale(), $appId));
+                singleton('assets')->defer(sprintf(\Director::protocol() . 'connect.facebook.net/%s/all.js#xfbml=1&appId=%s', \i18n::get_locale(), $appId));
 
             self::$_facebook_included = true;
 
@@ -34,24 +32,24 @@ class Utilities implements \TemplateGlobalProvider {
     }
 
     public static function require_twitter_script() {
-        Assets::defer(\Director::protocol() . 'platform.twitter.com/widgets.js');
+	    singleton('assets')->defer(\Director::protocol() . 'platform.twitter.com/widgets.js');
     }
 
     public static function require_google_plus_script() {
         \Requirements::customScript("window.___gcfg = {lang: '" . str_replace('_', '-', \i18n::get_locale()) . "'};", 'GooglePlus-Locale');
-        Assets::defer(\Director::protocol() . 'apis.google.com/js/plusone.js', true);
+	    singleton('assets')->defer(\Director::protocol() . 'apis.google.com/js/plusone.js', true);
     }
 
     private static $_addThis_included;
 
-    public static function addThisJS($profileID = '', $config = []) {
+    public static function addThisJS($profileID = '', $parent = null, $config = []) {
         if(!self::$_addThis_included) {
             if(!$profileID) {
                 if($profile = \SocialFeed_Profile::get()->first())
-                    $profileID = $profile->getValueFromEnvironment('AddThis');
+                    $profileID = $profile->setting('AddThis', $parent);
 
                 if(!$profileID)
-                    $profileID = singleton('SocialFeed_Profile')->getValueFromEnvironment('AddThis');
+                    $profileID = singleton('SocialFeed_Profile')->setting('AddThis', $parent);
 
                 if(!$profileID)
                     return;
@@ -72,30 +70,30 @@ class Utilities implements \TemplateGlobalProvider {
         </script>
             ', 'AddThis-Configuration');
 
-            Assets::defer('http://s7.addthis.com/js/300/addthis_widget.js#pubid=' . $profileID, true);
+	        singleton('assets')->defer('http://s7.addthis.com/js/300/addthis_widget.js#pubid=' . $profileID, true);
         }
     }
 
-	public static function facebookLink()
+	public static function facebookLink($parent = null)
 	{
-		if($id = singleton('SocialFeed_Facebook')->getValueFromEnvironment('Username'))
-			return \Controller::join_links(singleton('SocialFeed_Facebook')->url, $id);
+		if($id = singleton('SocialFeed_Facebook')->setting('Username', $parent))
+			return \Controller::join_links(singleton('SocialFeed_Facebook')->config()->url, $id);
 
 		return '';
 	}
 
-	public static function twitterLink()
+	public static function twitterLink($parent = null)
 	{
-		if($id = singleton('SocialFeed_Twitter')->getValueFromEnvironment('Username'))
-			return \Controller::join_links(singleton('SocialFeed_Twitter')->url, $id);
+		if($id = singleton('SocialFeed_Twitter')->setting('Username', $parent))
+			return \Controller::join_links(singleton('SocialFeed_Twitter')->config()->url, $id);
 
 		return '';
 	}
 
-	public static function googlePlusLink()
+	public static function googlePlusLink($parent = null)
 	{
-		if($id = singleton('SocialFeed_GooglePlus')->getValueFromEnvironment('Username'))
-			return \Controller::join_links(singleton('SocialFeed_GooglePlus')->url, $id);
+		if($id = singleton('SocialFeed_GooglePlus')->setting('Username', $parent))
+			return \Controller::join_links(singleton('SocialFeed_GooglePlus')->config()->url, $id);
 
 		return '';
 	}
@@ -107,14 +105,6 @@ class Utilities implements \TemplateGlobalProvider {
 
 		return '';
 	}
-
-    public static function clean_cache() {
-        $classes = \ClassInfo::implementorsOf('Milkyway\SS\SocialFeed\Contracts\IsCached');
-
-        foreach($classes as $class) {
-            singleton($class)->cleanCache();
-        }
-    }
 
     public static function get_template_global_variables() {
         return array(

@@ -110,7 +110,7 @@ class HasProfiles extends \DataExtension {
                 ->setAttribute('placeholder', 6),
             \TextField::create('AddThis', _t('SocialFeed.ADDTHIS', 'Add This Profile'))
                 ->setDescription(_t('SocialFeed.DESC-ADDTHIS', 'AddThis Profile ID used for sharing (format: <strong>ra-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</strong>)'))
-                ->setAttribute('placeholder', singleton('SocialFeed_Profile')->getValueFromEnvironment('AddThis'))
+                ->setAttribute('placeholder', singleton('SocialFeed_Profile')->setting('AddThis'))
         )
         );
 
@@ -133,6 +133,33 @@ class HasProfiles extends \DataExtension {
                 ]);
             }
         }
+
+	    if($detailForm = $config->getComponentByType('GridFieldDetailForm')) {
+		    $self = $this->owner;
+		    $oldCallback = $detailForm->getItemEditFormCallback();
+
+		    $detailForm->setItemEditFormCallback(function ($form, $controller) use ($self, $detailForm, $oldCallback) {
+			    if($oldCallback)
+				    $oldCallback($form, $controller);
+
+			    if (isset($controller->record))
+				    $record = $controller->record;
+			    elseif ($form->Record)
+				    $record = $form->Record;
+			    else
+				    $record = null;
+
+			    if ($record) {
+				    $record->Parent = $self;
+
+				    foreach(array_intersect($record->many_many(), \ClassInfo::ancestry($self)) as $relation => $type) {
+					    $form->Fields()->removeByName($relation);
+				    }
+
+				    $record->setEditFormWithParent($self, $form, $controller);
+			    }
+		    });
+	    }
     }
 
     public function getFeed() {
@@ -143,7 +170,7 @@ class HasProfiles extends \DataExtension {
         if(!$this->collection) {
 	        $cache = $this->owner->CacheHours ?: 6;
             $profiles = $this->owner->SocialFeed_Profiles()->exists() ? $this->owner->SocialFeed_Profiles()->filter('Enabled', 1)->exclude('Module_Disabled', 1) : $this->owner->SocialFeed_Profiles();
-            $this->collection = \Object::create('Milkyway\SS\SocialFeed\Collector', $profiles, $this->owner->SocialFeed_Limit, $cache);
+            $this->collection = \Object::create('Milkyway\SS\SocialFeed\Collector', $profiles, $this->owner, $this->owner->SocialFeed_Limit, $cache);
         }
 
         return $this->collection;

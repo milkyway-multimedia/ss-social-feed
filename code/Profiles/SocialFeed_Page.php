@@ -39,15 +39,15 @@ class SocialFeed_Page extends SocialFeed_Profile {
         return $this->Page()->Title;
     }
 
-    public function getFeedSettings() {
+    public function getFeedSettings($parent = null) {
         return [
             'page' => $this->Page(),
             'limit' => $this->Limit,
         ];
     }
 
-    public function getPostSettings() {
-        return array_merge(parent::getPostSettings(), [
+    public function getPostSettings($parent = null) {
+        return array_merge(parent::getPostSettings($parent), [
                 'canLikePage' => $this->AllowPageLikes,
                 'canLikePost' => $this->AllowPostLikes,
             ]
@@ -58,7 +58,7 @@ class SocialFeed_Page extends SocialFeed_Profile {
         return _t('SocialFeed.CHILDREN_OF_PAGE', 'Children of \'{page}\' ({type})', ['page' => $this->Page()->Title, 'type' => $this->Page()->i18n_singular_name()]);
     }
 
-    public function Link() {
+    public function Link($parent = null) {
         return $this->Page()->AbsoluteLink;
     }
 

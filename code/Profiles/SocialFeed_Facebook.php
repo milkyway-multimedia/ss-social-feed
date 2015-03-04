@@ -27,12 +27,12 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 		'AllowHashTagLinks'  => 'Boolean',
 	);
 
-	protected $provider = 'Milkyway\SS\SocialFeed\Providers\Facebook';
-
-	protected $environmentMapping = [
-		'AppID' => 'facebook_application_id',
-		'AppSecret' => 'facebook_application_secret',
+	private static $db_to_environment_mapping = [
+		'AppID' => 'Facebook|SocialFeed|SiteConfig.facebook_application_id',
+		'AppSecret' => 'Facebook|SocialFeed|SiteConfig.facebook_application_secret',
 	];
+
+	protected $provider = 'Milkyway\SS\SocialFeed\Providers\Facebook';
 
 	public function getCMSFields()
 	{
@@ -72,8 +72,8 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 	public function getOauthConfiguration()
 	{
 		return [
-			'consumer_key' => $this->getValueFromEnvironment('AppID'),
-			'consumer_secret' => $this->getValueFromEnvironment('AppSecret'),
+			'consumer_key' => $this->setting('AppID'),
+			'consumer_secret' => $this->setting('AppSecret'),
 		];
 	}
 
@@ -86,26 +86,26 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 		}
 	}
 
-	public function getFeedSettings()
+	public function getFeedSettings($parent = null)
 	{
 		$settings = [];
 
 		if($this->Type == 'events')
 			$settings['since'] = '2004-04-02'; // Get all events since the founding on Facebook!
 
-		return array_merge(parent::getFeedSettings(), [
+		return array_merge(parent::getFeedSettings($parent), [
 				'type' => $this->Type,
 				'query' => array_merge([
-					'access_token' => $this->getValueFromEnvironment('AppID') . '|' . $this->getValueFromEnvironment('AppSecret'),
+					'access_token' => $this->setting('AppID', $parent) . '|' . $this->setting('AppSecret', $parent),
 					'limit' => $this->Limit,
 				], $settings),
 			]
 		);
 	}
 
-	public function getPostSettings()
+	public function getPostSettings($parent = null)
 	{
-		return array_merge(parent::getPostSettings(), [
+		return array_merge(parent::getPostSettings($parent), [
 			'canLikePage' => $this->AllowPageLikes,
 			'canLikePost' => $this->AllowPostLikes,
 		]);

@@ -12,8 +12,6 @@ class SocialFeed_GooglePlus extends SocialFeed_Profile {
 
     private static $singular_name = 'Google Plus';
 
-    protected $provider = 'Milkyway\SS\SocialFeed\Providers\GooglePlus';
-
     private static $db = array(
         'ApiKey'                 => 'Varchar',
 
@@ -21,21 +19,23 @@ class SocialFeed_GooglePlus extends SocialFeed_Profile {
         'AllowPlusOnes'          => 'Boolean',
     );
 
-    protected $environmentMapping = [
-        'ApiKey'              => 'googleplus_api_key',
-    ];
+	private static $db_to_environment_mapping = [
+		'ApiKey' => 'GooglePlus|SocialFeed|SiteConfig.googleplus_api_key',
+	];
 
-    public function getFeedSettings() {
+	protected $provider = 'Milkyway\SS\SocialFeed\Providers\GooglePlus';
+
+    public function getFeedSettings($parent = null) {
         return array_merge(parent::getFeedSettings(), [
                 'query' => [
-                    'key' => $this->getValueFromEnvironment('ApiKey'),
+                    'key' => $this->setting('ApiKey', $parent),
                     'maxResults' => $this->Limit,
                 ],
             ]
         );
     }
 
-    public function getPostSettings() {
+    public function getPostSettings($parent = null) {
         return [
             'canLikePage' => $this->AllowGooglePlusFollows,
             'canLikePost' => $this->AllowPlusOnes,
