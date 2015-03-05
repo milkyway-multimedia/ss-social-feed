@@ -118,10 +118,10 @@ class Facebook extends Oauth
 		    'Venue' => isset($data['venue']) && isset($data['venue']['name']) ? $data['venue']['name'] : '',
 		    'VenueLink' => isset($data['venue']) && isset($data['venue']['link']) ? $data['venue']['link'] : '',
 		    'VenuePageID' => isset($data['venue']) && isset($data['venue']['username']) ? $data['venue']['username'] : '',
-
-		    // Specifically for reviews
-		    'Rating' => isset($data['rating']) ? $data['rating'] : '',
 		];
+
+		if(isset($data['rating']))
+			$post['Rating'] = $data['rating'];
 
 		if(isset($data['review_text']))
 			$post['Content'] = '<p>' . $data['review_text'] . '</p>';
