@@ -110,7 +110,11 @@ abstract class Oauth extends HTTP {
 		if (!isset($_GET['code'])) {
 			$url = $provider->getAuthorizationUrl();
 			\Session::set(get_called_class() . '--oauth2state', $provider->state);
-			return \Controller::curr()->redirect($url);
+
+			if(\Controller::curr()->Request->isAjax())
+				\Controller::curr()->Response->addHeader('X-SocialFeed-RedirectForOauth', $url);
+			else
+				return \Controller::curr()->redirect($url);
 		} elseif (empty($_GET['state']) || ($_GET['state'] !== \Session::get(get_called_class() . '--oauth2state'))) {
 			\Session::clear(get_called_class() . '--oauth2state');
 			throw new \Exception('Invalid state');

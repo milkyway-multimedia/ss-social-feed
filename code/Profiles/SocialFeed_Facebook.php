@@ -25,6 +25,11 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 		'AllowPostShare' => 'Boolean',
 		'AllowPostSend' => 'Boolean',
 		'AllowHashTagLinks'  => 'Boolean',
+	    'OnlyShowIfRatingIsHigherThan' => "Enum('4,3,2,1,0','2')",
+	);
+
+	private static $defaults = array(
+		'OnlyShowIfRatingIsHigherThan' => 2,
 	);
 
 	private static $db_to_environment_mapping = [
@@ -122,6 +127,9 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 				$post['Description'] = $this->addHashTags($post['Description']);
 		}
 
+		if(isset($post['Rating']) && $post['Rating'] <= $this->OnlyShowIfRatingIsHigherThan)
+			$post['hidden'] = true;
+
 		return $post;
 	}
 
@@ -138,12 +146,10 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 		return $this->LikeButton($url);
 	}
 
-	protected function provideDetailsForPlatform() {
-		$this->beforeExtending('updatePlatformDetails', function(&$details) {
-			$details[$this->fieldLabel('Type')] = $this->Type;
-		});
-
-		return parent::provideDetailsForPlatform();
+	protected function detailsForPlatform() {
+		return array_merge(parent::detailsForPlatform(), [
+			$this->fieldLabel('Type') => $this->Type,
+		]);
 	}
 
 	protected function addHashTags($content) {

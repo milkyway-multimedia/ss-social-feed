@@ -223,12 +223,7 @@ class SocialFeed_Profile extends DataObject {
     }
 
 	protected function provideDetailsForPlatform() {
-		$details = [];
-
-		if($this->Username)
-			$details[$this->fieldLabel('Username')] = $this->Username;
-
-		$this->extend('updatePlatformDetails', $details);
+		$details = $this->detailsForPlatform();
 
 		$rendered = count($details) ? implode(' ', array_map(function($setting, $value) {
 			return '<li>' . $setting . ': ' . $value . '</li>';
@@ -240,5 +235,11 @@ class SocialFeed_Profile extends DataObject {
 		$this->extend('onRenderPlatformDetails', $details, $rendered);
 
 		return $rendered;
+	}
+
+	protected function detailsForPlatform() {
+		return [
+			$this->fieldLabel('Username') => $this->Username,
+		];
 	}
 }

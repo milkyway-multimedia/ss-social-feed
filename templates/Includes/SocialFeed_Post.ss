@@ -32,6 +32,7 @@
 
         <% if $Rating %>
         <p class="panel-post--rating">
+            <i class="panel-post--rating-{$Rating}"></i>
             <span class="panel-post--rating-label">
                 $Rating <% _t('STAR', 'Star') %>
             </span>

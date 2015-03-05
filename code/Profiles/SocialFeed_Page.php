@@ -72,4 +72,10 @@ class SocialFeed_Page extends SocialFeed_Profile {
     public function LikePostButton($url = '') {
         return $this->LikeButton($url);
     }
+
+	protected function detailsForPlatform() {
+		return array_merge(parent::detailsForPlatform(), [
+			$this->fieldLabel('Page') => $this->Page()->Title,
+		]);
+	}
 }

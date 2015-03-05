@@ -4,3 +4,7 @@ Name: social-feed-extensions
 SiteConfig:
   extensions:
     - 'Milkyway\SS\SocialFeed\Extensions\SiteConfig'
+
+LeftAndMain:
+  extra_requirements_javascript:
+    - 'social-feed/js/mwm.social-feed.admin.js'

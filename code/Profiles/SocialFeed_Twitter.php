@@ -113,11 +113,9 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
         return $this->customise(['twitterUser' => $this->setting('Username')])->renderWith('Twitter_MentionButton');
     }
 
-	protected function provideDetailsForPlatform() {
-		$this->beforeExtending('updatePlatformDetails', function(&$details) {
-			$details[$this->fieldLabel('Type')] = $this->Type;
-		});
-
-		return parent::provideDetailsForPlatform();
+	protected function detailsForPlatform() {
+		return array_merge(parent::detailsForPlatform(), [
+			$this->fieldLabel('Type') => $this->Type,
+		]);
 	}
 } 

@@ -79,6 +79,10 @@ class Collector {
 
             if(!($post instanceof \ViewableData)) {
                 $post = $profile->processPost(array_merge($postSettings, $post));
+
+	            if(isset($post['hidden']) && $post['hidden'])
+		            continue;
+
                 $post['Profile'] = $profile;
                 $this->convertToArrayData($post);
                 $post['forTemplate'] = \ArrayData::create($post)->renderWith($template);
@@ -86,6 +90,9 @@ class Collector {
             }
             else {
                 $profile->processPost($postSettings, $post);
+
+	            if(isset($post['hidden']) && $post['hidden'])
+		            continue;
 
                 foreach($postSettings as $setting => $value)
                     $post->$setting = $value;
