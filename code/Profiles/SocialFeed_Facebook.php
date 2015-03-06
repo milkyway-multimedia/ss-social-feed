@@ -26,6 +26,7 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 		'AllowPostSend' => 'Boolean',
 		'AllowHashTagLinks'  => 'Boolean',
 	    'OnlyShowIfRatingIsHigherThan' => "Enum('4,3,2,1,0','2')",
+	    'DoNotShowIfExpired' => 'Boolean',
 	);
 
 	private static $defaults = array(
@@ -130,6 +131,9 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 		}
 
 		if(isset($post['Rating']) && $post['Rating'] <= $this->OnlyShowIfRatingIsHigherThan)
+			$post['hidden'] = true;
+
+		if($this->DoNotShowIfExpired && isset($post['Expires']) && $post['Expires'] && $post['Expires']->InPast())
 			$post['hidden'] = true;
 
 		return $post;
