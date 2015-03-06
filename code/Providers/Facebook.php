@@ -95,6 +95,7 @@ class Facebook extends Oauth implements \Flushable
 			'AuthorID'      => isset($data['from']) && isset($data['from']['id']) ? $data['from']['id'] : '',
 			'AuthorURL'     => isset($data['from']) && isset($data['from']['id']) ? \Controller::join_links($this->url, $data['from']['id']) : \Controller::join_links($this->url, $userId),
 			'Avatar'        => isset($data['from']) && isset($data['from']['id']) ? \Controller::join_links($this->endpoint, $data['from']['id'], 'picture') : '',
+			'Title'       => isset($data['title']) ? $data['title']: '',
 			'Content'       => isset($data['message']) ? $this->textParser()->text($data['message']) : '',
 			'Picture'       => $this->getPictureFromData($data),
 			'Cover'         => isset($data['cover']) ? $this->getPictureFromData($data['cover']) : '',
@@ -118,7 +119,25 @@ class Facebook extends Oauth implements \Flushable
 		    'Venue' => isset($data['venue']) && isset($data['venue']['name']) ? $data['venue']['name'] : '',
 		    'VenueLink' => isset($data['venue']) && isset($data['venue']['link']) ? $data['venue']['link'] : '',
 		    'VenuePageID' => isset($data['venue']) && isset($data['venue']['username']) ? $data['venue']['username'] : '',
+
+		    // Specifically for offers
+		    'Expires' => isset($data['expiration_time']) ? \DBField::create_field('SS_Datetime', $data['expiration_time']) : null,
+		    'Terms' => isset($data['terms']) ? $this->textParser()->text($data['terms']) : null,
+		    'CouponType' => isset($data['coupon_type']) ? $data['coupon_type'] : '',
+		    'QRCode' => isset($data['qrcode']) ? $data['qrcode'] : '',
+		    'Barcode' => isset($data['barcode']) ? $data['barcode'] : '',
+		    'RedeemUrl' => isset($data['redemption_link']) ? $data['redemption_link'] : '',
+		    'RedeemCode' => isset($data['redemption_code']) ? $data['redemption_code'] : '',
 		];
+
+		if(!$post['ObjectName'] && $post['Title'])
+			$post['ObjectName'] = $post['Title'];
+
+		if($post['CouponType'] && !$post['RedeemUrl'])
+			$post['RedeemUrl'] = $post['Link'];
+
+		if(!$post['ObjectURL'] && $post['RedeemUrl'])
+			$post['ObjectURL'] = $post['RedeemUrl'];
 
 		if(isset($data['rating']))
 			$post['Rating'] = $data['rating'];
@@ -239,6 +258,9 @@ class Facebook extends Oauth implements \Flushable
 				$link = $data['picture'];
 			elseif(isset($data['cover_photo'])) {
 				$link = $data['cover_photo'];
+			}
+			elseif(isset($data['image_url'])) {
+				$link = $data['image_url'];
 			}
 		}
 		else

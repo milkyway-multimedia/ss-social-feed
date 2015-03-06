@@ -51,15 +51,16 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 						'events' => _t('SocialFeed_Facebook.EVENTS', 'Events'),
 						'links' => _t('SocialFeed_Facebook.LINKS', 'Posted links'),
 						'milestones' => _t('SocialFeed_Facebook.MILESTONES', 'Milestones'),
-						'offers' => _t('SocialFeed_Facebook.OFFERS', 'Offers'),
 						'photos' => _t('SocialFeed_Facebook.PHOTOS_TAGGED_IN', 'Photos where I have been tagged'),
 						'photos/uploaded' => _t('SocialFeed_Facebook.UPLOADED_PHOTOS', 'Uploaded photos'),
 						'videos' => _t('SocialFeed_Facebook.VIDEOS_TAGGED_IN', 'Videos where I have been tagged'),
 						'videos/uploaded' => _t('SocialFeed_Facebook.VIDEOS_UPLOADED_PHOTOS', 'Uploaded videos'),
 					];
 
-					if(class_exists('League\OAuth2\Client\Token\AccessToken'))
+					if(class_exists('League\OAuth2\Client\Token\AccessToken')) {
 						$types['ratings'] = _t('SocialFeed_Facebook.RATINGS', 'Reviews received (requires Facebook login permissions)');
+						$types['offers'] = _t('SocialFeed_Facebook.OFFERS', 'Offers (requires Facebook login permissions)');
+					}
 
 					$type->setSource($types);
 				}
@@ -84,7 +85,8 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 
 	public function getRequiresExtendedPermissions() {
 		switch ($this->Type) {
-			case 'ratings':
+			case 'ratings';
+		    case 'offers';
 				return ['manage_pages'];
 			default:
 				return [];

@@ -1,4 +1,30 @@
-<% if $Image || $HeroShot %>
+<% if $CouponType %>
+<figure class="panel-post-media has-offer">
+    <% if $Picture %>
+        <% if $ObjectURL %>
+            <a href="$ObjectURL" target="_blank"><img src="$Picture" alt="$ObjectName" /></a>
+        <% else %>
+            <img src="$Picture" alt="$ObjectName" />
+        <% end_if %>
+    <% end_if %>
+
+    <figcaption class="panel-post-media-caption panel-post-offer--details">
+        <% if $ObjectURL && $Title %>
+            <h5 class="panel-post-offer--title"><a href="$ObjectURL" target="_blank">$Title</a><% if $RedeemCode %> <span class="panel-post-offer--redeem-code">$RedeemCode</span><% end_if %></h5>
+        <% else_if $Title %>
+            <h5 class="panel-post-offer--title">$Title<% if $RedeemCode %> <span class="panel-post-offer--redeem-code">$RedeemCode</span><% end_if %></h5>
+        <% else_if $RedeemCode %>
+            <h5 class="panel-post-offer--redeem-code">$RedeemCode</h5>
+        <% end_if %>
+        <% if $Expires %><h6 class="panel-post-offer--expires"><% _t('EXPIRES', 'Expires') %> <time class="panel-post-offer--expires-time">$Expires.Full</time></h6><% end_if %>
+        <% if $RedeemUrl %>
+            <a class="btn btn-sm btn-default panel-post-offer--redeem-url" href="$RedeemUrl" target="_blank"><% _t('CLAIM_OFFER', 'Claim offer') %></a><% end_if %>
+        <% if $Terms %>
+            $Terms
+        <% end_if %>
+    </figcaption>
+</figure>
+<% else_if $Image || $HeroShot %>
 <figure class="panel-post-media has-image">
     <% if $HeroShot %>
         <img src="$HeroShot.URL" alt="<% if $Title %>$Title<% else %>$ObjectName<% end_if %>" />

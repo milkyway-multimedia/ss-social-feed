@@ -40,7 +40,7 @@
         <% end_if %>
 
         <div class="panel-post--contents">
-        $Content
+            $Content
         </div>
 
         <% include SocialFeed_Media %>
