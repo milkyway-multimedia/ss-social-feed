@@ -9,7 +9,7 @@ use Milkyway\SS\SocialFeed\Providers\Model\Oauth;
  * @package reggardocolaianni.com
  * @author  Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
-class Facebook extends Oauth
+class Facebook extends Oauth implements \Flushable
 {
 	const VERSION = 'v2.2';
 
@@ -297,5 +297,9 @@ class Facebook extends Oauth
 		}
 
 		return null;
+	}
+
+	public static function flush() {
+		singleton(__CLASS__)->cleanCache();
 	}
 }
