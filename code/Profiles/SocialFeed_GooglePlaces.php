@@ -33,21 +33,28 @@ class SocialFeed_GooglePlaces extends SocialFeed_Profile {
 				$fields->removeByName('LocationName');
 				$fields->removeByName('LocationAddress');
 
-				$fields->replaceField('Username', $location = \Select2Field::create('LocationAndUsername', _t('GooglePlaces.LOCATION', 'Location'), '', function($query = '', $limit = 10) {
-						return $query ? \Object::create($this->Provider, 0, (array) $this->OauthConfiguration)->textSearch($query, [
+				if(\ClassInfo::exists('Select2Field')) {
+					$fields->replaceField('Username', $location = \Select2Field::create('LocationAndUsername', _t('GooglePlaces.LOCATION', 'Location'), '', function ($query = '', $limit = 10) {
+						return $query ? \Object::create($this->Provider, 0, (array)$this->OauthConfiguration)->textSearch($query, [
 							'query' => [
 								'key' => $this->setting('ApiKey'),
 							]
 						]) : [];
 					}, null, 'name||formatted_address', 'place_id||name||formatted_address')
-//					->setSuggestURL('https://maps.googleapis.com/maps/api/place/textsearch/json?key=' . $this->setting('ApiKey'))
-					->setPrefetch(false)
-					->requireSelection(true)
-					->setMinimumSearchLength(15)
-				);
+						->setPrefetch(false)
+						->requireSelection(true)
+						->setMinimumSearchLength(15)
+					);
 
-				if($this->LocationName) {
-					$location->setEmptyString($this->LocationName . ' - ' . $this->LocationAddress);
+					if ($this->LocationName) {
+						$location->setEmptyString($this->LocationName . ' - ' . $this->LocationAddress);
+					}
+				}
+				else if($username = $fields->dataFieldByName('Username')) {
+					$username->setTitle(_t('SocialFeed.PLACE_ID', 'Place ID'));
+					$username->setDescription(_t('SocialFeed.DESC-PLACE_ID', '<a href="{url}">You can find the place ID of your location here.</a>', [
+						'url' => 'https://developers.google.com/places/documentation/place-id#find-id',
+					]));
 				}
 			}
 		);

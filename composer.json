@@ -18,14 +18,9 @@
         "milkyway-multimedia/ss-mwm":                 "dev-master"
     },
     "suggest":      {
-        "league/oauth2-client": "You will need Oauth2 authentication to unlock additional items to pull from a provider (such as Facebook ratings)"
+        "league/oauth2-client": "You will need Oauth2 authentication to unlock additional items to pull from a provider (such as Facebook ratings)",
+        "milkyway-multimedia/ss-mwm-autocomplete": "To add location finding via Google, in order to find Google Places with just the address"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url":  "https://github.com/milkyway-multimedia/ss-mwm"
-        }
-    ],
     "extra":        {
         "installer-name": "social-feed"
     }
