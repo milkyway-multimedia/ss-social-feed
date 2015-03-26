@@ -52,7 +52,7 @@ class SocialFeed_GooglePlaces extends SocialFeed_Profile {
 				}
 				else if($username = $fields->dataFieldByName('Username')) {
 					$username->setTitle(_t('SocialFeed.PLACE_ID', 'Place ID'));
-					$username->setDescription(_t('SocialFeed.DESC-PLACE_ID', '<a href="{url}">You can find the place ID of your location here.</a>', [
+					$username->setDescription(_t('SocialFeed.DESC-PLACE_ID', '<a href="{url}" target="_blank">You can find the place ID of your location here.</a>', [
 						'url' => 'https://developers.google.com/places/documentation/place-id#find-id',
 					]));
 				}
