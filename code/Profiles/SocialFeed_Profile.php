@@ -219,7 +219,12 @@ class SocialFeed_Profile extends DataObject {
 		    };
 	    }
 
-	    return singleton('env')->get($setting, [$this, $parent], null, null, $callbacks, $cache, $cache);
+        return singleton('env')->get($setting, null, [
+            'objects' => [$this, $parent],
+            'beforeConfigNamespaceCheckCallbacks' => $callbacks,
+            'fromCache' => $cache,
+            'doCache' => $cache,
+        ]);
     }
 
 	protected function provideDetailsForPlatform() {

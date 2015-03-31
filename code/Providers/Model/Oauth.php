@@ -1,7 +1,6 @@
 <?php namespace Milkyway\SS\SocialFeed\Providers\Model;
 
 use GuzzleHttp\Subscriber\Oauth\Oauth1;
-use Milkyway\SS\Config;
 
 /**
  * Milkyway Multimedia
@@ -137,7 +136,7 @@ abstract class Oauth extends HTTP {
 	}
 
 	private function tokenLocation() {
-		$folder = Config::get('SocialFeed.token_directory') ?: TEMP_FOLDER;
+		$folder = singleton('env')->get('SocialFeed.token_directory') ?: TEMP_FOLDER;
 		return $folder . DIRECTORY_SEPARATOR . '.' . str_replace('\\', '__' , get_class($this)) . '_token';
 	}
 } 
