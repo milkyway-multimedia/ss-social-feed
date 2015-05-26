@@ -22,15 +22,19 @@ class Collector {
     /** @var string Sorting of list */
     protected $sort = 'Priority DESC';
 
+    /** @var string Prepend to templates */
+    protected $templatePrepend = '';
+
 	/** @var int Amount collected already */
 	private $collected = 0;
 
-    public function __construct(\Countable $profiles, $parent = null, $limit = null, $cache = 6, $sort = 'Priority DESC') {
+    public function __construct(\Countable $profiles, $parent = null, $limit = null, $cache = 6, $sort = 'Priority DESC', $templatePrepend = '') {
         $this->profiles = $profiles;
         $this->parent = $parent;
         $this->limit = $limit;
         $this->cache = $cache;
         $this->sort = $sort;
+        $this->templatePrepend = $templatePrepend;
     }
 
     public function all() {
@@ -69,7 +73,9 @@ class Collector {
 	    if($profile->RequiresExtendedPermissions)
 			$provider = $provider->extendedPermissions($profile->RequiresExtendedPermissions);
 
-        $template = $profile->Templates;
+        $template = $this->templatePrepend ? array_merge(array_map(function($template) {
+            return $this->templatePrepend . '_' . $template;
+        }, (array)$profile->Templates), (array)$profile->Templates) : $profile->Templates;
         $posts = $provider->all((array) $profile->getFeedSettings($this->parent));
         $postSettings = (array) $profile->getPostSettings($this->parent);
 
@@ -106,6 +112,11 @@ class Collector {
         }
 
         return $feed;
+    }
+
+    public function prependTemplate($templatePrepend = '') {
+        $this->templatePrepend = $templatePrepend;
+        return $this;
     }
 
     protected function convertToArrayData(&$data) {
