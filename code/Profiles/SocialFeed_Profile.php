@@ -212,7 +212,10 @@ class SocialFeed_Profile extends DataObject {
 	    $callbacks = [];
 
 	    if(\ClassInfo::exists('SiteConfig')) {
-		    $prefix = get_class($this) == 'SocialFeed_Profile' ? '' : str_replace('SocialFeed_', '', get_class($this));
+            if(!in_array($setting, array_keys(singleton('SocialFeed_Profile')->config()->db_to_environment_mapping)))
+		        $prefix = get_class($this) == 'SocialFeed_Profile' ? '' : str_replace('SocialFeed_', '', get_class($this)).'_';
+            else
+                $prefix = '';
 
 		    $callbacks['SiteConfig'] = function($keyParts, $key) use($prefix, $setting) {
 			    return SiteConfig::current_site_config()->{$prefix.$setting};

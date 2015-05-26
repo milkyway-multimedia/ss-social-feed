@@ -71,4 +71,8 @@ class SiteConfig extends \DataExtension
             ]
         );
     }
+
+    public function getFacebook_AppID() {
+        return $this->owner->getField('Facebook_AppId');
+    }
 }

@@ -94,6 +94,10 @@ class HasProfiles extends \DataExtension {
     }
 
     protected function updateFields($fields) {
+        $fields->removeByName('SocialFeed_Profiles');
+        $fields->removeByName('SocialFeed_Limit');
+        $fields->removeByName('CacheHours');
+        $fields->removeByName('AddThis');
         $fields->addFieldToTab('Root', \Tab::create(
             $this->tab ?: 'SocialPlatforms',
             $this->tab ?: _t('SocialFeed.SOCIAL_PLATFORMS', 'Social Platforms'),

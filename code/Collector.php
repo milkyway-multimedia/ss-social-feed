@@ -97,7 +97,7 @@ class Collector {
             else {
                 $profile->processPost($postSettings, $post);
 
-	            if(isset($post['hidden']) && $post['hidden'])
+	            if(isset($post->hidden) && $post->hidden)
 		            continue;
 
                 foreach($postSettings as $setting => $value)

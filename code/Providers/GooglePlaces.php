@@ -19,6 +19,9 @@ class GooglePlaces extends HTTP {
         try {
             $body = $this->getBodyFromCache($this->endpoint(), $settings);
 
+            if(!isset($body['result']['reviews']))
+                return $all;
+
             foreach($body['result']['reviews'] as $id => $post) {
 	            $post['id'] = $id;
 	            $post['url'] = isset($body['result']['url']) ? $body['result']['url'] : '';
@@ -47,6 +50,22 @@ class GooglePlaces extends HTTP {
 		return $all;
 	}
 
+    public function details($settings = []) {
+        $body = [];
+
+        try {
+            $body = $this->getBodyFromCache($this->endpoint(), $settings);
+
+            if(isset($body['result'])) {
+                $body = $body['result'];
+            }
+        } catch (\Exception $e) {
+            \Debug::show($e->getMessage());
+        }
+
+        return $body;
+    }
+
     protected function handlePost(array $data, $settings = []) {
         $post = array(
             'ID' => isset($data['id']) ? $data['id'] : 0,
@@ -71,6 +90,6 @@ class GooglePlaces extends HTTP {
     }
 
     protected function isValid($body) {
-        return $body && is_array($body) && count($body) && (isset($body['results']) || (isset($body['result']) && isset($body['result']['reviews'])));
+        return $body && is_array($body) && count($body) && (isset($body['results']) || (isset($body['result'])));
     }
 } 

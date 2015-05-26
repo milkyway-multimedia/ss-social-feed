@@ -46,7 +46,7 @@ class SocialFeed_GooglePlaces extends SocialFeed_Profile {
 						->setMinimumSearchLength(15)
 					);
 
-					if ($this->LocationName) {
+					if ($this->LocationAddress) {
 						$location->setEmptyString($this->LocationName . ' - ' . $this->LocationAddress);
 					}
 				}
@@ -74,6 +74,19 @@ class SocialFeed_GooglePlaces extends SocialFeed_Profile {
 			$this->LocationName = $values[1];
 			$this->LocationAddress = $values[2];
 		}
+	}
+
+	public function saveUsername($value) {
+		if(!$this->LocationAndUsername && ($this->Username != $value || !$this->LocationAddress) && $this->setting('ApiKey')) {
+			$details = \Object::create($this->Provider, 0, (array)$this->OauthConfiguration)->details((array)$this->FeedSettings);
+
+			if(isset($details['name']))
+				$this->LocationName = $details['name'];
+
+			$this->LocationAddress = isset($details['formatted_address']) ? $details['formatted_address'] : 'N/A';
+		}
+
+		$this->Username = $value;
 	}
 
 	public function setting($setting, $parent = null, $cache = true) {

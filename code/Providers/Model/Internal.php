@@ -22,20 +22,23 @@ abstract class Internal implements Provider {
         if($object->AllChildrenIncludingDeleted()->limit($limit)->exists()) {
             foreach($object->AllChildrenIncludingDeleted()->limit($limit) as $child) {
                 $data = ($child instanceof \RedirectorPage) ? $child->ContentSource() : $child;
-
-                if(!$data->Posted)
-                    $data->Posted = \DBField::create_field('Datetime', $child->obj('Created')->Value);
-
-                if(!$data->Priority)
-                    $data->Priority = strtotime($data->Posted);
-
-                if(!$data->Link && $data->hasMethod('Link'))
-                    $data->AuthorURL = $data->Link();
-
-                $list[] = $data;
+                $list[] = $this->process($data);
             }
         }
 
         return $list;
+    }
+
+    protected function process($item) {
+        if(!$item->Posted)
+            $item->Posted = \DBField::create_field('Datetime', $item->obj('Created')->Value);
+
+        if(!$item->Priority)
+            $item->Priority = strtotime($item->Posted);
+
+        if(!$item->Link && $item->hasMethod('Link'))
+            $item->AuthorURL = $item->Link();
+
+        return $item;
     }
 } 
