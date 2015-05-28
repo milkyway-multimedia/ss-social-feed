@@ -62,7 +62,7 @@ class Collector {
                 $feed = $feed->sort('Priority', 'DESC');
         }
 
-        return $feed;
+        return $this->limit ? $feed->limit($this->limit) : $feed;
     }
 
     public function collect($profile) {
@@ -133,6 +133,7 @@ class Collector {
     }
 
 	protected function isOverTheLimit() {
-		return $this->limit !== null && $this->collected >= $this->limit;
+//		return $this->limit !== null && $this->collected >= $this->limit;
+        return false;
 	}
 } 
