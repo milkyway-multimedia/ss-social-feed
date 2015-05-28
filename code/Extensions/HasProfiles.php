@@ -121,6 +121,7 @@ class HasProfiles extends \DataExtension {
         $config
             ->removeComponentsByType('GridFieldAddNewButton')
             ->addComponent(new \GridFieldAddExistingSearchButton('buttons-before-right'))
+            ->addComponent(new \GridFieldDeleteAction(true), 'GridFieldDeleteAction')
             ->addComponent(new \GridFieldAddNewMultiClass);
 
         if($columns = $config->getComponentByType('GridFieldDataColumns')) {

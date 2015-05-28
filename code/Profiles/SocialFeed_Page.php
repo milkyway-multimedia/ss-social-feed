@@ -74,8 +74,8 @@ class SocialFeed_Page extends SocialFeed_Profile {
     }
 
 	protected function detailsForPlatform() {
-		return array_merge(parent::detailsForPlatform(), [
+        return array_diff_key(array_merge(parent::detailsForPlatform(), [
 			$this->fieldLabel('Page') => $this->Page()->Title,
-		]);
+        ]), ['Username'=>'']);
 	}
 }
