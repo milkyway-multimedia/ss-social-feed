@@ -12,15 +12,38 @@ use SS_HTTPRequest;
 use Session;
 use DataModel;
 use SS_HTTPResponse;
+use DOMDocument;
+use DOMXPath;
 
 class RemoveMultipleFbRoots implements RequestFilter {
 	public function preRequest(SS_HTTPRequest $request, Session $session, DataModel $model) {
 	}
 
 	public function postRequest(SS_HTTPRequest $request, SS_HTTPResponse $response, DataModel $model) {
-		$count = substr_count($response->getBody(), '<div id="fb-root"></div>');
+		if (substr_count($response->getBody(), 'id="fb-root"') < 2) return;
 
-		if ($count > 1)
-			$response->setBody(preg_replace('/<div id="fb-root"><\/div>/', '', $count - 1));
+		try {
+			$doc = new DOMDocument;
+			$doc->preserveWhiteSpace = false;
+			libxml_use_internal_errors(true);
+			$doc->loadhtml($response->getBody());
+			libxml_use_internal_errors(false);
+
+			$xpath = new DOMXPath($doc);
+
+			$ns = $xpath->query('//div[@id="fb-root"]');
+			$count = 0;
+			foreach($ns as $node) {
+				$node->parentNode->removeChild($node);
+				$count++;
+
+				if($ns->length >= $count)
+					continue;
+			}
+
+			$response->setBody($doc->savehtml());
+		} catch (\Exception $e) {
+
+		}
 	}
 }

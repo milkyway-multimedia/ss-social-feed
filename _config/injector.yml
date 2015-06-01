@@ -2,13 +2,13 @@
 Name: social-feed--injector
 ---
 Injector:
+  'Milkyway\SS\SocialFeed\Contracts\TextParser':
+    class: 'Milkyway\SS\SocialFeed\Parsers\DefaultParser'
+
   RequestProcessor:
     properties:
       filters:
         - '%$Milkyway\SS\SocialFeed\Control\RemoveMultipleFbRoots'
-Injector:
-  'Milkyway\SS\SocialFeed\Contracts\TextParser':
-    class: 'Milkyway\SS\SocialFeed\Parsers\DefaultParser'
 ---
 Only:
   classexists: 'Parsedown'
