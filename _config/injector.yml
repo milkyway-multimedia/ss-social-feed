@@ -2,6 +2,11 @@
 Name: social-feed--injector
 ---
 Injector:
+  RequestProcessor:
+    properties:
+      filters:
+        - '%$Milkyway\SS\SocialFeed\Control\RemoveMultipleFbRoots'
+Injector:
   'Milkyway\SS\SocialFeed\Contracts\TextParser':
     class: 'Milkyway\SS\SocialFeed\Parsers\DefaultParser'
 ---
@@ -22,7 +27,7 @@ Injector:
     class: 'ParsedownExtra'
 ---
 Only:
-  moduleexists: 'mwm'
+  moduleexists: 'mwm-utilities'
 ---
 ShortcodeParser:
   providers:
