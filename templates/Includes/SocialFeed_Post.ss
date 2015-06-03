@@ -27,7 +27,7 @@
                 <% if $AuthorName %>$AuthorName<% else_if $Author %>$Author<% else %>$Title<% end_if %>
             <% end_if %>
 
-			<time class="panel-post-body--header--time">$Posted.Ago</time>
+			<time class="panel-post-body--header--time" datetime="$Posted.Rfc3339">$Posted.Ago</time>
 		</h4>
 
         <% if $Rating %>

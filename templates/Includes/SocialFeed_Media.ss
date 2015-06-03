@@ -2,9 +2,9 @@
 <figure class="panel-post-media has-offer">
     <% if $Picture %>
         <% if $ObjectURL %>
-            <a href="$ObjectURL" target="_blank"><img src="$Picture" alt="$ObjectName" /></a>
+            <a href="$ObjectURL.URLATT" target="_blank"><img src="$Picture" alt="$ObjectName" /></a>
         <% else %>
-            <img src="$Picture" alt="$ObjectName" />
+            <img src="$Picture.URLATT" alt="$ObjectName" />
         <% end_if %>
     <% end_if %>
 
@@ -33,14 +33,14 @@
 <% else_if $Image || $HeroShot %>
 <figure class="panel-post-media has-image">
     <% if $HeroShot %>
-        <img src="$HeroShot.URL" alt="<% if $Title %>$Title<% else %>$ObjectName<% end_if %>" />
+        <img src="$HeroShot.URL.URLATT" alt="<% if $Title %>$Title<% else %>$ObjectName<% end_if %>" />
     <% else %>
-		<img src="$Image.URL" alt="<% if $Title %>$Title<% else %>$ObjectName<% end_if %>" />
+		<img src="$Image.URL.URLATT" alt="<% if $Title %>$Title<% else %>$ObjectName<% end_if %>" />
     <% end_if %>
 
 	<figcaption class="panel-post-media-caption">
         <% if $ObjectURL && $ObjectName %>
-			<h5><a href="$ObjectURL" target="_blank">$ObjectName</a></h5>
+			<h5><a href="$ObjectURL.URLATT" target="_blank">$ObjectName</a></h5>
         <% else_if $ObjectName %>
 			<h5>$ObjectName</h5>
         <% end_if %>
@@ -51,14 +51,14 @@
 <% else_if $Picture %>
 	<figure class="panel-post-media has-image">
         <% if $ObjectURL %>
-			<a href="$ObjectURL" target="_blank"><img src="$Picture" alt="$ObjectName" /></a>
+			<a href="$ObjectURL.URLATT" target="_blank"><img src="$Picture" alt="$ObjectName" /></a>
         <% else %>
-			<img src="$Picture" alt="$ObjectName" />
+			<img src="$Picture.URLATT" alt="$ObjectName" />
         <% end_if %>
 
 		<figcaption class="panel-post-media-caption">
             <% if $ObjectURL && $ObjectName %>
-				<h5><a href="$ObjectURL" target="_blank">$ObjectName</a></h5>
+				<h5><a href="$ObjectURL.URLATT" target="_blank">$ObjectName</a></h5>
             <% else_if $ObjectName %>
 				<h5>$ObjectName</h5>
             <% end_if %>
@@ -67,11 +67,11 @@
 	</figure>
 <% else_if $ObjectURL %>
 	<figure class="panel-post-media">
-		<a href="$ObjectURL" target="_blank">$ObjectURL</a>
+		<a href="$ObjectURL.URLATT" target="_blank">$ObjectURL</a>
 
 		<figcaption class="panel-post-media-caption">
             <% if $ObjectURL && $ObjectName %>
-				<h6><a href="$ObjectURL" target="_blank">$ObjectName</a></h6>
+				<h6><a href="$ObjectURL.URLATT" target="_blank">$ObjectName</a></h6>
             <% else_if $ObjectName %>
 				<h6>$ObjectName</h6>
             <% end_if %>
@@ -83,9 +83,9 @@
 		<figure class="panel-post-media">
             <% if $Picture %>
                 <% if $Link %>
-					<a href="$Link" target="_blank"><img src="$Picture" alt="$Link" /></a>
+					<a href="$Link.URLATT" target="_blank"><img src="$Picture.URLATT" alt="$Link" /></a>
                 <% else %>
-					<img src="$Picture" alt="$Link" />
+					<img src="$Picture.URLATT" alt="$Link" />
                 <% end_if %>
             <% end_if %>
 
@@ -103,7 +103,7 @@
             <% if $ObjectName %>
                 <h5 class="panel-post-event--title">
                 <% if $Link %>
-                    <a href="$Link" target="_blank">$ObjectName</a>
+                    <a href="$Link.URLATT" target="_blank">$ObjectName</a>
                 <% else %>
                     $ObjectName
                 <% end_if %>
@@ -114,7 +114,7 @@
                     <label class="panel-post-event--venue-label">At </label>
                     <strong>
                     <% if $VenueLink %>
-                        <a href="$VenueLink" target="_blank">$Venue</a>
+                        <a href="$VenueLink.URLATT" target="_blank">$Venue</a>
                     <% else %>
                         $Venue
                     <% end_if %>

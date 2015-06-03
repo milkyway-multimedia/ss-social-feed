@@ -1,3 +1,3 @@
 $require_facebook_script
 
-<div class="fb-share-button" data-href="<% if $fbLink %>$fbLink<% else_if $fbUser %>http://facebook.com/$fbUser<% else_if $SiteConfig.Facebook_Username %>http://facebook.com/$SiteConfig.Facebook_Username<% else %>$absoluteBaseURL<% end_if %>" data-width="100" data-layout="<% if $fbLayout %>$fbLayout<% else %>button_count<% end_if %>" data-ref="<% if $fbRef %>$fbRef<% else %>social-feed-shares<% end_if %>"></div>
+<span class="fb-share-button" data-href="<% if $fbLink %>$fbLink<% else_if $fbUser %>http://facebook.com/$fbUser<% else_if $SiteConfig.Facebook_Username %>http://facebook.com/$SiteConfig.Facebook_Username<% else %>$absoluteBaseURL<% end_if %>" data-width="100" data-layout="<% if $fbLayout %>$fbLayout<% else %>button_count<% end_if %>" data-ref="<% if $fbRef %>$fbRef<% else %>social-feed-shares<% end_if %>"></span>

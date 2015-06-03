@@ -1,4 +1,4 @@
-<div class="addthis_toolbox addthis_default_style" addthis:url="<% if $addThisUrl %>$addThisUrl<% else_if $Top.Link %>{$absoluteBaseURL}{$Top.Link.Trim('/','l')}<% else %>$absoluteBaseURL<% end_if %>"<% if $addThisTitle %> addthis:title="$addThisTitle"<% end_if %>>
+<div class="addthis_toolbox addthis_default_style" data-addthis-url="<% if $addThisUrl %>$addThisUrl<% else_if $Top.Link %>{$absoluteBaseURL}{$Top.Link.Trim('/','l')}<% else %>$absoluteBaseURL<% end_if %>"<% if $addThisTitle %> data-addthis-title="$addThisTitle"<% end_if %>>
 	<a class="addthis_button_facebook"></a>
 	<a class="addthis_button_twitter"></a>
 	<a class="addthis_button_pinterest_share"></a>
