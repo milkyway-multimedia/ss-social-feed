@@ -167,8 +167,8 @@ class HasProfiles extends \DataExtension {
 	    }
     }
 
-    public function getFeed() {
-        return $this->collection()->all();
+    public function Feed($templatePrepend = '') {
+        return $this->collection()->prependTemplate($templatePrepend)->all();
     }
 
     protected function collection() {

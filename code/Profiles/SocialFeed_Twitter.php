@@ -22,6 +22,8 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
         'AccessTokenSecret'   => 'Varchar',
 
         'IncludeReplies'      => 'Boolean',
+        'AllowFavourites'     => 'Boolean',
+        'AllowRetweets'       => 'Boolean',
         'AllowAuthorFollows'  => 'Boolean',
         'AllowAuthorMentions' => 'Boolean',
         'AllowHashTagTweets'  => 'Boolean',
@@ -81,7 +83,7 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
     public function getPostSettings($parent = null) {
         return array_merge(parent::getPostSettings($parent), [
                 'canLikePage' => $this->AllowAuthorFollows,
-                'canLikePost' => $this->AllowAuthorMentions,
+                'canLikePost' => $this->AllowFavourites,
             ]
         );
     }
@@ -109,8 +111,26 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
         return $this->customise(['twitterUser' => $this->setting('Username')])->renderWith('Twitter_FollowButton');
     }
 
-    public function LikePostButton() {
-        return $this->customise(['twitterUser' => $this->setting('Username')])->renderWith('Twitter_MentionButton');
+    public function LikePostButton($link = '', $id = '', $likes = 0, $likesDescriptor = '') {
+        return $this->customise([
+            'tweetId' => $id,
+            'Favourites' => $likes,
+            'FavouritesDescriptor' => $likesDescriptor,
+        ])->renderWith('Twitter_FavouriteButton');
+    }
+
+    public function RetweetButton($id, $retweets = 0, $retweetsDescriptor = '') {
+        return $this->customise([
+            'tweetId' => $id,
+            'Retweets' =>$retweets,
+            'RetweetsDescriptor' => $retweetsDescriptor,
+        ])->renderWith('Twitter_RetweetButton');
+    }
+
+    public function MentionButton() {
+        return $this->customise([
+            'twitterUser' => $this->setting('Username'),
+        ])->renderWith('Twitter_MentionButton');
     }
 
 	protected function detailsForPlatform() {

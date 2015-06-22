@@ -1,0 +1,3 @@
+$require_twitter_script
+<span class="twitter-btn">
+    <a href="https://twitter.com/intent/tweet?<% if $twitterText %>text={$twitterText.URLATT}&amp;<% end_if %><% if $twitterLink %>url={$twitterLink.URLATT}&amp;<% end_if %><% if $twitterHashtags %>hashtags={$twitterHashtags.URLATT}&amp;<% end_if %>" class="twitter-share-button" <% if $twitterLargeBtn %>data-size="large" <% end_if %>data-related="<% if $twitterUser %>$twitterUser<% else_if $SiteConfig.Twitter_Username %>$SiteConfig.Twitter_Username<% else %>mwmdesign<% end_if %>" data-lang="$localeLanguage"<% if not $twitterHideCount %> data-show-count="true"<% end_if %><% if not $twitterCountDirection %> data-count="$twitterCountDirection"<% end_if %>><% _t('TWEET', 'Tweet') %></a></span>

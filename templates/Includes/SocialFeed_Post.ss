@@ -75,7 +75,7 @@
             <% end_if %>
 
             <% if $canLikePost %>
-                $Profile.LikePostButton($Link)
+                $Profile.LikePostButton($Link,$ID,$LikesCount,$LikesDescriptor)
             <% else_if $LikesDescriptor %>
                 <span class="panel-post-likes-count panel-post-footer--likes-count"><a href="$Link" target="_blank">$LikesCount $LikesDescriptor</a></span>
             <% end_if %>
@@ -97,15 +97,23 @@
             <% end_if %>
 
             <% if $RetweetsDescriptor %>
-				<span class="post-retweets-count panel-post-footer--retweets-count">$Retweets $RetweetsDescriptor</span>
+            <span class="post-retweets-count panel-post-footer--retweets-count">
+                <% if $ID && $Profile.AllowRetweets %>
+                    $Profile.RetweetButton($ID,$Retweets,$RetweetsDescriptor)
+                <% else_if $RetweetsDescriptor %>
+                    <a href="$Link" target="_blank">$Retweets $RetweetsDescriptor</a>
+                <% end_if %>
+            </span>
             <% end_if %>
 
             <% if $UserMentionsDescriptor %>
-				<span class="panel-post-mentions-count panel-post-footer--mentions-count"><% if $UserMentions %>$UserMentions.Count<% else %>0<% end_if %> $UserMentionsDescriptor</span>
+				<span class="panel-post-mentions-count panel-post-footer--mentions-count">
+                    <a href="$AuthorURL" target="_blank"><% if $UserMentions %>$UserMentions.Count<% else %>0<% end_if %> $UserMentionsDescriptor</a>
 
-                <% if $canLikePost %>
-                    $Profile.LikePostButton($AuthorName)
-                <% end_if %>
+                    <% if $Profile.AllowAuthorMentions %>
+                        $Profile.MentionButton
+                    <% end_if %>
+                </span>
             <% end_if %>
 
             <% if $ReshareCountDescriptor %>

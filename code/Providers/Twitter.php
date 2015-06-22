@@ -47,7 +47,9 @@ class Twitter extends Oauth {
             'AuthorFriends' => isset($data['user']) && isset($data['user']['friends_count']) ? $data['user']['friends_count'] : 0,
             'Content' => isset($data['text']) ? '<p>' . $this->textParser()->text($data['text']) . '</p>' : '',
             'Favourite' => isset($data['favorited']) ? $data['favorited'] : false,
+            'Favourites' => isset($data['favorite_count']) ? $data['favorite_count'] : 0,
             'Truncated' => isset($data['truncated']) ? $data['truncated'] : false,
+            'isQuote' => isset($data['is_quote_status']) ? $data['is_quote_status'] : false,
             'Priority' => isset($data['created_at']) ? strtotime($data['created_at']) : 0,
             'Posted' => isset($data['created_at']) ? \DBField::create_field('SS_Datetime', strtotime($data['created_at'])) : null,
             'Retweeted' => isset($data['retweeted']) ? $data['retweeted'] : false,
@@ -57,10 +59,21 @@ class Twitter extends Oauth {
             'Sensitive' => isset($data['possibly_sensitive']) ? $data['possibly_sensitive'] : false,
         ];
 
+        if($post['ID'] && $post['Author']) {
+            $post['Link'] = \Controller::join_links($this->url, $data['user']['screen_name'], 'status', $post['ID']);
+        }
+
         $post['Created'] = $post['Posted'];
 
         $post['RetweetsDescriptor'] = $post['Retweets'] == 1 ? _t('SocialFeed.RETWEET', 'Retweet') : _t('SocialFeed.RETWEETS', 'Retweets');
+
+        $post['FavouritesDescriptor'] = $post['Favourites'] == 1 ? _t('SocialFeed.FAVOURITE', 'Favourite') : _t('SocialFeed.FAVOURITES', 'Favourites');
+
+        $post['LikesCount'] = $post['Likes'] = $post['Favourites'];
+        $post['LikesDescriptor'] = $post['FavouritesDescriptor'];
+
         $post['AuthorFollowersDescriptor'] = $post['AuthorFollowers'] == 1 ? _t('SocialFeed.FOLLOWER', 'Follower') : _t('SocialFeed.FOLLOWERS', 'Followers');
+
         $post['AuthorFriendsDescriptor'] = $post['AuthorFriends'] == 1 ? _t('SocialFeed.FRIEND', 'Friend') : _t('SocialFeed.FRIENDS', 'Friends');
 
         if (isset($data['entities'])) {
