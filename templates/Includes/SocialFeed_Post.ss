@@ -108,7 +108,7 @@
 
             <% if $UserMentionsDescriptor %>
 				<span class="panel-post-mentions-count panel-post-footer--mentions-count">
-                    <a href="$AuthorURL" target="_blank"><% if $UserMentions %>$UserMentions.Count<% else %>0<% end_if %> $UserMentionsDescriptor</a>
+                    <a href="$UsernameLink" target="_blank"><% if $UserMentions %>$UserMentions.Count<% else %>0<% end_if %> $UserMentionsDescriptor</a>
 
                     <% if $Profile.AllowAuthorMentions %>
                         $Profile.MentionButton

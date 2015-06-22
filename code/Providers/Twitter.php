@@ -37,8 +37,9 @@ class Twitter extends Oauth {
 
     protected function handlePost(array $data, $settings = []) {
         $post = [
-            'ID' => isset($data['id']) ? $data['id'] : 0,
+            'ID' => isset($data['id']) ? $data['id'] : '0',
             'Author' => isset($data['user']) && isset($data['user']['screen_name']) ? '@' . $data['user']['screen_name'] : '',
+            'Username' => isset($data['user']) && isset($data['user']['screen_name']) ? $data['user']['screen_name'] : '',
             'AuthorName' => isset($data['user']) && isset($data['user']['screen_name']) ? $data['user']['screen_name'] : '',
             'AuthorID' => isset($data['user']) && isset($data['user']['id']) ? $data['user']['id'] : 0,
             'AuthorURL' => isset($data['user']) && isset($data['user']['url']) ? $data['user']['url'] : '',
@@ -61,6 +62,10 @@ class Twitter extends Oauth {
 
         if($post['ID'] && $post['Author']) {
             $post['Link'] = \Controller::join_links($this->url, $data['user']['screen_name'], 'status', $post['ID']);
+        }
+
+        if($post['Username']) {
+            $post['UsernameLink'] = \Controller::join_links($this->url, $post['Username']);
         }
 
         $post['Created'] = $post['Posted'];

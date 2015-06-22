@@ -87,7 +87,7 @@ abstract class HTTP implements Provider {
     }
 
     protected function parseResponse(ResponseInterface $response) {
-        return $response->json();
+        return $response->json(['big_int_strings' => true,]);
     }
 
     protected function isValid($body) {
