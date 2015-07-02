@@ -32,13 +32,11 @@ class RemoveMultipleFbRoots implements RequestFilter {
 			$xpath = new DOMXPath($doc);
 
 			$ns = $xpath->query('//div[@id="fb-root"]');
-			$count = 0;
-			foreach($ns as $node) {
-				$node->parentNode->removeChild($node);
-				$count++;
-
-				if($ns->length >= $count)
+			foreach($ns as $i => $node) {
+				if($ns->length <= ($i+1))
 					continue;
+
+				$node->parentNode->removeChild($node);
 			}
 
 			$response->setBody($doc->savehtml());
