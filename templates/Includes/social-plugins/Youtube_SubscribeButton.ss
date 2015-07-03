@@ -1,0 +1,2 @@
+$require_google_platform_script
+<span class="youtube-subscribe-btn g-ytsubscribe"<% if $youtubeChannelId %> data-channelid="$youtubeChannelId"<% else %> data-channel="$youtubeChannel"<% end_if %><% if $youtubeLayout %> data-layout="$youtubeLayout"<% end_if %><% if $youtubeTheme %> data-theme="$youtubeTheme"<% end_if %><% if $youtubeCounter %> data-count="$youtubeCounter"<% end_if %>></span>

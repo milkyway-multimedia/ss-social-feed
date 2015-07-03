@@ -19,6 +19,7 @@
     },
     "suggest":      {
         "league/oauth2-client": "You will need Oauth2 authentication to unlock additional items to pull from a provider (such as Facebook ratings)",
+        "embed/embed": "To allow more complex embeds for some social media provides (such as Youtube)",
         "milkyway-multimedia/ss-mwm-autocomplete": "To add location finding via Google, in order to find Google Places with just the address"
     },
     "extra":        {

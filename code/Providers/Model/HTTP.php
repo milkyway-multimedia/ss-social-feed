@@ -100,6 +100,59 @@ abstract class HTTP implements Provider {
 
         return $this->textParser;
     }
+
+    protected function setFromEmbed(&$post) {
+        if(!isset($post['Link']))
+            return;
+
+        $cacheKey = $this->getCacheKey(['embed' => $post['Link']]);
+
+        if(!($record = unserialize($this->cache()->load($cacheKey)))) {
+            $record = [];
+
+            if (class_exists('Embed\Embed')) {
+                $info = \Embed\Embed::create($post['Link']);
+
+                $record['ObjectName'] = $info->getTitle();
+                $record['ObjectURL'] = $info->getUrl();
+                $record['ObjectWidth'] = $info->getWidth();
+                $record['ObjectHeight'] = $info->getHeight();
+                $record['ObjectThumbnail'] = $info->getImage();
+                $record['ObjectDescription'] = $info->getDescription();
+                $record['ObjectType'] = $info->getType();
+                $record['ObjectEmbed'] = $info->getCode();
+            } else if ($info = \Oembed::get_oembed_from_url($post['Link'])) {
+                if ($info->hasField('title'))
+                    $record['ObjectName'] = $info->getField('title');
+
+                if ($info->hasField('url'))
+                    $record['ObjectURL'] = $info->getField('url');
+
+                if ($info->hasField('width'))
+                    $record['ObjectWidth'] = $info->getField('width');
+
+                if ($info->hasField('height'))
+                    $record['ObjectHeight'] = $info->getField('height');
+
+                if ($info->hasField('thumbnail'))
+                    $record['ObjectThumbnail'] = $info->getField('thumbnail');
+
+                if ($info->hasField('description'))
+                    $record['ObjectDescription'] = $this->textParser()->text($info->getField('description'));
+
+                if ($info->hasField('type'))
+                    $record['ObjectType'] = $info->getField('type');
+
+                $record['ObjectEmbed'] = $info->forTemplate();
+            }
+
+            $this->cache()->save(serialize($record), $cacheKey);
+        }
+
+        foreach($record as $key => $value) {
+            $post[$key] = $value;
+        }
+    }
 }
 
 class HTTP_Exception extends \Exception {

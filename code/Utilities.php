@@ -40,6 +40,10 @@ class Utilities implements \TemplateGlobalProvider {
 	    singleton('assets')->defer(\Director::protocol() . 'apis.google.com/js/plusone.js', true);
     }
 
+    public static function require_google_platform_script() {
+        singleton('assets')->defer(\Director::protocol() . 'apis.google.com/js/platform.js', true);
+    }
+
     private static $_addThis_included;
 
     public static function addThisJS($profileID = '', $parent = null, $config = []) {
@@ -111,6 +115,7 @@ class Utilities implements \TemplateGlobalProvider {
             'require_facebook_script',
             'require_twitter_script',
             'require_google_plus_script',
+            'require_google_platform_script',
             'addThisJS',
 
 	        'facebookLink',

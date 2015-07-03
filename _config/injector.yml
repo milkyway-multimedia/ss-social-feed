@@ -41,3 +41,4 @@ ShortcodeParser:
     - 'Milkyway\SS\SocialFeed\Shortcodes\GooglePlus_PlusOne'
     - 'Milkyway\SS\SocialFeed\Shortcodes\Twitter_Follow'
     - 'Milkyway\SS\SocialFeed\Shortcodes\Twitter_Mention'
+    - 'Milkyway\SS\SocialFeed\Shortcodes\Youtube_Subscribe'

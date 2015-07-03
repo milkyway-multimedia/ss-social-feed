@@ -18,7 +18,7 @@
             <% end_if %>
 
             <% if $canLikePage && $AuthorURL %>
-                $Profile.LikeButton($AuthorURL)
+                $Profile.LikeButton($AuthorURL, $AuthorID)
             <% end_if %>
 
             <% if $AuthorURL %>
