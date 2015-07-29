@@ -6,7 +6,7 @@ use Milkyway\SS\SocialFeed\Providers\Model\HTTP;
  * Milkyway Multimedia
  * GooglePlus.php
  *
- * @package reggardocolaianni.com
+ * @package milkyway-multimedia/ss-social-feed
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 class GooglePlus extends HTTP {

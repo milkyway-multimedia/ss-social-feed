@@ -3,7 +3,7 @@
  * Milkyway Multimedia
  * Collector.php
  *
- * @package reggardocolaianni.com
+ * @package milkyway-multimedia/ss-social-feed
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 class Collector {

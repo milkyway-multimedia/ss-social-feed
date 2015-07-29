@@ -4,7 +4,7 @@
  * Milkyway Multimedia
  * SocialFeed_Facebook.php
  *
- * @package reggardocolaianni.com
+ * @package milkyway-multimedia/ss-social-feed
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 class SocialFeed_Facebook extends SocialFeed_Profile

@@ -5,7 +5,7 @@ use Milkyway\SS\SocialFeed\Contracts\TextParser;
  * Milkyway Multimedia
  * AutolinkParser.php
  *
- * @package reggardocolaianni.com
+ * @package milkyway-multimedia/ss-social-feed
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 

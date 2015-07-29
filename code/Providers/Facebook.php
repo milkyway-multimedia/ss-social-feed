@@ -6,7 +6,7 @@ use Milkyway\SS\SocialFeed\Providers\Model\Oauth;
  * Milkyway Multimedia
  * Facebook.php
  *
- * @package reggardocolaianni.com
+ * @package milkyway-multimedia/ss-social-feed
  * @author  Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 class Facebook extends Oauth implements \Flushable

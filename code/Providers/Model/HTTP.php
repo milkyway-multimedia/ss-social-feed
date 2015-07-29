@@ -8,7 +8,7 @@ use Milkyway\SS\SocialFeed\Contracts\Provider;
  * Milkyway Multimedia
  * HTTP.php
  *
- * @package reggardocolaianni.com
+ * @package milkyway-multimedia/ss-social-feed
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 abstract class HTTP implements Provider {

@@ -20,7 +20,8 @@ class RemoveMultipleFbRoots implements RequestFilter {
 	}
 
 	public function postRequest(SS_HTTPRequest $request, SS_HTTPResponse $response, DataModel $model) {
-		if(singleton('env')->get('include_facebook_root_div'))
-			$response->setBody(str_replace('<body>', '<body><div id="fb-root"></div>', $response->getBody()));
+		if(singleton('env')->get('include_facebook_root_div')) {
+			$response->setBody(str_replace('</body>', '<div id="fb-root"></div></body>', $response->getBody()));
+		}
 	}
 }

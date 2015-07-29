@@ -1,6 +1,5 @@
 <?php namespace Milkyway\SS\SocialFeed;
 
-use TemplateGlobalProvider;
 use Milkyway\SS\Director;
 use SocialFeed_Facebook;
 use SocialFeed_Profile;
@@ -12,54 +11,68 @@ use i18n;
  * Milkyway Multimedia
  * Utilities.php
  *
- * @package reggardocolaianni.com
+ * @package milkyway-multimedia/ss-social-feed
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
-class Utilities implements TemplateGlobalProvider {
-    public static function require_facebook_script($facebook = null, $parent = null) {
-            if(!$facebook)
-                $facebook = singleton('SocialFeed_Facebook');
+class Utilities implements \TemplateGlobalProvider
+{
+    public static function require_facebook_script($facebook = null, $parent = null)
+    {
+        if (!$facebook) {
+            $facebook = singleton('SocialFeed_Facebook');
+        }
 
+        $appId = $facebook->setting('AppID', $parent);
+
+        if (!$appId && $facebook = SocialFeed_Facebook::get()->first()) {
             $appId = $facebook->setting('AppID', $parent);
+        }
 
-            if(!$appId && $facebook = SocialFeed_Facebook::get()->first())
-                $appId = $facebook->setting('AppID', $parent);
-
-            if($appId)
-                singleton('assets')->defer(sprintf(Director::protocol() . 'connect.facebook.net/%s/all.js#xfbml=1&appId=%s', i18n::get_locale(), $appId));
+        if ($appId) {
+            singleton('assets')->defer(sprintf(Director::protocol() . 'connect.facebook.net/%s/all.js#xfbml=1&appId=%s',
+                i18n::get_locale(), $appId));
+        }
 
         singleton('env')->set('include_facebook_root_div', true);
     }
 
-    public static function require_twitter_script() {
-	    singleton('assets')->defer(Director::protocol() . 'platform.twitter.com/widgets.js');
+    public static function require_twitter_script()
+    {
+        singleton('assets')->defer(Director::protocol() . 'platform.twitter.com/widgets.js');
     }
 
-    public static function require_google_plus_script() {
-        singleton('assets')->customScript("window.___gcfg = {lang: '" . str_replace('_', '-', i18n::get_locale()) . "'};", 'GooglePlus-Locale');
-	    singleton('assets')->defer(Director::protocol() . 'apis.google.com/js/plusone.js', true);
+    public static function require_google_plus_script()
+    {
+        singleton('assets')->customScript("window.___gcfg = {lang: '" . str_replace('_', '-',
+                i18n::get_locale()) . "'};", 'GooglePlus-Locale');
+        singleton('assets')->defer(Director::protocol() . 'apis.google.com/js/plusone.js', true);
     }
 
-    public static function require_google_platform_script() {
+    public static function require_google_platform_script()
+    {
         singleton('assets')->defer(Director::protocol() . 'apis.google.com/js/platform.js', true);
     }
 
     private static $_addThis_included;
 
-    public static function addThisJS($profileID = '', $parent = null, $config = []) {
-        if(!self::$_addThis_included) {
-            if(!$profileID) {
-                if($profile = SocialFeed_Profile::get()->first())
+    public static function addThisJS($profileID = '', $parent = null, $config = [])
+    {
+        if (!self::$_addThis_included) {
+            if (!$profileID) {
+                if ($profile = SocialFeed_Profile::get()->first()) {
                     $profileID = $profile->setting('AddThis', $parent);
+                }
 
-                if(!$profileID)
+                if (!$profileID) {
                     $profileID = singleton('SocialFeed_Profile')->setting('AddThis', $parent);
+                }
 
-                if(!$profileID)
+                if (!$profileID) {
                     return;
+                }
             }
 
-            if(!count($config)) {
+            if (!count($config)) {
                 $config = array(
                     'data_track_addressbar' => false,
                     'ui_cobrand' => SiteConfig::current_site_config()->Title,
@@ -74,54 +87,58 @@ class Utilities implements TemplateGlobalProvider {
         </script>
             ', 'AddThis-Configuration');
 
-	        singleton('assets')->defer('http://s7.addthis.com/js/300/addthis_widget.js#pubid=' . $profileID, true);
+            singleton('assets')->defer('http://s7.addthis.com/js/300/addthis_widget.js#pubid=' . $profileID, true);
         }
     }
 
-	public static function facebookLink($parent = null)
-	{
-		if($id = singleton('SocialFeed_Facebook')->setting('Username', $parent))
-			return Controller::join_links(singleton('SocialFeed_Facebook')->config()->url, $id);
+    public static function facebookLink($parent = null)
+    {
+        if ($id = singleton('SocialFeed_Facebook')->setting('Username', $parent)) {
+            return Controller::join_links(singleton('SocialFeed_Facebook')->config()->url, $id);
+        }
 
-		return '';
-	}
+        return '';
+    }
 
-	public static function twitterLink($parent = null)
-	{
-		if($id = singleton('SocialFeed_Twitter')->setting('Username', $parent))
-			return Controller::join_links(singleton('SocialFeed_Twitter')->config()->url, $id);
+    public static function twitterLink($parent = null)
+    {
+        if ($id = singleton('SocialFeed_Twitter')->setting('Username', $parent)) {
+            return Controller::join_links(singleton('SocialFeed_Twitter')->config()->url, $id);
+        }
 
-		return '';
-	}
+        return '';
+    }
 
-	public static function googlePlusLink($parent = null)
-	{
-		if($id = singleton('SocialFeed_GooglePlus')->setting('Username', $parent))
-			return Controller::join_links(singleton('SocialFeed_GooglePlus')->config()->url, $id);
+    public static function googlePlusLink($parent = null)
+    {
+        if ($id = singleton('SocialFeed_GooglePlus')->setting('Username', $parent)) {
+            return Controller::join_links(singleton('SocialFeed_GooglePlus')->config()->url, $id);
+        }
 
-		return '';
-	}
+        return '';
+    }
 
-	public static function instagramLink()
-	{
-		if($id = SiteConfig::current_site_config()->Instagram_Username)
-			return Controller::join_links('http://instagram.com', $id);
+    public static function instagramLink()
+    {
+        if ($id = SiteConfig::current_site_config()->Instagram_Username) {
+            return Controller::join_links('http://instagram.com', $id);
+        }
 
-		return '';
-	}
+        return '';
+    }
 
-    public static function get_template_global_variables() {
+    public static function get_template_global_variables()
+    {
         return array(
             'require_facebook_script',
             'require_twitter_script',
             'require_google_plus_script',
             'require_google_platform_script',
             'addThisJS',
-
-	        'facebookLink',
-	        'twitterLink',
-	        'googlePlusLink',
-	        'instagramLink',
+            'facebookLink',
+            'twitterLink',
+            'googlePlusLink',
+            'instagramLink',
         );
     }
 } 

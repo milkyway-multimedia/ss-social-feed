@@ -4,7 +4,7 @@
  * Milkyway Multimedia
  * SocialFeed_GooglePlus.php
  *
- * @package reggardocolaianni.com
+ * @package milkyway-multimedia/ss-social-feed
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 class SocialFeed_Youtube extends SocialFeed_Profile {

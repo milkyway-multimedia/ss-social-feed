@@ -6,7 +6,7 @@ use GuzzleHttp\Subscriber\Oauth\Oauth1;
  * Milkyway Multimedia
  * HTTPProvider.php
  *
- * @package reggardocolaianni.com
+ * @package milkyway-multimedia/ss-social-feed
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 abstract class Oauth extends HTTP {
