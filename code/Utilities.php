@@ -29,7 +29,7 @@ class Utilities implements \TemplateGlobalProvider
         }
 
         if ($appId) {
-            singleton('assets')->defer(sprintf(Director::protocol() . 'connect.facebook.net/%s/all.js#xfbml=1&appId=%s',
+            singleton('require')->defer(sprintf(Director::protocol() . 'connect.facebook.net/%s/all.js#xfbml=1&appId=%s',
                 i18n::get_locale(), $appId));
         }
 
@@ -38,19 +38,19 @@ class Utilities implements \TemplateGlobalProvider
 
     public static function require_twitter_script()
     {
-        singleton('assets')->defer(Director::protocol() . 'platform.twitter.com/widgets.js');
+        singleton('require')->defer(Director::protocol() . 'platform.twitter.com/widgets.js');
     }
 
     public static function require_google_plus_script()
     {
-        singleton('assets')->customScript("window.___gcfg = {lang: '" . str_replace('_', '-',
+        singleton('require')->customScript("window.___gcfg = {lang: '" . str_replace('_', '-',
                 i18n::get_locale()) . "'};", 'GooglePlus-Locale');
-        singleton('assets')->defer(Director::protocol() . 'apis.google.com/js/plusone.js', true);
+        singleton('require')->defer(Director::protocol() . 'apis.google.com/js/plusone.js', true);
     }
 
     public static function require_google_platform_script()
     {
-        singleton('assets')->defer(Director::protocol() . 'apis.google.com/js/platform.js', true);
+        singleton('require')->defer(Director::protocol() . 'apis.google.com/js/platform.js', true);
     }
 
     private static $_addThis_included;
@@ -81,13 +81,13 @@ class Utilities implements \TemplateGlobalProvider
                 );
             }
 
-            singleton('assets')->insertHeadTags('
+            singleton('require')->insertHeadTags('
         <script>
             var addthis_config = addthis_config || ' . json_encode($config) . ';
         </script>
             ', 'AddThis-Configuration');
 
-            singleton('assets')->defer('http://s7.addthis.com/js/300/addthis_widget.js#pubid=' . $profileID, true);
+            singleton('require')->defer('http://s7.addthis.com/js/300/addthis_widget.js#pubid=' . $profileID, true);
         }
     }
 
