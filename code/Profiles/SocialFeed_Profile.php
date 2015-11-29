@@ -201,7 +201,7 @@ class SocialFeed_Profile extends DataObject {
     }
 
     public function getStyleClasses() {
-        return singleton('utilities')->raw2htmlid('platform-' . str_replace('_', '-', strtolower($this->singular_name())));
+        return singleton('mwm')->raw2htmlid('platform-' . str_replace('_', '-', strtolower($this->singular_name())));
     }
 
     public function Link($parent = null) {

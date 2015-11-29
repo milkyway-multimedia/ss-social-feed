@@ -20,6 +20,8 @@ class Facebook extends Oauth implements \Flushable
 
     protected $defaultType = 'feed';
 
+	protected $allowLargeUnsafeImages = true;
+
 	protected $replaceInUrls = [
 		//'/v/'       => '/',
 //		'p600x600/' => '',
@@ -212,6 +214,19 @@ class Facebook extends Oauth implements \Flushable
 			}
 		}
 
+		if($post['Type'] == 'video' && $post['Source']) {
+			$url = parse_url($post['Source']);
+			parse_str($url['query'], $query);
+
+			if(isset($query['autoplay'])) {
+				unset($query['autoplay']);
+			}
+
+			$url = sprintf('%s://%s%s%s', $url['scheme'], $url['host'], $url['path'], (!empty($query) ? '?' . http_build_query($query) : ''));
+
+			$post['ObjectEmbed'] = '<iframe src="' . $url . '" class="panel-post-media--embed" width="640" height="480" frameborder="0" allowfullscreen></iframe>';
+		}
+
 		return $post;
 	}
 
@@ -265,6 +280,17 @@ class Facebook extends Oauth implements \Flushable
 		}
 		else
 			$link = $data;
+
+		if($this->allowLargeUnsafeImages && strpos($link, '/safe_image.php?') !== false) {
+			$parts = parse_url($link);
+
+			if(isset($parts['query'])) {
+				parse_str($parts['query'], $query);
+				if(isset($query['url'])) {
+					$link = $query['url'];
+				}
+			}
+		}
 
 		return $link ? str_replace(array_keys($this->replaceInUrls), array_values($this->replaceInUrls), $link) : '';
 	}

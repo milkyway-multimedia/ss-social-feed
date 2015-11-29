@@ -7,6 +7,10 @@
  * @author Mellisa Hankins <mellisa.hankins@me.com>
  */
 
+if(!class_exists('Page')) {
+	return;
+}
+
 class SocialFeed extends Page {
 	private static $description = 'A page that displays a social feed from various social platforms';
 
