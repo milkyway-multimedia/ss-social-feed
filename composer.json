@@ -12,10 +12,9 @@
     ],
     "require":      {
         "silverstripe/framework":                     "~3.1",
-        "silverstripe/cms":                           "~3.1",
-        "guzzlehttp/oauth-subscriber":                "~0.2",
+        "guzzlehttp/oauth-subscriber":                "~0.3",
         "silverstripe-australia/gridfieldextensions": "~1",
-        "milkyway-multimedia/ss-mwm":                 "dev-master"
+        "milkyway-multimedia/ss-mwm":                 "~0.3"
     },
     "suggest":      {
         "league/oauth2-client": "You will need Oauth2 authentication to unlock additional items to pull from a provider (such as Facebook ratings)",

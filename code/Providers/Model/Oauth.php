@@ -1,5 +1,6 @@
 <?php namespace Milkyway\SS\SocialFeed\Providers\Model;
 
+use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Subscriber\Oauth\Oauth1;
 
 /**
@@ -52,22 +53,15 @@ abstract class Oauth extends HTTP {
 		return $this;
 	}
 
-    protected function http()
-    {
-        parent::http();
-
-        $this
-            ->client
-            ->getEmitter()
-            ->attach(new Oauth1($this->credentials));
-
-        return $this->client;
-    }
-
     protected function getHttpSettings() {
+		$handlers = HandlerStack::create();
+
+		$handlers->push(new Oauth1($this->credentials));
+
 	    $settings = [
 		    'defaults' => [
 			    'auth' => $this->accessToken ? 'oauth2' : 'oauth',
+				'handler' => $handlers,
 		    ],
 	    ];
 

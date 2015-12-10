@@ -1,8 +1,8 @@
 <?php namespace Milkyway\SS\SocialFeed\Providers\Model;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Message\ResponseInterface;
 use Milkyway\SS\SocialFeed\Contracts\Provider;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Milkyway Multimedia
@@ -18,6 +18,8 @@ abstract class HTTP implements Provider {
 
     protected $cache;
     protected $textParser;
+
+    protected $embedWillBeAjax = true;
 
     public function __construct($cache = 6) {
         $this->cacheLifetime = $cache;
@@ -87,7 +89,7 @@ abstract class HTTP implements Provider {
     }
 
     protected function parseResponse(ResponseInterface $response) {
-        return $response->json(['big_int_strings' => true,]);
+        return json_decode($response->getBody()->getContents(), true, 512, JSON_BIGINT_AS_STRING);
     }
 
     protected function isValid($body) {
