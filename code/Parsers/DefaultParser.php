@@ -36,4 +36,4 @@ class DefaultParser implements TextParser {
 
         return preg_replace("/\-+<br \/>/", '<hr class="post-divider" />', $linked);
     }
-} 
+}

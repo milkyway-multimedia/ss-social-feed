@@ -139,4 +139,4 @@ class Twitter extends Oauth {
     protected function isValid($body) {
         return $body && is_array($body);
     }
-} 
+}

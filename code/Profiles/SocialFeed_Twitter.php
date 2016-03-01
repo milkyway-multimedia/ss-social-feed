@@ -138,4 +138,4 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
 			$this->fieldLabel('Type') => $this->Type,
 		]);
 	}
-} 
+}

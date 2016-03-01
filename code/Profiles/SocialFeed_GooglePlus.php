@@ -53,4 +53,4 @@ class SocialFeed_GooglePlus extends SocialFeed_Profile {
         if(!$url) return '';
         return $this->customise(['gpLink' => $url])->renderWith('Google_PlusOneButton');
     }
-} 
+}

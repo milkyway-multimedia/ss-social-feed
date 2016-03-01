@@ -21,4 +21,4 @@ class Twitter_Follow extends Twitter {
 			'twitter_follow' => _t('Shortcodable.TWITTER_FOLLOW', 'Twitter Follow Button'),
 		];
 	}
-} 
+}

@@ -34,4 +34,4 @@ class Facebook_Send extends Facebook_Like {
 			['fbAction', 'fbLayout', 'fbFaces', 'fbShare']
 		);
 	}
-} 
+}

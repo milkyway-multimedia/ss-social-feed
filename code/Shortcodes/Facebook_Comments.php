@@ -73,4 +73,4 @@ class Facebook_Comments extends Facebook_Like {
 
 		return $vars;
 	}
-} 
+}

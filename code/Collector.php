@@ -136,4 +136,4 @@ class Collector {
 //		return $this->limit !== null && $this->collected >= $this->limit;
         return false;
 	}
-} 
+}

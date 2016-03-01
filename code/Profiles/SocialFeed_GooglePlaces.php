@@ -131,4 +131,4 @@ class SocialFeed_GooglePlaces extends SocialFeed_Profile {
 			$this->fieldLabel('PlaceId') => $this->Username,
 		];
 	}
-} 
+}

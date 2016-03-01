@@ -133,4 +133,4 @@ abstract class Oauth extends HTTP {
 		$folder = singleton('env')->get('SocialFeed.token_directory') ?: TEMP_FOLDER;
 		return $folder . DIRECTORY_SEPARATOR . '.' . str_replace('\\', '__' , get_class($this)) . '_token';
 	}
-} 
+}

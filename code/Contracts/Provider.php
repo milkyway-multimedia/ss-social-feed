@@ -8,4 +8,4 @@
  */
 interface Provider {
     public function all($settings = []);
-} 
+}

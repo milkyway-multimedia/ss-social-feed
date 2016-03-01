@@ -161,4 +161,4 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 	protected function addHashTags($content) {
 		return preg_replace('/(^|\s)#(\w*[a-zA-Z_]+\w*)/', str_replace('{url}', \Controller::join_links($this->url, 'hashtag') . '/', '\1#<a href="{url}\2" target="\_blank">\2</a>'), $content);
 	}
-} 
+}

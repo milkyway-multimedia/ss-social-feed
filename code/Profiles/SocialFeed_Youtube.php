@@ -107,4 +107,4 @@ class SocialFeed_Youtube extends SocialFeed_Profile {
 
         return parent::validate();
     }
-} 
+}
