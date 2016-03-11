@@ -34,4 +34,4 @@ class Facebook_Follow extends Facebook_Like {
 			['fbShare']
 		);
 	}
-} 
+}

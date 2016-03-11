@@ -12,4 +12,4 @@ namespace Milkyway\SS\SocialFeed\Contracts;
 
 interface TextParser {
     public function text($text);
-} 
+}

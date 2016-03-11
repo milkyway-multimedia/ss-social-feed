@@ -83,4 +83,4 @@ class GooglePlus extends HTTP {
     protected function isValid($body) {
         return $body && is_array($body) && count($body) && isset($body['items']);
     }
-} 
+}

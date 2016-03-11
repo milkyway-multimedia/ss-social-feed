@@ -34,4 +34,4 @@ class Facebook_Share extends Facebook_Like {
 			['fbAction', 'fbScheme', 'fbFaces', 'fbShare', 'fbForKids']
 		);
 	}
-} 
+}

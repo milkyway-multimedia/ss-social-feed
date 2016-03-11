@@ -41,4 +41,4 @@ abstract class Internal implements Provider {
 
         return $item;
     }
-} 
+}

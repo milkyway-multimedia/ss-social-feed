@@ -79,4 +79,4 @@ class Youtube_Subscribe implements Contract {
 			)
 		);
 	}
-} 
+}

@@ -141,4 +141,4 @@ class Facebook_Like implements Contract {
 
 		return $fields;
 	}
-} 
+}

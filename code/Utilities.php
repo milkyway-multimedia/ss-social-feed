@@ -141,4 +141,4 @@ class Utilities implements \TemplateGlobalProvider
             'instagramLink',
         );
     }
-} 
+}

@@ -67,4 +67,4 @@ abstract class Twitter implements Contract {
 			)
 		);
 	}
-} 
+}

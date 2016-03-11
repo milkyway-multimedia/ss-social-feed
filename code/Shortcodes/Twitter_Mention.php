@@ -23,4 +23,4 @@ class Twitter_Mention extends Twitter {
 			'twitter_mention' => _t('Shortcodable.TWITTER_MENTION', 'Twitter Mention Button'),
 		];
 	}
-} 
+}

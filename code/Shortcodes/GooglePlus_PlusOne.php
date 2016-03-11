@@ -23,4 +23,4 @@ class GooglePlus_PlusOne extends GooglePlus {
 			'google_plus_one' => _t('Shortcodable.GOOGLE_PLUS_ONE', 'Google Plus One Button'),
 		];
 	}
-} 
+}

@@ -79,4 +79,4 @@ class AddThis implements Contract {
 			)
 		);
 	}
-} 
+}

@@ -75,4 +75,4 @@ abstract class GooglePlus implements Contract {
 			)
 		);
 	}
-} 
+}

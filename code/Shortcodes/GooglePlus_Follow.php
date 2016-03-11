@@ -21,4 +21,4 @@ class GooglePlus_Follow extends GooglePlus {
 			'google_plus_follow' => _t('Shortcodable.GOOGLE_PLUS_FOLLOW', 'Follow on Google+ Button'),
 		];
 	}
-} 
+}
