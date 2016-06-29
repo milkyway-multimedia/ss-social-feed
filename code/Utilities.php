@@ -87,7 +87,7 @@ class Utilities implements \TemplateGlobalProvider
         </script>
             ', 'AddThis-Configuration');
 
-            singleton('require')->defer('http://s7.addthis.com/js/300/addthis_widget.js#pubid=' . $profileID, true);
+            singleton('require')->defer(singleton('director')->protocol() . 's7.addthis.com/js/300/addthis_widget.js#pubid=' . $profileID, true);
         }
     }
 
