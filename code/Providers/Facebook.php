@@ -47,6 +47,15 @@ class Facebook extends Oauth2 implements \Flushable
     public function all($settings = [])
     {
         $type = isset($settings['type']) ? $settings['type'] : $this->defaultType;
+
+        if(empty($settings['query'])) {
+            $settings['query'] = [];
+        }
+
+        if(empty($settings['query']['fields'])) {
+            $settings['query']['fields'] = 'id,link,message,call_to_action,caption,created_time,description,from,icon,is_hidden,is_published,message_tags,name,object_id, parent_id, picture,place,privacy,properties,shares,source,status_type,story,type,updated_time,with_tags';
+        }
+
         return $this->request($this->endpoint($settings['username'], $type), $settings);
     }
 
@@ -330,7 +339,28 @@ class Facebook extends Oauth2 implements \Flushable
             $link = $data;
         }
 
-        if ($this->allowLargeUnsafeImages && strpos($link, '/safe_image.php?') !== false) {
+        if($link instanceof ResponseInterface) {
+//            $link = json_decode($link->getBody()->getContents(), true);
+//
+//            if(isset($link['id'])) {
+//                $images = json_decode($this->one($link['id'], '', [
+//                    'fields' => 'images',
+//                ])->getBody()->getContents(), true);
+//
+//                foreach($images as $image) {
+//                    if(isset($image['source'])) {
+//                        $link = $image['source'];
+//                        break;
+//                    }
+//                }
+//            }
+//
+//            if(!is_string($link)) {
+//                $link = '';
+//            }
+            $link = '';
+        }
+        else if ($this->allowLargeUnsafeImages && strpos($link, '/safe_image.php?') !== false) {
             $parts = parse_url($link);
 
             if (isset($parts['query'])) {
@@ -368,7 +398,7 @@ class Facebook extends Oauth2 implements \Flushable
     {
         switch ($type) {
             case 'events':
-                $data = array_merge($data, $this->one($id));
+                $data = array_merge($data, json_decode($this->one($id)->getBody()->getContents(), true));
 
                 if (!isset($data['from']) && isset($data['owner'])) {
                     $data['from'] = $data['owner'];
@@ -376,12 +406,12 @@ class Facebook extends Oauth2 implements \Flushable
                 break;
             case 'albums':
                 if (isset($data['cover_photo'])) {
-                    $data['cover'] = $this->one($data['cover_photo']);
+                    $data['cover'] = json_decode($this->one($data['cover_photo'], '', ['query' => ['fields' => 'source']])->getBody()->getContents(), true);
                 }
                 break;
             case 'feed':
                 if (isset($data['type']) && $data['type'] == 'photo' && isset($data['object_id'])) {
-                    $data['cover'] = $this->one($data['object_id']);
+                    $data['cover'] = json_decode($this->one($data['object_id'], '', ['query' => ['fields' => 'source']])->getBody()->getContents(), true);
                 }
         }
     }
