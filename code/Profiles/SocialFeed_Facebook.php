@@ -76,7 +76,7 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 		return parent::getTitle() . ' - ' . $this->Type;
 	}
 
-	public function getOauthConfiguration()
+	public function getProviderConfiguration()
 	{
 		return [
 			'consumer_key' => $this->setting('AppID'),
@@ -88,7 +88,7 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 		switch ($this->Type) {
 			case 'ratings';
 		    case 'offers';
-				return ['manage_pages'];
+				return ['scopes' => ['manage_pages']];
 			default:
 				return [];
 		}

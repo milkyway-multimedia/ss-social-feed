@@ -1,12 +1,5 @@
 <?php namespace Milkyway\SS\SocialFeed;
 
-use Milkyway\SS\Director;
-use SocialFeed_Facebook;
-use SocialFeed_Profile;
-use SiteConfig;
-use Controller;
-use i18n;
-
 /**
  * Milkyway Multimedia
  * Utilities.php
@@ -14,6 +7,14 @@ use i18n;
  * @package milkyway-multimedia/ss-social-feed
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
+
+use Milkyway\SS\Director;
+use SocialFeed_Facebook;
+use SocialFeed_Profile;
+use SiteConfig;
+use Controller;
+use i18n;
+
 class Utilities implements \TemplateGlobalProvider
 {
     public static function require_facebook_script($facebook = null, $parent = null)

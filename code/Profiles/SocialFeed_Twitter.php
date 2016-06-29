@@ -58,7 +58,7 @@ class SocialFeed_Twitter extends SocialFeed_Profile {
 		return parent::getCMSFields();
 	}
 
-    public function getOauthConfiguration()
+    public function getProviderConfiguration()
     {
         return [
             'consumer_key'    => $this->setting('ApiKey'),

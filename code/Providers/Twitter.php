@@ -1,7 +1,5 @@
 <?php namespace Milkyway\SS\SocialFeed\Providers;
 
-use Milkyway\SS\SocialFeed\Providers\Model\Oauth;
-
 /**
  * Milkyway Multimedia
  * Twitter.php
@@ -9,7 +7,11 @@ use Milkyway\SS\SocialFeed\Providers\Model\Oauth;
  * @package milkyway-multimedia/ss-social-feed
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
-class Twitter extends Oauth {
+
+use Milkyway\SS\SocialFeed\Providers\Model\Oauth1;
+use Psr\Http\Message\ResponseInterface;
+
+class Twitter extends Oauth1 {
     const VERSION = 1.1;
 
     protected $endpoint = 'https://api.twitter.com/';
@@ -17,21 +19,21 @@ class Twitter extends Oauth {
 
     protected $defaultType = 'statuses/user_timeline';
 
-    public function all($settings = []) {
+    public function all($settings = [])
+    {
+        $type = empty($settings['type']) ? $this->defaultType : $settings['type'];
+        return $this->request($this->endpoint($type), $settings);
+    }
+
+    public function parseResponse(ResponseInterface $response, $settings = [])
+    {
+        $body = parent::parseResponse($response, $settings);
+
         $all = [];
 
-        $type = isset($settings['type']) ? $settings['type'] : $this->defaultType;
-
-        try {
-            $body = $this->getBodyFromCache($this->endpoint($type), $settings);
-
-            foreach($body as $post) {
-                $all[] = $this->handlePost($post, $settings);
-            }
-        } catch (\Exception $e) {
-            \Debug::show($e->getMessage());
+        foreach($body as $post) {
+            $all[] = $this->handlePost($post, $settings);
         }
-
         return $all;
     }
 

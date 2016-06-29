@@ -115,8 +115,13 @@ class SocialFeed_Profile extends DataObject {
 			        $fields->removeByName($relation);
 		        }
 
-		        if(count($this->RequiresExtendedPermissions)) {
-			        \Object::create($this->Provider, 0, (array) $this->OauthConfiguration)->extendedPermissions($this->RequiresExtendedPermissions, false);
+		        if(!empty($this->RequiresExtendedPermissions)) {
+			        \Object::create($this->Provider, (array) $this->ProviderConfiguration)->extendedPermissions(array_merge(
+                        $this->RequiresExtendedPermissions,
+                        [
+                            'no_live_request' => false,
+                        ]
+                    ));
 		        }
             }
         );
@@ -169,6 +174,10 @@ class SocialFeed_Profile extends DataObject {
 
     public function getProvider() {
         return $this->provider;
+    }
+
+    public function getProviderConfiguration() {
+        return [];
     }
 
     public function getFeedSettings($parent = null) {

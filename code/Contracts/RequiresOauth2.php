@@ -2,12 +2,12 @@
 
 /**
  * Milkyway Multimedia
- * Provider.php
+ * RequiresOauth2.php
  *
  * @package milkyway-multimedia/ss-social-feed
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-interface Provider {
-    public function all($settings = []);
-}
+interface RequiresOauth2 {
+    public function extendedPermissions($params = []);
+} 

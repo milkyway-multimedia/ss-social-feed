@@ -1,27 +1,42 @@
 {
-    "name":         "milkyway-multimedia/ss-social-feed",
-    "description":  "Ability to display a social on a silverstripe website",
-    "type":         "silverstripe-module",
-    "keywords":     ["silverstripe", "facebook", "twitter", "googleplus", "google+", "blog", "mwm"],
-    "license":      "MIT",
-    "authors":      [
-        {
-            "name":  "Mellisa Hankins",
-            "email": "mell@milkywaymultimedia.com.au"
-        }
-    ],
-    "require":      {
-        "silverstripe/framework":                     "~3.1",
-        "guzzlehttp/oauth-subscriber":                "~0.3",
-        "silverstripe-australia/gridfieldextensions": "~1",
-        "milkyway-multimedia/ss-mwm":                 "~0.3"
-    },
-    "suggest":      {
-        "league/oauth2-client": "You will need Oauth2 authentication to unlock additional items to pull from a provider (such as Facebook ratings)",
-        "embed/embed": "To allow more complex embeds for some social media provides (such as Youtube)",
-        "milkyway-multimedia/ss-mwm-autocomplete": "To add location finding via Google, in order to find Google Places with just the address"
-    },
-    "extra":        {
-        "installer-name": "social-feed"
+  "name"       : "milkyway-multimedia/ss-social-feed",
+  "description": "Ability to display a social on a silverstripe website",
+  "type"       : "silverstripe-module",
+  "keywords"   : [
+    "silverstripe",
+    "facebook",
+    "twitter",
+    "googleplus",
+    "google+",
+    "blog",
+    "mwm"
+  ],
+  "license"    : "MIT",
+  "authors"    : [
+    {
+      "name" : "Mellisa Hankins",
+      "email": "mell@milkywaymultimedia.com.au"
     }
+  ],
+  "require"    : {
+    "silverstripe/framework"                    : "~3.1",
+    "guzzlehttp/guzzle"                         : "~6",
+    "kevinrob/guzzle-cache-middleware"          : "~1",
+    "silverstripe-australia/gridfieldextensions": "~1",
+    "milkyway-multimedia/ss-mwm-assets"         : "~0.3",
+    "milkyway-multimedia/ss-mwm-env"            : "~0.3"
+  },
+  "suggest"    : {
+    "guzzlehttp/oauth-subscriber"          : "For Twitter & Smugmug Providers, you will need the Oauth1 Subscriber",
+    "league/oauth2-facebook"               : "You will need Oauth2 authentication to unlock additional items to pull from a provider (such as Facebook ratings)",
+    "league/oauth2-instagram"              : "For the instagram feed",
+    "embed/embed"                          : "To allow more complex embeds for some social media provides (such as Youtube)",
+    "milkyway-multimedia/ss-mwm-formfields": "To add location finding via Google, in order to find Google Places with just the address"
+  },
+  "extra"      : {
+    "installer-name": "social-feed",
+    "branch-alias"  : {
+      "dev-master": "0.4.x-dev"
+    }
+  }
 }

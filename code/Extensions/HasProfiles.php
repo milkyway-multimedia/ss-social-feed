@@ -13,7 +13,6 @@ class HasProfiles extends \DataExtension {
 
     private static $db = [
         'SocialFeed_Limit' => 'Int',
-        'CacheHours' => 'Int',
         'AddThis' => 'Varchar',
     ];
 
@@ -23,7 +22,6 @@ class HasProfiles extends \DataExtension {
 
     private static $defaults = [
         'SocialFeed_Limit' => 30,
-        'CacheHours' => 6,
     ];
 
     protected $tab;
@@ -96,7 +94,6 @@ class HasProfiles extends \DataExtension {
     protected function updateFields($fields) {
         $fields->removeByName('SocialFeed_Profiles');
         $fields->removeByName('SocialFeed_Limit');
-        $fields->removeByName('CacheHours');
         $fields->removeByName('AddThis');
         $fields->addFieldToTab('Root', \Tab::create(
             $this->tab ?: 'SocialPlatforms',
@@ -109,9 +106,6 @@ class HasProfiles extends \DataExtension {
             ),
 		    \NumericField::create('SocialFeed_Limit', _t('SocialFeed.LIMIT', 'Limit'))
 			        ->setDescription(_t('SocialFeed.DESC-LIMIT', 'Set how many to retrieve at a time')),
-            \NumericField::create('CacheHours', _t('SocialFeed.CACHE', 'Cache for'))
-                ->setDescription(_t('SocialFeed.DESC-CACHE', 'Set how many hours the results from the various platforms are stored in cache for'))
-                ->setAttribute('placeholder', 6),
             \TextField::create('AddThis', _t('SocialFeed.ADDTHIS', 'Add This Profile'))
                 ->setDescription(_t('SocialFeed.DESC-ADDTHIS', 'AddThis Profile ID used for sharing (format: <strong>ra-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</strong>)'))
                 ->setAttribute('placeholder', singleton('SocialFeed_Profile')->setting('AddThis'))
@@ -173,9 +167,8 @@ class HasProfiles extends \DataExtension {
 
     protected function collection() {
         if(!$this->collection) {
-	        $cache = $this->owner->CacheHours ?: 6;
             $profiles = $this->owner->SocialFeed_Profiles()->exists() ? $this->owner->SocialFeed_Profiles()->filter('Enabled', 1)->exclude('Module_Disabled', 1) : $this->owner->SocialFeed_Profiles();
-            $this->collection = \Object::create('Milkyway\SS\SocialFeed\Collector', $profiles, $this->owner, $this->owner->SocialFeed_Limit, $cache);
+            $this->collection = \Object::create('Milkyway\SS\SocialFeed\Collector', $profiles, $this->owner, $this->owner->SocialFeed_Limit);
         }
 
         return $this->collection;

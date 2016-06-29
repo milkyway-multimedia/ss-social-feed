@@ -12,7 +12,7 @@ Add the following to your composer.json file
 ```
 
     "require"          : {
-		"milkyway-multimedia/silverstripe-social-feed": "dev-master"
+		"milkyway-multimedia/ss-social-feed": "~0.4
 	}
 
 ```
@@ -23,6 +23,8 @@ Currently only the following are supported:
 - Facebook Pages/Profiles
 - Twitter Account
 - Google Plus Page
+- Youtube
+- Instagram
 - Internal Page (will display children of said page)
 
 I am hoping to add Instagram and maybe Pinterest when I have time... But you can have as many of the above accounts as you want (if you don't mind the lag...)
@@ -37,7 +39,7 @@ I am hoping to add Instagram and maybe Pinterest when I have time... But you can
 * MIT
 
 ## Version
-* Version 0.1 - Alpha
+* Version 0.4 - Alpha
 
 ## Contact
 #### Milkyway Multimedia
