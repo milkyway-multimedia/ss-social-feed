@@ -36,6 +36,7 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 	private static $db_to_environment_mapping = [
 		'AppID' => 'Facebook|SocialFeed|SiteConfig.facebook_application_id',
 		'AppSecret' => 'Facebook|SocialFeed|SiteConfig.facebook_application_secret',
+		'AccessToken' => 'Facebook|SocialFeed|SiteConfig.facebook_access_token',
 	];
 
 	protected $provider = 'Milkyway\SS\SocialFeed\Providers\Facebook';
@@ -78,15 +79,27 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 
 	public function getProviderConfiguration()
 	{
-		return [
+		$config = [
 			'consumer_key' => $this->setting('AppID'),
 			'consumer_secret' => $this->setting('AppSecret'),
+			'access_token' => $this->setting('AccessToken'),
 		];
+
+		$config['clientId'] = $config['consumer_key'];
+		$config['clientSecret'] = $config['consumer_secret'];
+
+		return $config;
 	}
 
 	public function getRequiresExtendedPermissions() {
 		switch ($this->Type) {
 			case 'ratings';
+				return [
+					'scopes' => [
+						'manage_pages',
+					],
+					'page' => $this->setting('Username'),
+				];
 		    case 'offers';
 				return ['scopes' => ['manage_pages']];
 			default:
@@ -104,7 +117,7 @@ class SocialFeed_Facebook extends SocialFeed_Profile
 		return array_merge(parent::getFeedSettings($parent), [
 				'type' => $this->Type,
 				'query' => array_merge([
-					'access_token' => $this->setting('AppID', $parent) . '|' . $this->setting('AppSecret', $parent),
+					'access_token' => $this->setting('AccessToken') ?: ($this->setting('AppID', $parent) . '|' . $this->setting('AppSecret', $parent)),
 					'limit' => $this->Limit,
 				], $settings),
 			]

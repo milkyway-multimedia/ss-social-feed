@@ -10,6 +10,7 @@
 
 use Milkyway\SS\SocialFeed\Providers\Model\HTTP;
 use Psr\Http\Message\ResponseInterface;
+use Object;
 
 class GooglePlaces extends HTTP
 {
@@ -47,7 +48,9 @@ class GooglePlaces extends HTTP
     {
         try {
             $settings['query']['query'] = $text;
-            return $this->request($this->endpoint('textsearch'), $settings)->wait()['results'];
+            $this->setClient(Object::create('GuzzleHttp\Client'));
+            $response = $this->parseRawResponse($this->request($this->endpoint('textsearch'), $settings)->wait());
+            return !empty($response['results']) ? $response['results'] : [];
         } catch (\Exception $e) {
             \Debug::show($e->getMessage());
         }
@@ -59,7 +62,9 @@ class GooglePlaces extends HTTP
     public function details($settings = [])
     {
         try {
-            return $this->request($this->endpoint(), $settings)->wait()['results'];
+            $this->setClient(Object::create('GuzzleHttp\Client'));
+            $response = $this->parseResponse($this->request($this->endpoint(), $settings)->wait());
+            return $response['results'];
         } catch (\Exception $e) {
             \Debug::show($e->getMessage());
         }
@@ -94,6 +99,6 @@ class GooglePlaces extends HTTP
 
     protected function isValid($body)
     {
-        return $body && is_array($body) && !empty($body) && !empty($body['results']);
+        return $body && is_array($body) && !empty($body) && (!empty($body['results']) || !empty($body['result']));
     }
 }

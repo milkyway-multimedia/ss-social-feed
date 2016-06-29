@@ -47,7 +47,13 @@ class Silverstripe implements CacheStorageInterface, \Flushable
         $entry = null;
 
         try {
-            return unserialize($this->cache()->load($key));
+            $entry = unserialize($this->cache()->load($key));
+
+            if($entry === false) {
+                return null;
+            }
+
+            return $entry;
         } catch (Exception $ignored) {
             return $entry;
         }

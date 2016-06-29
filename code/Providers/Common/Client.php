@@ -16,6 +16,7 @@ use GuzzleHttp\HandlerStack;
 use Kevinrob\GuzzleCache\CacheMiddleware;
 use Kevinrob\GuzzleCache\Strategy\PublicCacheStrategy;
 use Milkyway\SS\SocialFeed\Cache\Silverstripe;
+use Milkyway\SS\SocialFeed\Contracts\HttpProvider;
 use Milkyway\SS\SocialFeed\Contracts\RequiresOauth1;
 use Psr\Http\Message\RequestInterface;
 
@@ -40,7 +41,9 @@ class Client extends Original  {
                     ]), 'oauth-' . $id);
                 }
 
-                $provider->setClient($this);
+                if($provider instanceof HttpProvider) {
+                    $provider->setClient($this);
+                }
             }
         }
 

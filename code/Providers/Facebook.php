@@ -10,10 +10,11 @@
 
 use Milkyway\SS\SocialFeed\Providers\Model\Oauth2;
 use Psr\Http\Message\ResponseInterface;
+use Session;
 
-class Facebook extends Oauth2
+class Facebook extends Oauth2 implements \Flushable
 {
-    const VERSION = 'v2.5';
+    const VERSION = 'v2.6';
 
     protected $endpoint = 'https://graph.facebook.com';
     protected $url = 'http://facebook.com';
@@ -34,10 +35,29 @@ class Facebook extends Oauth2
 //		's50x50/'   => '',
     ];
 
+    protected $currentPage;
+
+    /**
+     * Clear session tokens on flush
+     */
+    public static function flush() {
+        Session::clear('Facebook.page_tokens');
+    }
+
     public function all($settings = [])
     {
         $type = isset($settings['type']) ? $settings['type'] : $this->defaultType;
         return $this->request($this->endpoint($settings['username'], $type), $settings);
+    }
+
+    public function extendedPermissions($params = null)
+    {
+        if(!empty($params['page'])) {
+            $this->currentPage = $params['page'];
+            unset($params['page']);
+        }
+
+        return parent::extendedPermissions($params);
     }
 
     public function parseResponse(ResponseInterface $response, $settings = [])
@@ -71,7 +91,7 @@ class Facebook extends Oauth2
         $post = [];
 
         try {
-            $settings['query']['access_token'] = $this->configuration['consumer_key'] . '|' . $this->configuration['consumer_secret'];
+            $settings['query']['access_token'] = $this->accessToken ?: $this->configuration['consumer_key'] . '|' . $this->configuration['consumer_secret'];
             $settings['id'] = $id;
             $settings['type'] = $type;
             $post = $this->request($this->endpoint($id, $type), $settings)->wait();
@@ -364,5 +384,73 @@ class Facebook extends Oauth2
                     $data['cover'] = $this->one($data['object_id']);
                 }
         }
+    }
+
+    protected function provider() {
+        if(!isset($this->configuration['graphApiVersion'])) {
+            $this->configuration['graphApiVersion'] = static::VERSION;
+        }
+
+        return parent::provider();
+    }
+
+    protected function request($url, $settings = []) {
+        if($this->accessToken) {
+            $settings = $this->mergeSettingsRecursively($settings, [
+                'query' => [
+                    'access_token' => $this->accessToken,
+                ],
+            ]);
+        }
+
+        return parent::request($url, $settings);
+    }
+
+    protected function accessToken($noLiveRequest = true)
+    {
+        if($this->currentPage) {
+            if($pageToken = Session::get('Facebook.page_tokens.' . get_called_class() . '.' . $this->currentPage)) {
+                return $pageToken;
+            }
+
+            $accessToken = parent::accessToken($noLiveRequest);
+
+
+            if(!$accessToken) {
+                return $accessToken;
+            }
+
+            $tokenLocation = $this->pageTokenLocation();
+
+            if (!file_exists($tokenLocation) || !($pageToken = file_get_contents($tokenLocation))) {
+                if(!$this->accessToken) {
+                    $this->accessToken = $accessToken;
+                }
+
+                $response = $this->parseRawResponse($this->request($this->endpoint($this->currentPage), [
+                    'query' => [
+                        'fields' => 'access_token',
+                    ],
+                ])->wait());
+
+                if(isset($response['access_token'])) {
+                    $pageToken = $response['access_token'];
+
+                    file_put_contents($tokenLocation, $pageToken);
+                }
+            }
+
+            Session::set('Facebook.page_tokens.' . get_called_class() . '.' . $this->currentPage, $pageToken);
+
+            return $pageToken;
+        }
+
+        return parent::accessToken($noLiveRequest);
+    }
+
+    private function pageTokenLocation()
+    {
+        $folder = singleton('env')->get('SocialFeed.token_directory') ?: TEMP_FOLDER;
+        return $folder . DIRECTORY_SEPARATOR . '.' . str_replace('\\', '__', get_called_class()) . $this->currentPage . '_token';
     }
 }

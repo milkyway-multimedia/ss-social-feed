@@ -34,8 +34,8 @@ class SocialFeed_GooglePlaces extends SocialFeed_Profile {
 				$fields->removeByName('LocationAddress');
 
 				if(\ClassInfo::exists('Select2Field')) {
-					$fields->replaceField('Username', $location = \Select2Field::create('LocationAndUsername', _t('GooglePlaces.LOCATION', 'Location'), '', function ($query = '', $limit = 10) {
-						return $query ? \Object::create($this->Provider, 0, (array)$this->OauthConfiguration)->textSearch($query, [
+					$fields->replaceField('Username', $location = \Select2Field::create('LocationAndUsername', _t('GooglePlaces.LOCATION', 'Location'), '', function ($query, $limit = 10) {
+						return !empty($query['term']) ? \Object::create($this->Provider, 0, (array)$this->OauthConfiguration)->textSearch($query['term'], [
 							'query' => [
 								'key' => $this->setting('ApiKey'),
 							]

@@ -8,6 +8,7 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Promise\PromiseInterface;
 use Milkyway\SS\SocialFeed\Contracts\HttpProvider;
 use Milkyway\SS\SocialFeed\Contracts\RequiresOauth2;
@@ -64,7 +65,7 @@ class Collector
             $hasHttpProvider = false;
 
             foreach ($this->profiles as $profile) {
-                $providers[$profile->ID] = Object::create($profile->Provider, (array)$profile->OauthConfiguration);
+                $providers[$profile->ID] = Object::create($profile->Provider, (array)$profile->ProviderConfiguration);
 
                 if (!$hasHttpProvider && $providers[$profile->ID] instanceof HttpProvider) {
                     $hasHttpProvider = true;
@@ -72,7 +73,9 @@ class Collector
             }
 
             if ($hasHttpProvider && !$this->client) {
-                $this->client = Object::create('Milkyway\SS\SocialFeed\Providers\Common', [], $providers);
+                $this->client = Object::create('Milkyway\SS\SocialFeed\Providers\Common\Client', [
+                    'providers' => $providers,
+                ]);
             }
 
             foreach ($this->profiles as $profile) {
@@ -85,11 +88,22 @@ class Collector
                 $feeds[$profile->ID] = $this->collect($profile, $providers[$profile->ID]);
             }
 
-            if (!empty($this->promises)) {
-                $responses = \GuzzleHttp\Promise\unwrap(array_column($this->promises, 'promise', 'id'));
 
-                foreach($responses as $id => $response) {
-                    $feeds[$id] = $this->processProvidedResponse($this->promises[$id]['provider']->parseResponse($response, $this->promises[$id]['settings']), $this->promises[$id]['profile']);
+            if (!empty($this->promises)) {
+                foreach($this->promises as $id => $promise) {
+                    try {
+                        $feeds[$id] = $this->processProvidedResponse($promise['provider']->parseResponse($promise['promise']->wait(), $promise['settings']), $promise['profile']);
+                    } catch (ClientException $e) {
+                        if(\Director::isDev()) {
+                            \debug::show($e->getMessage());
+                        }
+
+                        if(isset($feeds[$id])) {
+                            unset($feeds[$id]);
+                        }
+
+                        continue;
+                    }
                 }
             }
 
@@ -97,7 +111,9 @@ class Collector
             $this->promises = [];
 
             foreach ($feeds as $feed) {
-                $list = $list->merge($feed);
+                if(is_array($feed)  || ($feed instanceof \Countable)) {
+                    $list->merge($feed);
+                }
             }
 
             if ($this->sort) {

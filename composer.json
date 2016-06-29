@@ -24,6 +24,7 @@
     "kevinrob/guzzle-cache-middleware"          : "~1",
     "silverstripe-australia/gridfieldextensions": "~1",
     "milkyway-multimedia/ss-mwm-assets"         : "~0.3",
+    "milkyway-multimedia/ss-mwm-core"            : "~0.3",
     "milkyway-multimedia/ss-mwm-env"            : "~0.3"
   },
   "suggest"    : {

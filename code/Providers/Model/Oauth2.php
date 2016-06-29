@@ -16,8 +16,10 @@ use Session;
 use SS_HTTPResponse_Exception;
 use Exception;
 use Object;
+use Director;
+use Debug;
 
-abstract class Oauth2 extends HTTP implements RequiresOauth2
+abstract class Oauth2 extends HTTP implements RequiresOauth2, \Flushable
 {
     protected $provider;
     protected $providerClass;
@@ -25,6 +27,13 @@ abstract class Oauth2 extends HTTP implements RequiresOauth2
     protected $accessToken;
 
     protected $configuration = [];
+
+    /**
+     * Clear session tokens on flush
+     */
+    public static function flush() {
+        Session::clear('SocialFeed.access_tokens');
+    }
 
     /**
      * This is a very basic Oauth2 caller, limited for use to this module
@@ -40,17 +49,17 @@ abstract class Oauth2 extends HTTP implements RequiresOauth2
         }
 
         if (!empty($params['scopes']) && $params['scopes'] !== '_all') {
-            $this->configuration['scopes'] = $params['scopes'];
+            $this->configuration['scope'] = $params['scopes'];
         }
 
         if (empty($params['redirect_to'])) {
             $params['redirect_to'] = isset($_SERVER['REQUEST_URI']) ? singleton('director')->absoluteURL($_SERVER['REQUEST_URI']) : singleton('director')->absoluteURL(Controller::curr()->Link());
 
             // Ouch, hacky, but making it easier for you to follow the redirect url rules for some oauth providers... Looking at you instagram!
-            $params['redirect_to'] = Controller::join_links(singleton('director')->absoluteBaseURL(), '?url=' . singleton('director')->makeRelative($params['redirect_to']));
+//            $params['redirect_to'] = Controller::join_links(singleton('director')->absoluteBaseURL(), '?url=' . singleton('director')->makeRelative($params['redirect_to']));
         }
 
-        $this->configuration['redirectUri'] = $this->removeFromQueryString(['code', 'state'], $params['redirect_to']);
+        $this->configuration['redirectUri'] = Controller::join_links($this->removeFromQueryString(['code', 'state', 'scope', 'redirectUri'], $params['redirect_to']));
 
         $this->accessToken = $this->accessToken(!empty($params['no_live_request']));
 
@@ -74,7 +83,7 @@ abstract class Oauth2 extends HTTP implements RequiresOauth2
                     [
                         'httpClient' => $this->client,
                     ],
-                    singleton('env')->get(__CLASS__ . '|SocialFeed_Oauth2.collaborators', [
+                    singleton('env')->get(get_called_class() . '|' . __CLASS__ . '|SocialFeed_Oauth2.collaborators', [
                         'requestFactory' => Object::create('Milkyway\SS\SocialFeed\Providers\Common\RequestFactory'),
                     ])
                 )
@@ -89,11 +98,22 @@ abstract class Oauth2 extends HTTP implements RequiresOauth2
         $tokenLocation = $this->tokenLocation();
         $accessToken = null;
 
+        if($accessToken = Session::get('SocialFeed.access_tokens.' . get_called_class() . '.' . $this->tokenKey())) {
+            return $accessToken;
+        }
+
+        if(!empty($this->configuration['access_token'])) {
+            $accessToken = $this->configuration['access_token'];
+        }
+
         if (file_exists($tokenLocation)) {
-            $token = json_decode(file_get_contents($tokenLocation));
+            $token = unserialize(file_get_contents($tokenLocation));
 
             if (isset($token->accessToken)) {
                 $accessToken = $token->accessToken;
+            }
+            else if($token instanceof \League\OAuth2\Client\Token\AccessToken) {
+                $accessToken = $token->getToken();
             }
         }
 
@@ -103,6 +123,13 @@ abstract class Oauth2 extends HTTP implements RequiresOauth2
             if (isset($token->accessToken)) {
                 $accessToken = $token->accessToken;
             }
+            else if($token instanceof \League\OAuth2\Client\Token\AccessToken) {
+                $accessToken = $token->getToken();
+            }
+        }
+
+        if($accessToken) {
+            Session::set('SocialFeed.access_tokens.' . get_called_class() . '.' . $this->tokenKey(), $accessToken);
         }
 
         return $accessToken;
@@ -110,23 +137,58 @@ abstract class Oauth2 extends HTTP implements RequiresOauth2
 
     protected function retrieveAccessToken()
     {
-        if(Controller::curr()->redirectedTo() ||Controller::curr()->Response->getHeader('X-SocialFeed-RedirectForOauth')) {
+        if(Controller::curr()->redirectedTo() || Controller::curr()->Response->getHeader('X-SocialFeed-RedirectForOauth')) {
             return null;
         }
 
+        $key = $this->tokenKey();
+
         if (!isset($_GET['code'])) {
-            $url = $this->provider()->getAuthorizationUrl();
+            if(!empty($this->configuration['consumer_key'])) {
+                if(empty($this->configuration['clientId'])) {
+                    $this->configuration['clientId'] = $this->configuration['consumer_key'];
+                }
 
-            Session::set(get_called_class() . '.oauth2state', $this->provider()->getState());
-
-            if (Controller::curr()->Request->isAjax()) {
-                Controller::curr()->Response->addHeader('X-SocialFeed-RedirectForOauth', $url);
-            } else {
-                return Controller::curr()->redirect($url);
+                unset($this->configuration['consumer_key']);
             }
 
-        } elseif (empty($_GET['state']) || ($_GET['state'] !== Session::get(get_called_class() . '.oauth2state'))) {
+            if(!empty($this->configuration['consumer_secret'])) {
+                if(empty($this->configuration['clientSecret'])) {
+                    $this->configuration['clientSecret'] = $this->configuration['consumer_secret'];
+                }
 
+                unset($this->configuration['consumer_secret']);
+            }
+
+            $url = Session::get(get_called_class() . '.oauth2state.' . $key . '.url');
+
+            if(!$url) {
+                $url = $this->provider()->getAuthorizationUrl($this->configuration);
+
+                Session::set(get_called_class() . '.oauth2state.' . $key, [
+                    'url' => $url,
+                    'state' => $this->provider()->getState(),
+                ]);
+            }
+
+            if(isset($_GET['flush'])) {
+                Session::clear(get_called_class() . '.oauth2state.' . $key . '.url');
+            }
+
+            if(singleton('env')->get('SocialFeed.disable_oauth_redirects')) {
+                if(Director::isDev()) {
+                    Debug::show($url);
+                }
+            }
+            else {
+                if (Controller::curr()->Request->isAjax()) {
+                    Controller::curr()->Response->addHeader('X-SocialFeed-RedirectForOauth', $url);
+                } else {
+                    return Controller::curr()->redirect($url);
+                }
+            }
+
+        } elseif (empty($_GET['state']) || ($_GET['state'] != Session::get(get_called_class() . '.oauth2state.' . $key . '.state'))) {
             throw new SS_HTTPResponse_Exception('Could not get access token', 403);
 
         } else {
@@ -135,9 +197,13 @@ abstract class Oauth2 extends HTTP implements RequiresOauth2
                     'code' => $_GET['code'],
                 ]);
 
+                $token = $this->provider()->getLongLivedAccessToken($token);
+
                 file_put_contents($this->tokenLocation(), serialize($token));
+                Session::set('SocialFeed.access_tokens.' . get_called_class() . '.' . $this->tokenKey(), $token->getToken());
             } catch (Exception $e) {
-                throw new SS_HTTPResponse_Exception('Could not get access token', 403);
+//                throw $e;
+                throw new SS_HTTPResponse_Exception('Could not get access token: ' . $e->getMessage(), 403);
             }
 
             return $token;
@@ -154,9 +220,13 @@ abstract class Oauth2 extends HTTP implements RequiresOauth2
         return $url;
     }
 
+    protected function tokenKey() {
+        return !empty($this->configuration['scope']) ? singleton('mwm')->clean_cache_key('SocialFeed', $this->configuration['scope']) : 0;
+    }
+
     private function tokenLocation()
     {
         $folder = singleton('env')->get('SocialFeed.token_directory') ?: TEMP_FOLDER;
-        return $folder . DIRECTORY_SEPARATOR . '.' . str_replace('\\', '__', get_class($this)) . '_token';
+        return $folder . DIRECTORY_SEPARATOR . '.' . str_replace('\\', '__', get_called_class()) . $this->tokenKey() . '_token';
     }
 } 

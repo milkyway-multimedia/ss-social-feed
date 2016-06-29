@@ -15,15 +15,21 @@ if(!class_exists('League\OAuth2\Client\Tool\RequestFactory')) {
 }
 
 use League\OAuth2\Client\Tool\RequestFactory as Original;
+use GuzzleHttp\Psr7\Request;
 
 class RequestFactory extends Original
 {
-    protected function parseOptions(array $options)
-    {
-        return array_merge(parent::parseOptions($options), [
-            'headers' => [
-                'send_as_async' => true,
-            ],
-        ]);
+    public function getRequest(
+        $method,
+        $uri,
+        array $headers = [],
+        $body = null,
+        $version = '1.1'
+    ) {
+        if($method == 'GET') {
+            $headers['send_as_async'] = true;
+        }
+
+        return new Request($method, $uri, $headers, $body, $version);
     }
 }

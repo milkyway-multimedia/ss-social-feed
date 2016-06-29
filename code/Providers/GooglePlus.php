@@ -21,7 +21,7 @@ class GooglePlus extends HTTP
 
     public function all($settings = [])
     {
-        return $this->request($this->endpoint($settings['username']), $settings);
+        return $this->request($this->endpoint(urlencode($settings['username'])), $settings);
     }
 
     public function parseResponse(ResponseInterface $response, $settings = [])

@@ -8,7 +8,6 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-use Milkyway\SS\Director;
 use SocialFeed_Facebook;
 use SocialFeed_Profile;
 use SiteConfig;
@@ -30,7 +29,7 @@ class Utilities implements \TemplateGlobalProvider
         }
 
         if ($appId) {
-            singleton('require')->defer(sprintf(Director::protocol() . 'connect.facebook.net/%s/all.js#xfbml=1&appId=%s',
+            singleton('require')->defer(sprintf(singleton('director')->protocol() . 'connect.facebook.net/%s/all.js#xfbml=1&appId=%s',
                 i18n::get_locale(), $appId));
         }
 
@@ -39,19 +38,19 @@ class Utilities implements \TemplateGlobalProvider
 
     public static function require_twitter_script()
     {
-        singleton('require')->defer(Director::protocol() . 'platform.twitter.com/widgets.js');
+        singleton('require')->defer(singleton('director')->protocol() . 'platform.twitter.com/widgets.js');
     }
 
     public static function require_google_plus_script()
     {
         singleton('require')->customScript("window.___gcfg = {lang: '" . str_replace('_', '-',
                 i18n::get_locale()) . "'};", 'GooglePlus-Locale');
-        singleton('require')->defer(Director::protocol() . 'apis.google.com/js/plusone.js', true);
+        singleton('require')->defer(singleton('director')->protocol() . 'apis.google.com/js/plusone.js', true);
     }
 
     public static function require_google_platform_script()
     {
-        singleton('require')->defer(Director::protocol() . 'apis.google.com/js/platform.js', true);
+        singleton('require')->defer(singleton('director')->protocol() . 'apis.google.com/js/platform.js', true);
     }
 
     private static $_addThis_included;
