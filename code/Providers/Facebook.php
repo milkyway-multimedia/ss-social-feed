@@ -11,6 +11,7 @@
 use Milkyway\SS\SocialFeed\Providers\Model\Oauth2;
 use Psr\Http\Message\ResponseInterface;
 use Session;
+use Milkyway\SS\SocialFeed\Utilities;
 
 class Facebook extends Oauth2 implements \Flushable
 {
@@ -52,7 +53,7 @@ class Facebook extends Oauth2 implements \Flushable
             $settings['query'] = [];
         }
 
-        if(empty($settings['query']['fields'])) {
+        if(empty($settings['query']['fields']) && (!$this->currentPage || !$this->accessToken)) {
             $settings['query']['fields'] = 'id,link,message,call_to_action,caption,created_time,description,from,icon,is_hidden,is_published,message_tags,name,object_id, parent_id, picture,place,privacy,properties,shares,source,status_type,story,type,updated_time,with_tags';
         }
 
@@ -269,18 +270,32 @@ class Facebook extends Oauth2 implements \Flushable
             }
         }
 
-        if ($post['Type'] == 'video' && $post['Source']) {
-            $url = parse_url($post['Source']);
-            parse_str($url['query'], $query);
+//        if ($post['Type'] == 'video' && $post['Source']) {
+//            $url = parse_url($post['Source']);
+//            parse_str($url['query'], $query);
+//
+//            if (isset($query['autoplay'])) {
+//                unset($query['autoplay']);
+//            }
+//
+//            $url = sprintf('%s://%s%s%s', $url['scheme'], $url['host'], $url['path'],
+//                (!empty($query) ? '?' . http_build_query($query) : ''));
+//
+//            $post['ObjectEmbed'] = '<iframe src="' . $url . '" class="panel-post-media--embed" width="640" height="480" frameborder="0" allowfullscreen></iframe>';
+//        }
 
-            if (isset($query['autoplay'])) {
-                unset($query['autoplay']);
-            }
+        // FIX: Use proper Facebook emebed code to stop autoplay of videos
+        if ($post['Type'] == 'video' && $post['ObjectURL']) {
+            Utilities::require_facebook_script((empty($this->configuration['consumer_key']) ? '' : $this->configuration['consumer_key']));
 
-            $url = sprintf('%s://%s%s%s', $url['scheme'], $url['host'], $url['path'],
-                (!empty($query) ? '?' . http_build_query($query) : ''));
-
-            $post['ObjectEmbed'] = '<iframe src="' . $url . '" class="panel-post-media--embed" width="640" height="480" frameborder="0" allowfullscreen></iframe>';
+            $post['ObjectEmbed'] = _t('SocialFeed_Facebook.VIDEO_EMBED_CODE', '
+            <div class="fb-video" data-href="{link}" data-width="640" data-show-text="false">
+                <blockquote cite="{link}" class="fb-xfbml-parse-ignore">
+                    <a href="{link}">{title}</a>
+                    {content}
+                </blockquote>
+            </div>
+            ', ['link' => $post['ObjectURL'], 'title' => $post['Title'], 'content' => $post['Content'],]);
         }
 
         return $post;

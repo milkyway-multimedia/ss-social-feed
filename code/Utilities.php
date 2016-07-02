@@ -18,14 +18,19 @@ class Utilities implements \TemplateGlobalProvider
 {
     public static function require_facebook_script($facebook = null, $parent = null)
     {
-        if (!$facebook) {
-            $facebook = singleton('SocialFeed_Facebook');
+        if(is_string($facebook) || is_int($facebook)) {
+            $appId = $facebook;
         }
+        else {
+            if (!$facebook) {
+                $facebook = singleton('SocialFeed_Facebook');
+            }
 
-        $appId = $facebook->setting('AppID', $parent);
-
-        if (!$appId && $facebook = SocialFeed_Facebook::get()->first()) {
             $appId = $facebook->setting('AppID', $parent);
+
+            if (!$appId && $facebook = SocialFeed_Facebook::get()->first()) {
+                $appId = $facebook->setting('AppID', $parent);
+            }
         }
 
         if ($appId) {
