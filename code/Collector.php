@@ -8,7 +8,7 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-use GuzzleHttp\Exception\ClientException;
+use Exception;
 use GuzzleHttp\Promise\PromiseInterface;
 use Milkyway\SS\SocialFeed\Contracts\HttpProvider;
 use Milkyway\SS\SocialFeed\Contracts\RequiresOauth2;
@@ -93,7 +93,7 @@ class Collector
                 foreach($this->promises as $id => $promise) {
                     try {
                         $feeds[$id] = $this->processProvidedResponse($promise['provider']->parseResponse($promise['promise']->wait(), $promise['settings']), $promise['profile']);
-                    } catch (ClientException $e) {
+                    } catch (Exception $e) {
                         if(\Director::isDev()) {
                             \debug::show($e->getMessage());
                         }
@@ -237,4 +237,4 @@ class Collector
 
         return $feed;
     }
-} 
+}
